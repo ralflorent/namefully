@@ -8,5 +8,5 @@
 import { Namefully } from './namefully';
 
 const name = new Namefully('Joe Smith');
-console.log(`Initials of ${name.fullname}: ${name.initials().join('')}`);
+console.log(`Initials of ${name.getFullname()}: ${name.initials().join('')}`);
 console.log(name.describe());

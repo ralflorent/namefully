@@ -1,5 +1,5 @@
 /**
- * `Namefully` name handler
+ * `Namefully` person name handler
  *
  * Created on March 03, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
@@ -14,14 +14,52 @@
  * @see https://departments.weber.edu/qsupport&training/Data_Standards/Name.htm
  */
 export class Namefully {
-    fullname: string;
-    firstname: string;
-    lastname: string;
 
+    private fullname: Fullname;
     private stats: Summary;
 
-    constructor(private rawstring: string) {
-        this.parse(rawstring);
+    constructor(
+        private rawstring: string,
+        private by: Namon.FIRST_NAME | Namon.LAST_NAME = Namon.FIRST_NAME
+    ) {
+        this.parse();
+    }
+
+    getFullname(): string {
+        let nama: string[] = [];
+
+        if (this.fullname.prefix)
+            nama.push(this.fullname.prefix)
+
+        switch(this.by) {
+            case 'firstname':
+                nama.push(this.getFirstname());
+                nama.push(this.getLastname());
+                break;
+            case 'lastname':
+                nama.push(this.getLastname());
+                nama.push(this.getFirstname());
+                break;
+        }
+
+        if (this.fullname.suffix)
+            nama.push(this.fullname.suffix)
+
+        return nama.join(Separator.SPACE);
+    }
+
+    getFirstname(): string {
+        let nama: string[] = [this.fullname.firstname.first];
+        if (this.fullname.firstname.second)
+            nama.push(this.fullname.firstname.second)
+        return nama.join(Separator.SPACE);
+    }
+
+    getLastname(): string {
+        let nama: string[] = [this.fullname.lastname.father];
+        if (this.fullname.lastname.mother)
+            nama.push(this.fullname.lastname.mother)
+        return nama.join(Separator.SPACE);
     }
 
     describe(): string {
@@ -30,7 +68,7 @@ export class Namefully {
 
     initials(): string[] {
         const initials = [];
-        initials.push(this.firstname[0], this.lastname[0]);
+        initials.push(this.getFirstname(), this.getLastname());
         return initials;
     }
 
@@ -62,18 +100,53 @@ export class Namefully {
         throw new Error('Not implemented yet');
     }
 
-    private parse(name: string): void {
-        const splitnames = name.split(' ');
-        this.lastname = this.capitalize(splitnames.pop());
-        this.firstname = this.capitalize(splitnames[0]);
+    private parse(): void {
+        const splitnames = this.rawstring.split(' ');
+        const lastname = this.capitalize(splitnames.pop());
+        const firstname = this.capitalize(splitnames[0]);
 
-        this.fullname = `${this.lastname}, ${this.firstname}`;
-        this.stats = new Summary(this.fullname);
+        const fullname = [];
+        if (this.by = Namon.FIRST_NAME) {
+            fullname.push(firstname, lastname);
+        } else {
+            fullname.push(lastname, firstname);
+        }
+        this.fullname = {
+            firstname: {
+                first: firstname
+            },
+            lastname: {
+                father: lastname
+            }
+        }
+        this.stats = new Summary(fullname.join(Separator.SPACE));
     }
 
     private capitalize(namon: string): string {
         return ''.concat(namon[0].toUpperCase(), namon.slice(1, namon.length));
     }
+}
+
+enum Namon {
+    LAST_NAME = 'lastname',
+    FIRST_NAME = 'firstname',
+    MIDDLE_NAME = 'middlename',
+    PREFIX = 'prefix',
+    SUFFIX = 'suffix',
+    NICKNAME = 'nickname'
+}
+
+/**
+ * ASCII characters
+ */
+enum Separator {
+    EMPTY = '',
+    SPACE = ' ',
+    COMMA = ',',
+    PERIOD = '.',
+    HYPHEN = '-',
+    UNDERSCORE = '_',
+    APOSTROPHE = `'`,
 }
 
 interface Fullname {
