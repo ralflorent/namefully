@@ -7,6 +7,6 @@
 
 import { Namefully } from './namefully';
 
-const nf = new Namefully('Joe Bidden');
-
-console.log(`Initials of ${nf.fullname}: ${nf.initials()}`);
+const name = new Namefully('Joe Smith');
+console.log(`Initials of ${name.fullname}: ${name.initials().join('')}`);
+console.log(name.describe());
