@@ -20,23 +20,24 @@ export class Namefully {
 
     constructor(
         private rawstring: string,
-        private by: Namon.FIRST_NAME | Namon.LAST_NAME = Namon.FIRST_NAME
+        private orderedBy: Namon.FIRST_NAME | Namon.LAST_NAME = Namon.FIRST_NAME,
+        private separator: Separator = Separator.SPACE
     ) {
         this.parse();
     }
 
     getFullname(): string {
-        let nama: string[] = [];
+        const nama: string[] = [];
 
         if (this.fullname.prefix)
             nama.push(this.fullname.prefix)
 
-        switch(this.by) {
-            case 'firstname':
+        switch(this.orderedBy) {
+            case Namon.FIRST_NAME:
                 nama.push(this.getFirstname());
                 nama.push(this.getLastname());
                 break;
-            case 'lastname':
+            case Namon.LAST_NAME:
                 nama.push(this.getLastname());
                 nama.push(this.getFirstname());
                 break;
@@ -49,26 +50,21 @@ export class Namefully {
     }
 
     getFirstname(): string {
-        let nama: string[] = [this.fullname.firstname.first];
-        if (this.fullname.firstname.second)
-            nama.push(this.fullname.firstname.second)
-        return nama.join(Separator.SPACE);
+        return this.fullname.firstname.tostring();
     }
 
     getLastname(): string {
-        let nama: string[] = [this.fullname.lastname.father];
-        if (this.fullname.lastname.mother)
-            nama.push(this.fullname.lastname.mother)
-        return nama.join(Separator.SPACE);
+        return this.fullname.lastname.tostring();
     }
 
     describe(): string {
         return this.stats.tostring();
     }
 
-    initials(): string[] {
+    getInitials(): string[] {
         const initials = [];
-        initials.push(this.getFirstname(), this.getLastname());
+        initials.push(...this.fullname.firstname.getInitials());
+        initials.push(...this.fullname.lastname.getInitials());
         return initials;
     }
 
@@ -101,30 +97,122 @@ export class Namefully {
     }
 
     private parse(): void {
-        const splitnames = this.rawstring.split(' ');
+        const splitnames = this.rawstring.split(Separator.SPACE);
         const lastname = this.capitalize(splitnames.pop());
         const firstname = this.capitalize(splitnames[0]);
 
         const fullname = [];
-        if (this.by = Namon.FIRST_NAME) {
+        if (this.orderedBy = Namon.FIRST_NAME) {
             fullname.push(firstname, lastname);
         } else {
             fullname.push(lastname, firstname);
         }
         this.fullname = {
-            firstname: {
-                first: firstname
-            },
-            lastname: {
-                father: lastname
-            }
+            firstname: new Firstname(firstname),
+            lastname: new Lastname(lastname)
         }
         this.stats = new Summary(fullname.join(Separator.SPACE));
     }
 
     private capitalize(namon: string): string {
-        return ''.concat(namon[0].toUpperCase(), namon.slice(1, namon.length));
+        return Separator.EMPTY.concat(
+            namon[0].toUpperCase(),
+            namon.slice(1, namon.length)
+        );
     }
+}
+
+abstract class Name {
+
+    private initial: string;
+    private body: string;
+
+    constructor(public namon: string) {
+        this.initial = namon[0];
+        this.body = namon.slice(1, namon.length);
+    }
+
+    abstract describe(): Summary;
+
+    abstract tostring(includeAll: boolean): string;
+
+    getInitials(): string[] {
+        return [this.initial];
+    }
+
+    protected capitalize(option: 'initial' | 'all' = 'initial'): void {
+        if (option === 'initial') {
+            this.initial = this.initial.toUpperCase();
+            this.namon = this.initial.concat(this.body);
+        } else  {
+            this.namon = this.namon.toUpperCase();
+        }
+    }
+}
+
+class Firstname extends Name {
+
+    constructor(public namon: string, public more?: string[]) {
+        super(namon);
+    }
+
+    describe(): Summary {
+        throw new Error('Not implemented yet');
+    }
+
+    tostring(includeAll: boolean = false): string {
+        return !includeAll ?
+            this.namon :
+            this.namon.concat(
+                Separator.SPACE,
+                this.more.join(Separator.SPACE)
+            );
+    }
+
+    getInitials(): string[] {
+        const initials: string[] = [this.namon[0]];
+        if (Array.isArray(this.more) && this.more.length) {
+            initials.push(...this.more);
+        }
+        return initials;
+    }
+}
+
+class Lastname extends Name {
+
+    constructor(public father: string, public mother?: string) {
+        super(father);
+    }
+
+    describe(): Summary {
+        throw new Error('Not implemented yet');
+    }
+
+    tostring(includeAll: boolean = false): string {
+        return !includeAll ?
+            this.father :
+            this.mother ?
+                this.father.concat(Separator.SPACE, this.mother) :
+                this.father
+        ;
+    }
+
+    getInitials(): string[] {
+        const initials: string[] = [this.father[0]];
+        if (!!this.mother && this.mother.length) {
+            initials.push(this.mother[0]);
+        }
+        return initials;
+    }
+}
+
+interface Fullname {
+    firstname: Firstname;
+    lastname: Lastname;
+    middlename?: Name[];
+    prefix?: Prefix;
+    suffix?: Suffix;
+    nickname?: Name;
 }
 
 enum Namon {
@@ -147,25 +235,6 @@ enum Separator {
     HYPHEN = '-',
     UNDERSCORE = '_',
     APOSTROPHE = `'`,
-}
-
-interface Fullname {
-    firstname: Firstname;
-    lastname: Lastname;
-    middlename?: string[];
-    prefix?: Prefix;
-    suffix?: Suffix;
-    nickname?: string;
-}
-
-interface Firstname {
-    first: string;
-    second?: string;
-}
-
-interface Lastname {
-    father: string;
-    mother?: string;
 }
 
 enum Prefix {
