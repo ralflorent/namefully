@@ -14,8 +14,17 @@
   },
   "keywords": [
     "fullname",
+    "person-name",
     "name-handler",
-    "name"
+    "namefull",
+    "firstname",
+    "lastname",
+    "middlename",
+    "prefix",
+    "suffix",
+    "nickname",
+    "surname",
+    "given name"
   ],
   "author": {
     "name": "Ralph Florent",
