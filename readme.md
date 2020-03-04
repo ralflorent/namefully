@@ -2,12 +2,32 @@
 
 ## Description
 
-Name handler
+Person name handler
 
 ## Concept
 
 Given a string name, manipulate the chuncks of the name as desired while
 considering some variants: language, non-unicode chars, latin-like, etc.
+
+## Use cases and examples
+
+English alphabet, ordered by first name:
+
+- typical name `John Smith`
+  - with middle name `John Joe Smith`
+  - with prefix `Mr John Smith`
+  - with suffix `John Smith, PhD`
+  - with prefix and suffix `Mr John Smith, PhD`
+- preferred name or nickname `Johnny`
+
+## Special cases
+
+- mononym:  `Plato`
+- polynymous last names: `De La Cruz`, `Da Vinci`
+- latin last names: `Perez Rodriguez`
+- hyphenated last name: `Pinkett-Smith`
+- last name with apostrophe: `O'Connell`, `O'Connor`
+- middle names: `Stefani Joanne Angelina Germanotta`
 
 ## Objectives
 
@@ -21,7 +41,7 @@ considering some variants: language, non-unicode chars, latin-like, etc.
 
 - string utils (if necessary)
 
-## To consider
+## Things to consider
 
 - testing
 - browser support
@@ -30,12 +50,13 @@ considering some variants: language, non-unicode chars, latin-like, etc.
 
 ## Expected API
 
-Given a name 'Joe Smith':
+Given a typical name `Mrs Jane O'Connor Pearson-Smith, PhD`:
 
-- body parts (first, last, mid name, prefix, suffix)
+- nama or body parts (first, last, mid name, prefix, suffix)
 - initials
 - digital signature
 - alphabet
+- stats
 
 ---
 
@@ -54,4 +75,4 @@ Given a name 'Joe Smith':
 
 ## License
 
-The underlying content of this project is licensed under [GPLv3](LICENSE).
+The underlying content of this project is licensed under [GPL-3.0](LICENSE).
