@@ -21,7 +21,7 @@ export class Namefully {
     constructor(
         private rawstring: string,
         private orderedBy: Namon.FIRST_NAME | Namon.LAST_NAME = Namon.FIRST_NAME,
-        private separator: Separator = Separator.SPACE
+        private separator: Separator = Separator.SPACE // for ending suffix
     ) {
         this.parse();
     }
@@ -43,8 +43,13 @@ export class Namefully {
                 break;
         }
 
-        if (this.fullname.suffix)
-            nama.push(this.fullname.suffix)
+        if (this.fullname.suffix) {
+            const suffix = this.separator !== Separator.SPACE ?
+                `${this.separator} ${this.fullname.suffix}` : // => ', PhD'
+                this.fullname.suffix
+            ;
+            nama.push(suffix);
+        }
 
         return nama.join(Separator.SPACE);
     }
@@ -57,15 +62,48 @@ export class Namefully {
         return this.fullname.lastname.tostring();
     }
 
-    describe(): string {
-        return this.stats.tostring();
+    getMiddlenames(): string[] {
+        return this.fullname.middlename ?
+            this.fullname.middlename.map(n => n.namon) :
+            []
+        ;
+    }
+
+    getNickname(): string {
+        return this.fullname.nickname ?
+            this.fullname.nickname.namon :
+            Separator.EMPTY
+        ;
+    }
+
+    getPrefix(): string {
+        return this.fullname.prefix ?
+            this.fullname.prefix :
+            Separator.EMPTY
+        ;
+    }
+
+    getSuffix(): string {
+        return this.fullname.suffix ?
+            this.fullname.suffix :
+            Separator.EMPTY
+        ;
     }
 
     getInitials(): string[] {
         const initials = [];
-        initials.push(...this.fullname.firstname.getInitials());
-        initials.push(...this.fullname.lastname.getInitials());
+        if (this.orderedBy = Namon.FIRST_NAME) {
+            initials.push(...this.fullname.firstname.getInitials());
+            initials.push(...this.fullname.lastname.getInitials());
+        } else {
+            initials.push(...this.fullname.lastname.getInitials());
+            initials.push(...this.fullname.firstname.getInitials());
+        }
         return initials;
+    }
+
+    describe(): string {
+        return this.stats.tostring();
     }
 
     shorten(): string {
@@ -102,7 +140,7 @@ export class Namefully {
         const firstname = this.capitalize(splitnames[0]);
 
         const fullname = [];
-        if (this.orderedBy = Namon.FIRST_NAME) {
+        if (this.orderedBy === Namon.FIRST_NAME) {
             fullname.push(firstname, lastname);
         } else {
             fullname.push(lastname, firstname);
@@ -116,7 +154,7 @@ export class Namefully {
 
     private capitalize(namon: string): string {
         return Separator.EMPTY.concat(
-            namon[0].toUpperCase(),
+            namon[0].toUpperCase(), // TODO: check toLocaleUppercase when include unicode | intl
             namon.slice(1, namon.length)
         );
     }
@@ -127,7 +165,7 @@ abstract class Name {
     private initial: string;
     private body: string;
 
-    constructor(public namon: string) {
+    constructor(public namon: string, public type: Namon) {
         this.initial = namon[0];
         this.body = namon.slice(1, namon.length);
     }
@@ -153,7 +191,7 @@ abstract class Name {
 class Firstname extends Name {
 
     constructor(public namon: string, public more?: string[]) {
-        super(namon);
+        super(namon, Namon.FIRST_NAME);
     }
 
     describe(): Summary {
@@ -180,8 +218,8 @@ class Firstname extends Name {
 
 class Lastname extends Name {
 
-    constructor(public father: string, public mother?: string) {
-        super(father);
+    constructor(public father: string, public mother?: string, hyphenated: boolean = false) {
+        super(father, Namon.LAST_NAME);
     }
 
     describe(): Summary {
@@ -221,7 +259,8 @@ enum Namon {
     MIDDLE_NAME = 'middlename',
     PREFIX = 'prefix',
     SUFFIX = 'suffix',
-    NICKNAME = 'nickname'
+    NICK_NAME = 'nickname',
+    MONO_NAME = 'mononame'
 }
 
 /**
