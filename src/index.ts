@@ -7,7 +7,7 @@
 
 import { Namefully } from './namefully';
 
-const name = new Namefully('Joe Smith');
+const name = new Namefully.Base('John Joe Smith');
 console.log(`Full name: ${name.getFullname()}`);
 console.log(`Initials: ${name.getInitials().join('')}`);
 console.log(name.describe());
