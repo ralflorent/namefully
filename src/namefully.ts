@@ -184,16 +184,56 @@ export class Namefully {
         return initials;
     }
 
+    /**
+     * Gives some descriptive statistics that summarize the central tendency,
+     * dispersion and shape of the characters' distribution.
+     * @returns {string} the stats behind the full name.
+     *
+     * Treated as a categorical dataset, the summary contains the following info:
+     * `count` : the number of *unrestricted* characters of the name;
+     * `frequency` : the highest frequency within the characters;
+     * `top` : the character with the highest frequency;
+     * `unique` : the count of unique characters of the name.
+     *
+     * @example
+     * Given the name "Thomas Alva Edison", the summary will output as follows:
+     *
+     * Descriptive statistics for "Thomas Alva Edison"
+     *  count    : 16
+     *  frequency: 3
+     *  top      : A
+     *  unique   : 12
+     *
+     * **NOTE:**
+     * During the setup, a set of restricted characters can be defined to be removed
+     * from the stats. By default, the only restricted character is the `space`.
+     * That is why the `count` for the example below result in `16` instead of
+     * `16`.
+     * Another thing to consider is that the summary is case *insensitive*. Note
+     * that the letter `a` has the top frequency, be it `3`.
+     */
     describe(): string {
         return this.stats.tostring();
     }
 
+    /**
+     * Shortens a complex full name to a simple typical name, a combination of
+     * first name and last name.
+     * @returns {string} a typical name
+     *
+     * @example
+     * For a given name such as `Mr Keanu Charles Reeves`, shortening this name
+     * is equivalent to making it `Keanu Reeves`.
+     */
     shorten(): string {
-        throw new Error('Not implemented yet');
+        return [
+            this.fullname.firstname.namon,
+            this.fullname.lastname.namon
+        ].join(Separator.SPACE);
     }
 
     /**
-     * Compress a name by using different forms of variants
+     * Compresses a name by using different forms of variants
      * @param {number} limit a threshold to limit the number of characters
      * @param {'firstname'|'lastname'|'middlename'|'firstmid'|'midlast'} by
      * a variant to use when compressing the long name. The last two variants
@@ -547,7 +587,12 @@ export enum Separator {
     UNDERSCORE = '_',
     APOSTROPHE = `'`,
 }
-
+/**
+ * American and Canadian English follow slightly different rules for abbreviated
+ * titles than British and Australian English. In North American English, titles
+ * before a name require a period: `Mr., Mrs., Ms., Dr.` In British and Australian
+ * English, no full stops are used in these abbreviations.
+ */
 export enum Prefix {
     FIRT_LIEUTENANT = '1st Lt',
     ADMIRAL = 'Adm',
