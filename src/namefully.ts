@@ -5,14 +5,14 @@
  * @author Ralph Florent <ralflornt@gmail.com>
  */
 
- /**
-  * `Namefully` scheme to keep track of the types and not worry about name
-  * collisions with other objects. Instead of putting lots of different names
-  * into the global namespace.
-  *
-  * How to share namespace:
-  *     /// <reference path="namefully.ts" />
-  */
+/**
+ * `Namefully` scheme to keep track of the types and not worry about name
+ * collisions with other objects. Instead of putting lots of different names
+ * into the global namespace.
+ *
+ * How to share namespace:
+ *     /// <reference path="namefully.ts" />
+ */
 // export namespace Namefully {...}
 
 /**
@@ -111,7 +111,7 @@ export class Namefully {
         if (this.fullname.prefix)
             nama.push(this.fullname.prefix)
 
-        switch(this.config.orderedBy) {
+        switch (this.config.orderedBy) {
             case Namon.FIRST_NAME:
                 nama.push(this.getFirstname());
                 nama.push(...this.getMiddlenames());
@@ -128,7 +128,7 @@ export class Namefully {
             const suffix = this.config.separator !== Separator.SPACE ?
                 `${this.config.separator} ${this.fullname.suffix}` : // => ', PhD'
                 this.fullname.suffix
-            ;
+                ;
             nama.push(suffix);
         }
 
@@ -192,8 +192,87 @@ export class Namefully {
         throw new Error('Not implemented yet');
     }
 
-    compress(): string {
-        throw new Error('Not implemented yet');
+    /**
+     * Compress a name by using different forms of variants
+     * @param {number} limit a threshold to limit the number of characters
+     * @param {'firstname'|'lastname'|'middlename'|'firstmid'|'midlast'} by
+     * a variant to use when compressing the long name. The last two variants
+     * represent respectively the combination of `firstname + middlename` and
+     * `middlename + lastname`.
+     *
+     * @example
+     * The compressing operation is only executed iff there is valid entry and it
+     * surpasses the limit set. In the examples below, let us assume that the
+     * name goes beyond the limit value.
+     *
+     * Compressing a long name refers to reducing the name to the following forms:
+     * 1. by firstname: 'John Moe Beau Lennon' => 'J. Moe Beau Lennon'
+     * 2. by middlename: 'John Moe Beau Lennon' => 'John M. B. Lennon'
+     * 3. by lastname: 'John Moe Beau Lennon' => 'John Moe Beau L.'
+     * 4. by firstmid: 'John Moe Beau Lennon' => 'J. M. B. Lennon'
+     * 5. by midlast: 'John Moe Beau Lennon' => 'John M. B. L.'
+     *
+     * By default, it compresses by 'firstmid' variant: 'J. M. B. Lennon'.
+     */
+    compress(
+        limit: number = 25,
+        by: 'firstname' | 'lastname' | 'middlename' | 'firstmid' | 'midlast' = 'firstmid'
+    ): string {
+
+        if (this.getFullname().length <= limit) // no need to reduce it
+            return this.getFullname();
+
+        const { firstname, lastname, middlename } = this.fullname;
+        const hasmid: boolean = Array.isArray(middlename) && middlename.length > 0;
+
+        const firsts = firstname
+            .getInitials()
+            .join(Separator.PERIOD)
+            .concat(Separator.PERIOD)
+        ;
+        const lasts = lastname
+            .getInitials()
+            .join(Separator.SPACE)
+            .concat(Separator.PERIOD)
+        ;
+        const mids = hasmid ?
+            middlename.map(n => n.getInitials())
+            .join(Separator.PERIOD)
+            .concat(Separator.PERIOD) :
+            ''
+        ;
+        let cname = '';
+        switch (by) {
+            case 'firstname':
+                cname = hasmid ?
+                    [firsts, this.getMiddlenames().join(Separator.SPACE), lastname.tostring()].join(Separator.SPACE) :
+                    [firsts, lastname.tostring()].join(Separator.SPACE);
+                    break;
+            case 'lastname':
+                cname = hasmid ?
+                    [firstname.tostring(), this.getMiddlenames().join(Separator.SPACE), lasts].join(Separator.SPACE) :
+                    [firstname.tostring(), lasts].join(Separator.SPACE);
+                    break;
+            case 'middlename':
+                cname = hasmid ?
+                    [firstname.tostring(), mids, lastname.tostring()].join(Separator.SPACE) :
+                    [firstname.tostring(), lastname.tostring()].join(Separator.SPACE);
+                    break;
+            case 'firstmid':
+                cname = hasmid ?
+                    [firsts, mids, lastname.tostring()].join(Separator.SPACE) :
+                    [firsts, lastname.tostring()].join(Separator.SPACE);
+                    break;
+            case 'midlast':
+                cname = hasmid ?
+                    [firstname.tostring(), mids, lasts].join(Separator.SPACE) :
+                    [firstname.tostring(), lasts].join(Separator.SPACE);
+                break;
+        }
+        if (cname.length > limit) {
+            console.warn(`The compressed name <${cname}> still surpasses the set limit ${limit}`);
+        }
+        return cname;
     }
 
     unicode(): string {
@@ -218,7 +297,7 @@ export class Namefully {
 
     private configure(options?: Partial<Config>): void {
         // consider using deepmerge if objects no longer stay shallow
-        this.config = {...CONFIG, ...options}; // if options, it overrides CONFIG
+        this.config = { ...CONFIG, ...options }; // if options, it overrides CONFIG
     }
 
     private initialize<T>(parser: Parser<T>): void {
@@ -248,7 +327,7 @@ export class Name {
         if (option === 'initial') {
             this.initial = this.initial.toUpperCase();
             this.namon = this.initial.concat(this.body);
-        } else  {
+        } else {
             this.namon = this.namon.toUpperCase();
         }
     }
@@ -298,7 +377,7 @@ export class Lastname extends Name {
             this.mother ?
                 this.father.concat(Separator.SPACE, this.mother) :
                 this.father
-        ;
+            ;
     }
 
     getInitials(): string[] {
@@ -317,7 +396,7 @@ export interface Parser<T> {
 
 export class StringParser implements Parser<string> {
 
-    constructor(public raw: string) {}
+    constructor(public raw: string) { }
 
     parse(): Fullname {
         const fullname: Fullname = {
@@ -345,7 +424,7 @@ export class StringParser implements Parser<string> {
 
 export class NameParser implements Parser<Name[]> {
 
-    constructor(public raw: Name[]) {}
+    constructor(public raw: Name[]) { }
 
     parse(): Fullname {
         const fullname: Fullname = {
@@ -356,12 +435,22 @@ export class NameParser implements Parser<Name[]> {
             suffix: null,
         };
         this.raw.forEach(name => {
-            switch(name.type) {
-                case Namon.FIRST_NAME: fullname.firstname = new Firstname(name.namon);
-                case Namon.LAST_NAME: fullname.lastname = new Lastname(name.namon);
-                case Namon.MIDDLE_NAME: fullname.middlename.push(name);
-                case Namon.PREFIX: fullname.prefix = name.namon as Prefix;
-                case Namon.SUFFIX: fullname.suffix = name.namon as Suffix;
+            switch (name.type) {
+                case Namon.FIRST_NAME:
+                    fullname.firstname = new Firstname(name.namon);
+                    break;
+                case Namon.LAST_NAME:
+                    fullname.lastname = new Lastname(name.namon);
+                    break;
+                case Namon.MIDDLE_NAME:
+                    fullname.middlename.push(name);
+                    break;
+                case Namon.PREFIX:
+                    fullname.prefix = name.namon as Prefix;
+                    break;
+                case Namon.SUFFIX:
+                    fullname.suffix = name.namon as Suffix;
+                    break;
             }
         });
 
@@ -372,7 +461,7 @@ export class NameParser implements Parser<Name[]> {
 
 export class NamaParser implements Parser<Nama> {
 
-    constructor(public raw: Nama) {}
+    constructor(public raw: Nama) { }
 
     parse(): Fullname {
         const fullname: Fullname = {
@@ -385,12 +474,22 @@ export class NamaParser implements Parser<Nama> {
 
         for (const entry of Object.entries(this.raw)) {
             let key = entry[0] as keyof Nama, value = entry[1] as string;
-            switch(key) {
-                case Namon.FIRST_NAME: fullname.firstname = new Firstname(value);
-                case Namon.LAST_NAME: fullname.lastname = new Lastname(value);
-                case Namon.MIDDLE_NAME: fullname.middlename.push(new Name(value, Namon.MIDDLE_NAME));
-                case Namon.PREFIX: fullname.prefix = value as Prefix;
-                case Namon.SUFFIX: fullname.suffix = value as Suffix;
+            switch (key) {
+                case Namon.FIRST_NAME:
+                    fullname.firstname = new Firstname(value);
+                    break;
+                case Namon.LAST_NAME:
+                    fullname.lastname = new Lastname(value);
+                    break;
+                case Namon.MIDDLE_NAME:
+                    fullname.middlename.push(new Name(value, Namon.MIDDLE_NAME));
+                    break;
+                case Namon.PREFIX:
+                    fullname.prefix = value as Prefix;
+                    break;
+                case Namon.SUFFIX:
+                    fullname.suffix = value as Suffix;
+                    break;
             }
         }
 
@@ -401,7 +500,7 @@ export class NamaParser implements Parser<Nama> {
 
 export class ArrayStringParser implements Parser<string[]> {
 
-    constructor(public raw: string[]) {}
+    constructor(public raw: string[]) { }
 
     parse(): Fullname {
         const fullname: Fullname = {
