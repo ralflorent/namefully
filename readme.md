@@ -62,15 +62,15 @@ Given a typical name `Mrs Jane O'Connor Pearson-Smith, PhD`:
 
 - describe (descriptive stats: count, freq, top, unique)
 - shorten
-- lenghten
 - compress
-- decompress
+- username (suggest usernames, 10+)
+- format (as desired)
+
+---
+
 - unicode (equivalent of non-unicode chars: ASCII)
 - intl (equivalent in other alphabets: e.g., cyrillic)
-- username (suggest usernames)
-- email (suggest emails)
 - root (origin and meaning of components)
-- format (PASSPORT, VISA, TICKETS, etc)
 - [to be continued]
 
 ## License
