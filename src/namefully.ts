@@ -30,6 +30,15 @@ export enum Namon {
     MONO_NAME = 'mononame'
 }
 
+interface Nama {
+    firstname: string;
+    lastname: string;
+    middlename?: string[];
+    prefix?: string;
+    suffix?: string;
+    nickname?: string;
+}
+
 /**
  * `Namefully` class definition
  * @todo docs
@@ -45,19 +54,53 @@ export class Namefully {
     private config: Config;
 
     constructor(
-        private raw: string | string[] | {} | Name | Fullname,
-        private options?: Partial<{
+        raw: string | Array<string> | Array<Name> | Nama,
+        options?: Partial<{
             orderedBy: Namon,
-            separator: Separator // for ending suffix
+            separator: Separator, // for ending suffix
+            parser: Parser<string> // (user-defined) custom parser
         }>
     ) {
         this.configure(options);
-        if (typeof raw === 'string') {
-            this.initialize(raw, new StringParser());
-        } else if ( raw instanceof Name ) {
-            this.initialize(raw, new NameParser());
+
+        // let's parse this, baby!
+        if (this.config.parser) {
+            this.initialize(this.config.parser);
+        } else if (typeof raw === 'string') { // check for string type
+            this.initialize(new StringParser(raw));
+        } else if (Array.isArray(raw) && raw.length) { // check for Array<T>
+            if (typeof raw[0] === 'string') { // check for Array<string>
+
+                for (const key of <Array<string>>raw)
+                    if (typeof key !== 'string')
+                        throw new Error(`Cannot parse raw data as array of 'string'`);
+                this.initialize(new ArrayStringParser(raw as Array<string>))
+
+            } else if (raw[0] instanceof Name) { // check for Array<Name>
+
+                for (const obj of <Array<Name>>raw)
+                    if (!(obj instanceof Name))
+                        throw new Error(`Cannot parse raw data as array of '${Name.name}'`);
+                this.initialize(new NameParser(raw as Array<Name>));
+
+            } else {
+                // typescript should stop them, but let's be paranoid (for JS users)
+                throw new Error(`Cannot parse raw data as arrays that are not of '${Name.name}' or string`);
+            }
+        } else if (raw instanceof Object) { // check for json object
+
+            for (const entry of Object.entries(raw)) { // make sure keys are correct
+                let key = entry[0], value = entry[1];
+                if (['firstname', 'lastname', 'middlenames', 'prefix', 'suffix'].indexOf(key) === -1)
+                    throw new Error(`Cannot parse raw data as json object that does not contains keys of '${Namon}'`);
+
+                if (typeof value !== 'string') // make sure the values are proper string
+                    throw new Error(`Cannot parse raw data. The key <${key}> should be a 'string' type`);
+            }
+            this.initialize(new NamaParser(raw as Nama));
         } else {
-            this.initialize(raw, new FullnameParser());
+            // typescript should stop them, but let's be paranoid again (for JS users)
+            throw new Error(`Cannot parse raw data. Review the data type expected.`);
         }
         this.stats = new Summary(this.getFullname());
     }
@@ -173,16 +216,13 @@ export class Namefully {
         throw new Error('Not implemented yet');
     }
 
-    private configure(options?: Partial<{
-        orderedBy: Namon,
-        separator: Separator
-    }>): void {
+    private configure(options?: Partial<Config>): void {
         // consider using deepmerge if objects no longer stay shallow
         this.config = {...CONFIG, ...options}; // if options, it overrides CONFIG
     }
 
-    private initialize<T>(sth: T, parser: Parser<T>): void {
-        this.fullname = parser.parse(sth);
+    private initialize<T>(parser: Parser<T>): void {
+        this.fullname = parser.parse();
     }
 }
 
@@ -271,44 +311,119 @@ export class Lastname extends Name {
 }
 
 export interface Parser<T> {
-    parse(value: T): Fullname;
+    raw: T;
+    parse(): Fullname;
 }
 
 export class StringParser implements Parser<string> {
 
-    parse(str: string): Fullname {
-        let fullname: Fullname;
+    constructor(public raw: string) {}
+
+    parse(): Fullname {
+        const fullname: Fullname = {
+            firstname: null,
+            lastname: null,
+            middlename: [],
+            prefix: null,
+            suffix: null,
+        };
         // dummy implementation to test the parsing
         // assuming this: 'Firstname [Middlename] [Lastname]'
-        const nama = str.split(Separator.SPACE);
-        const firstname = nama[0];
+        const nama = this.raw.split(Separator.SPACE);
         const middlenames: Array<string> = [];
-        let lastname = nama.pop();
-
+        fullname.firstname = new Firstname(nama[0]);
+        fullname.lastname = new Lastname(nama.pop());
         if (nama.length > 1)
             middlenames.push(...nama.slice(1, nama.length));
+        middlenames.map(n => fullname.middlename.push(new Name(n, Namon.MIDDLE_NAME)));
 
         // TODO: some validators are needed here (use of regex)
 
-        return {
-            firstname: new Firstname(firstname),
-            lastname: new Lastname(lastname),
-            middlename: middlenames.map(n => new Name(n, Namon.MIDDLE_NAME)),
+        return fullname;
+    }
+}
+
+export class NameParser implements Parser<Name[]> {
+
+    constructor(public raw: Name[]) {}
+
+    parse(): Fullname {
+        const fullname: Fullname = {
+            firstname: null,
+            lastname: null,
+            middlename: [],
+            prefix: null,
+            suffix: null,
         };
+        this.raw.forEach(name => {
+            switch(name.type) {
+                case Namon.FIRST_NAME: fullname.firstname = new Firstname(name.namon);
+                case Namon.LAST_NAME: fullname.lastname = new Lastname(name.namon);
+                case Namon.MIDDLE_NAME: fullname.middlename.push(name);
+                case Namon.PREFIX: fullname.prefix = name.namon as Prefix;
+                case Namon.SUFFIX: fullname.suffix = name.namon as Suffix;
+            }
+        });
+
+        // TODO: validate that `Fullname` contract is met
+        return fullname;
     }
 }
 
-export class FullnameParser implements Parser<Fullname> {
+export class NamaParser implements Parser<Nama> {
 
-    parse(fullname: Fullname): Fullname {
-        throw new Error('Not implemeted yet');
+    constructor(public raw: Nama) {}
+
+    parse(): Fullname {
+        const fullname: Fullname = {
+            firstname: null,
+            lastname: null,
+            middlename: [],
+            prefix: null,
+            suffix: null,
+        };
+
+        for (const entry of Object.entries(this.raw)) {
+            let key = entry[0] as keyof Nama, value = entry[1] as string;
+            switch(key) {
+                case Namon.FIRST_NAME: fullname.firstname = new Firstname(value);
+                case Namon.LAST_NAME: fullname.lastname = new Lastname(value);
+                case Namon.MIDDLE_NAME: fullname.middlename.push(new Name(value, Namon.MIDDLE_NAME));
+                case Namon.PREFIX: fullname.prefix = value as Prefix;
+                case Namon.SUFFIX: fullname.suffix = value as Suffix;
+            }
+        }
+
+        // TODO: validate that `Fullname` contract is met
+        return fullname;
     }
 }
 
-export class NameParser implements Parser<Name> {
+export class ArrayStringParser implements Parser<string[]> {
 
-    parse(name: Name): Fullname {
-        throw new Error('Not implemeted yet');
+    constructor(public raw: string[]) {}
+
+    parse(): Fullname {
+        const fullname: Fullname = {
+            firstname: null,
+            lastname: null,
+            middlename: [],
+            prefix: null,
+            suffix: null,
+        };
+
+        if (this.raw.length === 5) { // TODO: workaround on positions of elements, (e.g., orderedBy)
+            fullname.prefix = this.raw[0] as Prefix;
+            fullname.firstname = new Firstname(this.raw[1]);
+            fullname.lastname = new Lastname(this.raw[2]);
+            fullname.middlename.push(new Name(this.raw[3], Namon.MIDDLE_NAME));
+            fullname.suffix = this.raw[4] as Suffix;
+        } else {
+            throw new Error('Incomplete fields. Check for missing values from the array');
+        }
+
+        // TODO: validate that `Fullname` contract is met
+        return fullname;
     }
 }
 
@@ -434,7 +549,8 @@ export class Summary {
 
 interface Config {
     orderedBy: Namon;
-    separator: Separator;
+    separator: Separator; // ending suffix
+    parser?: Parser<string>; // (user-defined) custom parser
 }
 
 const CONFIG: Config = {
