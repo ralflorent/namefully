@@ -45,7 +45,7 @@ export class Namefully {
     private config: Config;
 
     constructor(
-        private raw: string | Name | Fullname,
+        private raw: string | string[] | {} | Name | Fullname,
         private options?: Partial<{
             orderedBy: Namon,
             separator: Separator // for ending suffix
@@ -197,7 +197,7 @@ export class Name {
     }
 
     describe(): Summary {
-        throw new Error('Not implemented yet');
+        return new Summary(this.namon);
     }
 
     getInitials(): string[] {
@@ -221,7 +221,7 @@ export class Firstname extends Name {
     }
 
     describe(): Summary {
-        throw new Error('Not implemented yet');
+        return new Summary(this.tostring());
     }
 
     tostring(includeAll: boolean = false): string {
@@ -249,7 +249,7 @@ export class Lastname extends Name {
     }
 
     describe(): Summary {
-        throw new Error('Not implemented yet');
+        return new Summary(this.tostring());
     }
 
     tostring(includeAll: boolean = false): string {
@@ -403,7 +403,7 @@ export class Summary {
         // compute stats for the string
         let count = 0, maxfreq = 0, uniq = 0, top = '';
         const freqs = this.groupByChar();
-        console.log('freqs: ', freqs)
+
         for (const char in freqs) {
             if (restrictions.indexOf(char) === -1) {
                 count += freqs[char];
@@ -423,7 +423,7 @@ export class Summary {
 
     private groupByChar(): any {
         const frequencies: { [key: string]: number } = {};
-        for (let char of this.namon)
+        for (let char of this.namon.toUpperCase())
             if (Object.keys(frequencies).includes(char))
                 frequencies[char] += 1;
             else
