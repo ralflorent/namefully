@@ -385,13 +385,13 @@ export class Summary {
     top: string;
     unique: number;
 
-    constructor(private namon: string) {
-        this.compute();
+    constructor(private namon: string, restrictions: string[] = [Separator.SPACE]) {
+        this.compute(restrictions);
     }
 
     tostring(): string {
         return Separator.EMPTY.concat(
-            `Descriptive statistics of "${this.namon}" \n`,
+            `Descriptive statistics for "${this.namon}" \n`,
             `count    : ${this.count} \n`,
             `frequency: ${this.frequency} \n`,
             `top      : ${this.top} \n`,
@@ -399,13 +399,36 @@ export class Summary {
         );
     }
 
-    private compute(): void {
+    private compute(restrictions: string[] = []): void {
         // compute stats for the string
-        this.count = this.namon.length;
-        // dummy values
-        this.frequency = 5;
-        this.top = 'I';
-        this.unique = 3;
+        let count = 0, maxfreq = 0, uniq = 0, top = '';
+        const freqs = this.groupByChar();
+        console.log('freqs: ', freqs)
+        for (const char in freqs) {
+            if (restrictions.indexOf(char) === -1) {
+                count += freqs[char];
+                if (freqs[char] >= maxfreq) {
+                    maxfreq = freqs[char];
+                    top = char;
+                }
+                uniq++;
+            }
+        }
+
+        this.count = count;
+        this.frequency = maxfreq;
+        this.top = top;
+        this.unique = uniq;
+    }
+
+    private groupByChar(): any {
+        const frequencies: { [key: string]: number } = {};
+        for (let char of this.namon)
+            if (Object.keys(frequencies).includes(char))
+                frequencies[char] += 1;
+            else
+                frequencies[char] = 1;
+        return frequencies;
     }
 }
 
