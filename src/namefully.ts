@@ -315,6 +315,35 @@ export class Namefully {
         return cname;
     }
 
+    /**
+     * Suggests possible (randomly) usernames closest to the name
+     * @returns {Array<string>} a set of usernames
+     *
+     * **NOTE**
+     * The validity of these usernames are not checked against any social media
+     * or web app online.
+     */
+    username(): string[] {
+        const unames: Array<string> = [];
+        const { firstname: f, lastname: l } = this.fullname;
+        const p = Separator.PERIOD;
+
+        // Given `John Smith`
+        unames.push(f.lower() + l.lower()); // johnsmith
+        unames.push(l.lower() + f.lower()); // smithjohn
+        unames.push(f.lower()[0] + l.lower()); // jsmith
+        unames.push(l.lower()[0] + f.lower()); // sjohn
+        unames.push(f.lower()[0] + p + l.lower()); // j.smith
+        unames.push(l.lower()[0] + p + f.lower()); // s.john
+        unames.push(f.lower().slice(0, 2) + l.lower()); // josmith
+        unames.push(l.lower().slice(0, 2) + f.lower()); // smjohn
+        unames.push(f.lower().slice(0, 2) + p + l.lower()); // jo.smith
+        unames.push(l.lower().slice(0, 2) + p + f.lower()); // sm.john
+        // TODO: to be continued...
+
+        return unames;
+    }
+
     unicode(): string {
         throw new Error('Not implemented yet');
     }
@@ -323,16 +352,36 @@ export class Namefully {
         throw new Error('Not implemented yet');
     }
 
-    username(): string {
-        throw new Error('Not implemented yet');
-    }
-
     root(): string {
         throw new Error('Not implemented yet');
     }
 
-    format(): string {
-        throw new Error('Not implemented yet');
+    /**
+     * Formats the name as desired
+     * @param {string} how to format the full name
+     * @returns {string} the formatted name as specified
+     *
+     * How to format it?
+     * 'f': first name
+     * 'F': capitalized first name
+     * 'l': last name (official)
+     * 'L': capitalized last name
+     * 'm': middle names
+     * 'M': Capitalized middle names
+     * 'n': nickname
+     * 'N': capitalized nickname
+     * 'O': Official document format
+     */
+    format(how?: string): string {
+        if (!how)
+            return this.getFullname();
+
+        // TODO: make sure the chars are correct
+
+        const formatted: Array<string> = [];
+        for (const c of how)
+            formatted.push(this.map(c));
+        return formatted.join(Separator.EMPTY).trim();
     }
 
     private configure(options?: Partial<Config>): void {
@@ -342,6 +391,50 @@ export class Namefully {
 
     private initialize<T>(parser: Parser<T>): void {
         this.fullname = parser.parse();
+    }
+
+    private map(c: string): string {
+        switch(c) {
+            case '.':
+                return Separator.PERIOD;
+            case ',':
+                return Separator.COMMA;
+            case ' ':
+                return Separator.SPACE;
+            case '-':
+                return Separator.HYPHEN;
+            case 'f':
+                return this.fullname.firstname.namon;
+            case 'F':
+                return this.fullname.firstname.upper();
+            case 'l':
+                return this.fullname.lastname.namon;
+            case 'L':
+                return this.fullname.lastname.upper();
+            case 'm':
+                return this.fullname.middlename
+                    .map(n => n.namon).join(Separator.SPACE);
+            case 'M':
+                return this.fullname.middlename
+                    .map(n => n.upper()).join(Separator.SPACE);
+            case 'n':
+                return this.fullname.nickname ?
+                    this.fullname.nickname.namon :
+                    Separator.SPACE;
+            case 'N':
+                return this.fullname.nickname ?
+                    this.fullname.nickname.upper() :
+                    Separator.SPACE;
+            case 'O':
+                return [
+                    this.fullname.prefix ? this.fullname.prefix : Separator.EMPTY,
+                    this.fullname.lastname.upper().concat(Separator.COMMA),
+                    this.fullname.firstname.tostring(),
+                    this.fullname.middlename.map(n => n.namon).join(Separator.SPACE)
+                ].join(Separator.SPACE).trim();
+            default:
+                return Separator.EMPTY;
+        }
     }
 }
 
@@ -370,6 +463,14 @@ export class Name {
         } else {
             this.namon = this.namon.toUpperCase();
         }
+    }
+
+    lower(): string {
+        return this.namon.toLowerCase();
+    }
+
+    upper(): string {
+        return this.namon.toUpperCase();
     }
 }
 
