@@ -7,6 +7,7 @@
  * @license GPL-3.0
  * @see {@link https://github.com/ralflorent/namefully|LICENSE} for more info.
  */
+import { NamonValidator } from './validators/validator';
 
 /**
  * `Namefully` scheme to keep track of the types and not worry about name
@@ -111,6 +112,7 @@ export class Namefully {
 
             for (const entry of Object.entries(raw)) { // make sure keys are correct
                 let key = entry[0], value = entry[1];
+                // FIXME: middlename in singular form
                 if (['firstname', 'lastname', 'middlenames', 'prefix', 'suffix'].indexOf(key) === -1)
                     throw new Error(`Cannot parse raw data as json object that does not contains keys of '${Namon}'`);
 
@@ -154,8 +156,7 @@ export class Namefully {
         if (this.fullname.suffix) {
             const suffix = this.config.separator !== Separator.SPACE ?
                 `${this.config.separator} ${this.fullname.suffix}` : // => ', PhD'
-                this.fullname.suffix
-                ;
+                this.fullname.suffix;
             nama.push(suffix);
         }
 
@@ -185,8 +186,7 @@ export class Namefully {
     getMiddlenames(): string[] {
         return this.fullname.middlename ?
             this.fullname.middlename.map(n => n.namon) :
-            []
-        ;
+            [];
     }
 
     /**
@@ -855,6 +855,12 @@ export class ArrayStringParser implements Parser<string[]> {
      * @returns {Fullname}
      */
     parse(): Fullname {
+
+        // validate first
+        const validator = new NamonValidator();
+        this.raw.forEach(s => validator.validate(s));
+
+        // then parse all the elements accordingly
         const fullname: Fullname = {
             firstname: null,
             lastname: null,
