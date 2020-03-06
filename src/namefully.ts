@@ -3,6 +3,9 @@
  *
  * Created on March 03, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
+ *
+ * @license GPL-3.0
+ * @see {@link https://github.com/ralflorent/namefully|LICENSE} for more info.
  */
 
 /**
@@ -17,9 +20,17 @@
 
 /**
  * The current version of `Namefully`.
+ * @constant
  */
 export const version: string = '1.0.0';
 
+/**
+ * Enum `Namon` contains the finite set of a representative piece of a name.
+ * @readonly
+ * @enum {string}
+ * The word `Namon` is the singular form used to refer to a chunk|part|piece of
+ * a name. And the plural form is `Nama`. (Same idea as in criterion/criteria)
+ */
 export enum Namon {
     LAST_NAME = 'lastname',
     FIRST_NAME = 'firstname',
@@ -30,7 +41,10 @@ export enum Namon {
     MONO_NAME = 'mononame'
 }
 
-interface Nama {
+/**
+ * @interface Nama represents the JSON signature for the `NamaParser`
+ */
+export interface Nama {
     firstname: string;
     lastname: string;
     middlename?: string[];
@@ -53,6 +67,12 @@ export class Namefully {
     private stats: Summary;
     private config: Config;
 
+    /**
+     * Constructs an instance of the utility and helps to benefit from many helpers
+     * @param {string | string[] | Array<Name> | Nama} raw element to parse or
+     * construct the pieces of the name
+     * @param {Config} options to configure how to run the utility
+     */
     constructor(
         raw: string | Array<string> | Array<Name> | Nama,
         options?: Partial<{
@@ -63,7 +83,7 @@ export class Namefully {
     ) {
         this.configure(options);
 
-        // let's parse this, baby!
+        // let's try to parse this, baby!
         if (this.config.parser) {
             this.initialize(this.config.parser);
         } else if (typeof raw === 'string') { // check for string type
@@ -105,6 +125,13 @@ export class Namefully {
         this.stats = new Summary(this.getFullname());
     }
 
+    /**
+     * Gets the full name ordered as configured
+     * @returns {string} the suffix
+     *
+     * @see {format} to alter manually the order of appearance of the full name.
+     * For example, ::format('l f m') outputs `lastname firstname middlename`.
+     */
     getFullname(): string {
         const nama: string[] = [];
 
@@ -135,14 +162,26 @@ export class Namefully {
         return nama.join(Separator.SPACE);
     }
 
+    /**
+     * Gets the first name part of the full name
+     * @returns {string} the first name
+     */
     getFirstname(): string {
         return this.fullname.firstname.tostring();
     }
 
+    /**
+     * Gets the last name part of the full name
+     * @returns {string} the last name
+     */
     getLastname(): string {
         return this.fullname.lastname.tostring();
     }
 
+    /**
+     * Gets the middle names part of the full name
+     * @returns {Array<string>} the middle names
+     */
     getMiddlenames(): string[] {
         return this.fullname.middlename ?
             this.fullname.middlename.map(n => n.namon) :
@@ -150,27 +189,40 @@ export class Namefully {
         ;
     }
 
+    /**
+     * Gets the nickname part of the full name
+     * @returns {string} the nickname
+     */
     getNickname(): string {
         return this.fullname.nickname ?
             this.fullname.nickname.namon :
-            Separator.EMPTY
-        ;
+            Separator.EMPTY;
     }
 
+    /**
+     * Gets the prefix part of the full name
+     * @returns {string} the prefix
+     */
     getPrefix(): string {
         return this.fullname.prefix ?
             this.fullname.prefix :
-            Separator.EMPTY
-        ;
+            Separator.EMPTY;
     }
 
+    /**
+     * Gets the suffix part of the full name
+     * @returns {string} the suffix
+     */
     getSuffix(): string {
         return this.fullname.suffix ?
             this.fullname.suffix :
-            Separator.EMPTY
-        ;
+            Separator.EMPTY;
     }
 
+    /**
+     * Gets the initials of the full name
+     * @returns {Array<string>} the initials
+     */
     getInitials(): string[] {
         // TODO: not considering middle names for now
         const initials = [];
@@ -339,21 +391,8 @@ export class Namefully {
         unames.push(l.lower().slice(0, 2) + f.lower()); // smjohn
         unames.push(f.lower().slice(0, 2) + p + l.lower()); // jo.smith
         unames.push(l.lower().slice(0, 2) + p + f.lower()); // sm.john
-        // TODO: to be continued...
 
         return unames;
-    }
-
-    unicode(): string {
-        throw new Error('Not implemented yet');
-    }
-
-    intl(): string {
-        throw new Error('Not implemented yet');
-    }
-
-    root(): string {
-        throw new Error('Not implemented yet');
     }
 
     /**
@@ -370,29 +409,52 @@ export class Namefully {
      * 'M': Capitalized middle names
      * 'n': nickname
      * 'N': capitalized nickname
-     * 'O': Official document format
+     * 'O': official document format
+     *
+     * @example
+     * Given the name `Joe Jim Smith`, call the `format` with the how string.
+     * - format('l f') => 'Smith Joe'
+     * - format('L, f') => 'SMITH, Joe'
+     * - format('fml') => 'JoeJimSmith'
+     * - format('FML') => 'JOEJIMSMITH'
+     * - format('L, f m') => 'SMITH, Joe Jim'
+     * - format('O') => 'SMITH, Joe Jim'
      */
     format(how?: string): string {
         if (!how)
             return this.getFullname();
 
-        // TODO: make sure the chars are correct
-
         const formatted: Array<string> = [];
-        for (const c of how)
+        for (const c of how) {
+            if (['.', ',', ' ', '-', '_', 'f', 'F', 'l', 'L', 'm', 'M', 'n', 'N', 'O'].indexOf(c) === -1)
+                throw new Error(`<${c}> is an invalid character for the formatting.`)
             formatted.push(this.map(c));
+        }
         return formatted.join(Separator.EMPTY).trim();
     }
 
+    /**
+     * Configures how the setup will be working
+     * @param {Config} options for a customized setup
+     */
     private configure(options?: Partial<Config>): void {
         // consider using deepmerge if objects no longer stay shallow
         this.config = { ...CONFIG, ...options }; // if options, it overrides CONFIG
     }
 
+    /**
+     * Defines the full name by having the pieces (namon) of the names ready
+     * @param parser customized or user-defined parser to get the full name
+     */
     private initialize<T>(parser: Parser<T>): void {
         this.fullname = parser.parse();
     }
 
+    /**
+     * Maps a character to a specific piece of the name
+     * @param c character to be mapped
+     * @return {string} piece of name
+     */
     private map(c: string): string {
         switch(c) {
             case '.':
@@ -403,6 +465,8 @@ export class Namefully {
                 return Separator.SPACE;
             case '-':
                 return Separator.HYPHEN;
+            case '_':
+                return Separator.UNDERSCORE;
             case 'f':
                 return this.fullname.firstname.namon;
             case 'F':
@@ -438,24 +502,47 @@ export class Namefully {
     }
 }
 
+/**
+ * Represents a namon with some extra functionalities
+ * @class
+ * @see {@link Namon} interface to understand the concept of namon/nama.
+ */
 export class Name {
 
     private initial: string;
     private body: string;
 
+    /**
+     * Constructs a `Name`
+     * @param namon a piece of string that will be defined as a namon
+     * @param type which namon that is
+     */
     constructor(public namon: string, public type: Namon) {
         this.initial = namon[0];
         this.body = namon.slice(1, namon.length);
     }
 
+    /**
+     * Gives some descriptive statistics that summarize the central tendency,
+     * dispersion and shape of the characters' distribution.
+     * @see {@link describe} in `Namefully` class for further information
+     */
     describe(): Summary {
         return new Summary(this.namon);
     }
 
+    /**
+     * Gets the initials of the name
+     * @returns {Array<string>} the initials
+     */
     getInitials(): string[] {
         return [this.initial];
     }
 
+    /**
+     * Capitalizes a name
+     * @param {'initial' | 'all'} option how to capitalize it
+     */
     protected capitalize(option: 'initial' | 'all' = 'initial'): void {
         if (option === 'initial') {
             this.initial = this.initial.toUpperCase();
@@ -465,25 +552,51 @@ export class Name {
         }
     }
 
+    /**
+     * Converts all the alphabetic characters in a string to lowercase
+     */
     lower(): string {
         return this.namon.toLowerCase();
     }
 
+    /**
+     * Converts all the alphabetic characters in a string to uppercase
+     */
     upper(): string {
         return this.namon.toUpperCase();
     }
 }
 
+/**
+ * Represents a first name with some extra functionalities
+ * @class
+ * @extends Name
+ */
 export class Firstname extends Name {
 
+    /**
+     * Constructs a `Firstname`
+     * @param {string} namon a piece of string that will be defined as a namon
+     * @param {string[]} [more] additional pieces considered as a given name
+     */
     constructor(public namon: string, public more?: string[]) {
         super(namon, Namon.FIRST_NAME);
     }
 
+    /**
+     * Gives some descriptive statistics that summarize the central tendency,
+     * dispersion and shape of the characters' distribution.
+     * @see {@link describe} in `Namefully` class for further information
+     */
     describe(): Summary {
         return new Summary(this.tostring());
     }
 
+    /**
+     * Returns a string representation of the first name
+     * @param {boolean} includeAll whether to include other pieces of the first
+     * name
+     */
     tostring(includeAll: boolean = false): string {
         return !includeAll ?
             this.namon :
@@ -493,6 +606,10 @@ export class Firstname extends Name {
             );
     }
 
+    /**
+     * Gets the initials of the first name
+     * @returns {Array<string>} the initials
+     */
     getInitials(): string[] {
         const initials: string[] = [this.namon[0]];
         if (Array.isArray(this.more) && this.more.length) {
@@ -502,25 +619,50 @@ export class Firstname extends Name {
     }
 }
 
+/**
+ * Represents a last name with some extra functionalities
+ * @class
+ * @extends Name
+ */
 export class Lastname extends Name {
 
+    /**
+     * Constructs a `Lastname`
+     * @param {string} father a piece of string that will be defined as a namon
+     * @param {string} [mother] additional pieces considered as a last name
+     * @param {boolean} [hyphenated] whether to include the hyphen as part the
+     * father-mother last name.
+     */
     constructor(public father: string, public mother?: string, hyphenated: boolean = false) {
         super(father, Namon.LAST_NAME);
     }
 
+    /**
+     * Gives some descriptive statistics that summarize the central tendency,
+     * dispersion and shape of the characters' distribution.
+     * @see {@link describe} in `Namefully` class for further information
+     */
     describe(): Summary {
         return new Summary(this.tostring());
     }
 
+    /**
+     * Returns a string representation of the last name
+     * @param {boolean} includeAll whether to include other pieces of the last
+     * name
+     */
     tostring(includeAll: boolean = false): string {
         return !includeAll ?
             this.father :
             this.mother ?
                 this.father.concat(Separator.SPACE, this.mother) :
-                this.father
-            ;
+                this.father;
     }
 
+    /**
+     * Gets the initials of the last name
+     * @returns {Array<string>} the initials
+     */
     getInitials(): string[] {
         const initials: string[] = [this.father[0]];
         if (!!this.mother && this.mother.length) {
@@ -530,15 +672,42 @@ export class Lastname extends Name {
     }
 }
 
+/**
+ * Interface for JSON signature that represents a generic parser
+ * @interface
+ */
 export interface Parser<T> {
+    /**
+     * raw data to be parsed
+     * @type {T}
+     */
     raw: T;
+
+    /**
+     * Parses the raw data into a full name
+     * @returns {Fullname}
+     */
     parse(): Fullname;
 }
 
+/**
+ * Represents a string parser
+ * @class
+ * @implements {Parser}
+ * @classdesc
+ */
 export class StringParser implements Parser<string> {
 
-    constructor(public raw: string) { }
+    /**
+     * Create a parser ready to parse the raw data
+     * @param {string} raw raw data as a string representation
+     */
+    constructor(public raw: string) {}
 
+    /**
+     * Parses the raw data into a full name
+     * @returns {Fullname}
+     */
     parse(): Fullname {
         const fullname: Fullname = {
             firstname: null,
@@ -563,10 +732,24 @@ export class StringParser implements Parser<string> {
     }
 }
 
+/**
+ * Represents a `Name` parser
+ * @class
+ * @implements {Parser}
+ * @classdesc
+ */
 export class NameParser implements Parser<Name[]> {
 
-    constructor(public raw: Name[]) { }
+    /**
+     * Create a parser ready to parse the raw data
+     * @param {Array<Name>} raw data
+     */
+    constructor(public raw: Name[]) {}
 
+    /**
+     * Parses the raw data into a full name
+     * @returns {Fullname}
+     */
     parse(): Fullname {
         const fullname: Fullname = {
             firstname: null,
@@ -600,10 +783,24 @@ export class NameParser implements Parser<Name[]> {
     }
 }
 
+/**
+ * Represents a `Nama` parser
+ * @class
+ * @implements {Parser}
+ * @classdesc
+ */
 export class NamaParser implements Parser<Nama> {
 
+    /**
+     * Create a parser ready to parse the raw data
+     * @param {Nama} raw data as JSON object
+     */
     constructor(public raw: Nama) { }
 
+    /**
+     * Parses the raw data into a full name
+     * @returns {Fullname}
+     */
     parse(): Fullname {
         const fullname: Fullname = {
             firstname: null,
@@ -639,10 +836,24 @@ export class NamaParser implements Parser<Nama> {
     }
 }
 
+/**
+ * Represents an array string parser
+ * @class
+ * @implements {Parser}
+ * @classdesc
+ */
 export class ArrayStringParser implements Parser<string[]> {
 
+    /**
+     * Create a parser ready to parse the raw data
+     * @param {Array<string>} raw data
+     */
     constructor(public raw: string[]) { }
 
+    /**
+     * Parses the raw data into a full name
+     * @returns {Fullname}
+     */
     parse(): Fullname {
         const fullname: Fullname = {
             firstname: null,
@@ -667,6 +878,10 @@ export class ArrayStringParser implements Parser<string[]> {
     }
 }
 
+/**
+ * Interface for JSON signature that represents the full name
+ * @interface
+ */
 export interface Fullname {
     firstname: Firstname;
     lastname: Lastname;
@@ -677,7 +892,9 @@ export interface Fullname {
 }
 
 /**
- * ASCII characters
+ * Enum for the separator values representing some of the ASCII characters
+ * @readonly
+ * @enum {string}
  */
 export enum Separator {
     EMPTY = '',
@@ -688,7 +905,11 @@ export enum Separator {
     UNDERSCORE = '_',
     APOSTROPHE = `'`,
 }
+
 /**
+ * Enum for the prefix values
+ * @readonly
+ * @enum {string}
  * American and Canadian English follow slightly different rules for abbreviated
  * titles than British and Australian English. In North American English, titles
  * before a name require a period: `Mr., Mrs., Ms., Dr.` In British and Australian
@@ -722,6 +943,11 @@ export enum Prefix {
     SISTER = 'Sister'
 }
 
+/**
+ * Enum for the suffix values
+ * @readonly
+ * @enum {string}
+ */
 export enum Suffix {
     THE_SECOND = 'II',
     THE_THIRD = 'III',
@@ -739,6 +965,10 @@ export enum Suffix {
     DOCTOR_OF_OSTEO = 'DO'
 }
 
+/**
+ * Represents the statistical summary of a string representation
+ * @class
+ */
 export class Summary {
     count: number;
     frequency: number;
@@ -792,13 +1022,23 @@ export class Summary {
     }
 }
 
-interface Config {
+/**
+ * Interface for JSON signature that represents the configuration of the utility
+ * @interface
+ */
+export interface Config {
     orderedBy: Namon;
     separator: Separator; // ending suffix
     parser?: Parser<string>; // (user-defined) custom parser
 }
 
-const CONFIG: Config = {
+/**
+ * CONFIG type definition
+ * @constant
+ * @type {Config}
+ * @default
+ */
+export const CONFIG: Config = {
     orderedBy: Namon.FIRST_NAME,
     separator: Separator.SPACE,
 }
