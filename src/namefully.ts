@@ -7,7 +7,7 @@
  * @license GPL-3.0
  * @see {@link https://github.com/ralflorent/namefully|LICENSE} for more info.
  */
-import { NamonValidator } from './validators/validator';
+import { StringNameValidator, ArrayStringValidator, ArrayNameValidator, NamaValidator } from './validators/validator';
 
 /**
  * `Namefully` scheme to keep track of the types and not worry about name
@@ -33,25 +33,25 @@ export const version: string = '1.0.0';
  * a name. And the plural form is `Nama`. (Same idea as in criterion/criteria)
  */
 export enum Namon {
-    LAST_NAME = 'lastname',
-    FIRST_NAME = 'firstname',
-    MIDDLE_NAME = 'middlename',
     PREFIX = 'prefix',
+    LAST_NAME = 'lastname',
+    MIDDLE_NAME = 'middlename',
+    FIRST_NAME = 'firstname',
     SUFFIX = 'suffix',
-    NICK_NAME = 'nickname',
-    MONO_NAME = 'mononame'
+    // NICK_NAME = 'nickname',
+    // MONO_NAME = 'mononame'
 }
 
 /**
  * @interface Nama represents the JSON signature for the `NamaParser`
  */
 export interface Nama {
-    firstname: string;
-    lastname: string;
-    middlename?: string[];
     prefix?: string;
+    firstname: string;
+    middlename?: string;
+    lastname: string;
     suffix?: string;
-    nickname?: string;
+    // nickname?: string;
 }
 
 /**
@@ -102,7 +102,7 @@ export class Namefully {
                 for (const obj of <Array<Name>>raw)
                     if (!(obj instanceof Name))
                         throw new Error(`Cannot parse raw data as array of '${Name.name}'`);
-                this.initialize(new NameParser(raw as Array<Name>));
+                this.initialize(new ArrayNameParser(raw as Array<Name>));
 
             } else {
                 // typescript should stop them, but let's be paranoid (for JS users)
@@ -113,7 +113,7 @@ export class Namefully {
             for (const entry of Object.entries(raw)) { // make sure keys are correct
                 let key = entry[0], value = entry[1];
                 // FIXME: middlename in singular form
-                if (['firstname', 'lastname', 'middlenames', 'prefix', 'suffix'].indexOf(key) === -1)
+                if (['firstname', 'lastname', 'middlename', 'prefix', 'suffix'].indexOf(key) === -1)
                     throw new Error(`Cannot parse raw data as json object that does not contains keys of '${Namon}'`);
 
                 if (typeof value !== 'string') // make sure the values are proper string
@@ -709,25 +709,21 @@ export class StringParser implements Parser<string> {
      * @returns {Fullname}
      */
     parse(): Fullname {
-        const fullname: Fullname = {
-            firstname: null,
-            lastname: null,
-            middlename: [],
-            prefix: null,
-            suffix: null,
-        };
-        // dummy implementation to test the parsing
-        // assuming this: 'Firstname [Middlename] [Lastname]'
-        const nama = this.raw.split(Separator.SPACE);
-        const middlenames: Array<string> = [];
-        fullname.firstname = new Firstname(nama[0]);
-        fullname.lastname = new Lastname(nama.pop());
-        if (nama.length > 1)
-            middlenames.push(...nama.slice(1, nama.length));
-        middlenames.map(n => fullname.middlename.push(new Name(n, Namon.MIDDLE_NAME)));
+
+        // validate first
+        new StringNameValidator().validate(this.raw);
+
+        // then distribute all the elements accordingly
+        const fullname: Fullname = this.distribute(this.raw);
 
         // TODO: some validators are needed here (use of regex)
+        return fullname;
+    }
 
+    private distribute(raw: string): Fullname {
+        // assuming this: '[Prefix] Firstname [Middlename] Lastname [Suffix]'
+        const nama = raw.split(Separator.SPACE); // TODO: config separator for this
+        const fullname = new ArrayStringParser(nama).parse();
         return fullname;
     }
 }
@@ -738,7 +734,7 @@ export class StringParser implements Parser<string> {
  * @implements {Parser}
  * @classdesc
  */
-export class NameParser implements Parser<Name[]> {
+export class ArrayNameParser implements Parser<Name[]> {
 
     /**
      * Create a parser ready to parse the raw data
@@ -751,6 +747,18 @@ export class NameParser implements Parser<Name[]> {
      * @returns {Fullname}
      */
     parse(): Fullname {
+        // validate first
+        new ArrayNameValidator().validate(this.raw);
+
+        // then distribute all the elements accordingly
+        const fullname: Fullname = this.distribute(...this.raw);
+
+        // TODO: validate that `Fullname` contract is met
+        return fullname;
+    }
+
+    private distribute(...args: Array<Name>): Fullname {
+
         const fullname: Fullname = {
             firstname: null,
             lastname: null,
@@ -758,8 +766,12 @@ export class NameParser implements Parser<Name[]> {
             prefix: null,
             suffix: null,
         };
-        this.raw.forEach(name => {
+
+        args.forEach(name => {
             switch (name.type) {
+                case Namon.PREFIX:
+                    fullname.prefix = name.namon as Prefix;
+                    break;
                 case Namon.FIRST_NAME:
                     fullname.firstname = new Firstname(name.namon);
                     break;
@@ -769,16 +781,12 @@ export class NameParser implements Parser<Name[]> {
                 case Namon.MIDDLE_NAME:
                     fullname.middlename.push(name);
                     break;
-                case Namon.PREFIX:
-                    fullname.prefix = name.namon as Prefix;
-                    break;
                 case Namon.SUFFIX:
                     fullname.suffix = name.namon as Suffix;
                     break;
             }
         });
 
-        // TODO: validate that `Fullname` contract is met
         return fullname;
     }
 }
@@ -802,6 +810,18 @@ export class NamaParser implements Parser<Nama> {
      * @returns {Fullname}
      */
     parse(): Fullname {
+
+        // validate first
+        new NamaValidator().validate(this.raw);
+
+        // then distribute all the elements accordingly
+        const fullname = this.distribute(this.raw);
+
+        // TODO: validate that `Fullname` contract is met
+        return fullname;
+    }
+
+    private distribute(args: any): Fullname {
         const fullname: Fullname = {
             firstname: null,
             lastname: null,
@@ -830,8 +850,6 @@ export class NamaParser implements Parser<Nama> {
                     break;
             }
         }
-
-        // TODO: validate that `Fullname` contract is met
         return fullname;
     }
 }
@@ -857,10 +875,17 @@ export class ArrayStringParser implements Parser<string[]> {
     parse(): Fullname {
 
         // validate first
-        const validator = new NamonValidator();
-        this.raw.forEach(s => validator.validate(s));
+        new ArrayStringValidator().validate(this.raw);
 
-        // then parse all the elements accordingly
+        // then distribute all the elements accordingly
+        const fullname = this.distribute(this.raw);
+
+        // TODO: validate that the `Fullname` contract is met
+        return fullname;
+    }
+
+    private distribute(args: string[]): Fullname {
+
         const fullname: Fullname = {
             firstname: null,
             lastname: null,
@@ -869,17 +894,30 @@ export class ArrayStringParser implements Parser<string[]> {
             suffix: null,
         };
 
-        if (this.raw.length === 5) { // TODO: workaround on positions of elements, (e.g., orderedBy)
-            fullname.prefix = this.raw[0] as Prefix;
-            fullname.firstname = new Firstname(this.raw[1]);
-            fullname.lastname = new Lastname(this.raw[2]);
-            fullname.middlename.push(new Name(this.raw[3], Namon.MIDDLE_NAME));
-            fullname.suffix = this.raw[4] as Suffix;
-        } else {
-            throw new Error('Incomplete fields. Check for missing values from the array');
+        switch (args.length) {
+            case 2: // first name + last name
+                fullname.firstname = new Firstname(args[0]);
+                fullname.lastname = new Lastname(args[1]);
+                break;
+            case 3: // first name + middle name + last name
+                fullname.firstname = new Firstname(args[0]);
+                fullname.middlename.push(new Name(args[1], Namon.MIDDLE_NAME));
+                fullname.lastname = new Lastname(args[2]);
+                break;
+            case 4: // prefix + first name + middle name + last name
+                fullname.prefix = args[0] as Prefix;
+                fullname.firstname = new Firstname(args[1]);
+                fullname.middlename.push(new Name(args[2], Namon.MIDDLE_NAME));
+                fullname.lastname = new Lastname(args[3]);
+                break;
+            case 5: // prefix + first name + middle name + last name + suffix
+                fullname.prefix = args[0] as Prefix;
+                fullname.firstname = new Firstname(args[1]);
+                fullname.middlename.push(new Name(args[2], Namon.MIDDLE_NAME));
+                fullname.lastname = new Lastname(args[3]);
+                fullname.suffix = args[4] as Suffix;
+                break;
         }
-
-        // TODO: validate that `Fullname` contract is met
         return fullname;
     }
 }
