@@ -6,61 +6,7 @@
  */
 
 import { Name, Prefix, Suffix, Namon, Nama, Fullname, Firstname, Lastname } from '../namefully';
-
-
-/**
- * Enum for the validation types
- * @enum
- */
-enum ValidatorType {
-    NONE,
-    //----------
-    NAMON,
-    NAMA,
-    ARR_NAMES, // array of `Name`s
-    ARR_STRING, // array of string
-    FULL_NAME,
-    //----------
-    PREFIX,
-    FIRST_NAME,
-    MIDDLE_NAME,
-    LAST_NAME,
-    SUFFIX,
-    //----------
-    CUSTOM, // user-defined
-}
-
-/**
- * Represents a set of validation rules (regex)
- * @class
- * @static fields only
- * @implements {Validator}
- */
-class ValidationRule {
-    static namon: RegExp = /^[a-zA-Z]+((['-][a-zA-Z])?[a-zA-Z]*)*$/g
-    static fullname: RegExp = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/g
-
-    static firtname: RegExp = /^[a-zA-Z]+((['-][a-zA-Z])?[a-zA-Z]*)*$/g
-    static middlename: RegExp = /^[a-zA-Z]+(([' -][a-zA-Z])?[a-zA-Z]*)*$/g
-    static lastname: RegExp = /^[a-zA-Z]+((['-][a-zA-Z])?[a-zA-Z]*)*$/g
-}
-
-/**
- * Represents a validation error
- * @class
- * @extends Error
- */
-class ValidationError extends Error {
-    /**
-     * Create a validation `Error`
-     * @param message of error to display
-     * @param type categorizes the error
-     */
-    constructor(message?: string, type?: string) {
-        super(`${ type ? type + ' :: ' + message : message }`);
-        this.name = ValidationError.name;
-    }
-}
+import { ValidationRule, ValidatorType, ValidationError } from './index';
 
 /**
  * Interface for a JSON signature that represents a generic validator
@@ -359,11 +305,8 @@ class ArrayNameValidator implements Validator<Name[]> {
     }
 }
 
-
 export {
     Validator,
-    ValidatorType,
-    ValidationRule,
     //------------
     PrefixValidator,
     FirstnameValidator,

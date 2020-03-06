@@ -7,7 +7,7 @@
  * @license GPL-3.0
  * @see {@link https://github.com/ralflorent/namefully|LICENSE} for more info.
  */
-import { StringNameValidator, ArrayStringValidator, ArrayNameValidator, NamaValidator, FullnameValidator } from './validators/validator';
+import { StringNameValidator, ArrayStringValidator, ArrayNameValidator, NamaValidator, FullnameValidator } from './validators';
 
 /**
  * `Namefully` scheme to keep track of the types and not worry about name
