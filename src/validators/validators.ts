@@ -5,8 +5,9 @@
  * @author Ralph Florent <ralflornt@gmail.com>
  */
 
-import { Name, Prefix, Suffix, Namon, Nama, Fullname, Firstname, Lastname } from '../namefully';
+import { Nama, Fullname } from '../namefully';
 import { ValidationRule, ValidatorType, ValidationError } from './index';
+import { Name, Prefix, Suffix, Namon, Firstname, Lastname } from '../models'
 
 /**
  * Interface for a JSON signature that represents a generic validator
