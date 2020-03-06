@@ -5,7 +5,7 @@
  * @author Ralph Florent <ralflornt@gmail.com>
  */
 
-import { Name, Prefix, Suffix, Namon, Nama } from '../namefully';
+import { Name, Prefix, Suffix, Namon, Nama, Fullname, Firstname, Lastname } from '../namefully';
 
 
 /**
@@ -62,12 +62,39 @@ class ValidationError extends Error {
     }
 }
 
+/**
+ * Interface for a JSON signature that represents a generic validator
+ * @interface
+ */
 interface Validator<T> {
     validate(value: T): void;
 }
 
 /**
- * Represents a full name validator
+ * Represents a `Fullname` (JSON signature) validator
+ * @class
+ * @implements {Validator}
+ */
+class FullnameValidator implements Validator<Fullname> {
+    readonly type: ValidatorType = ValidatorType.FULL_NAME;
+    /**
+     * Validates that the `Fullname` contract is met
+     * @param {Fullname} value data to validate
+     */
+    validate(v: Fullname): void {
+        if (!v.firstname || !(v.firstname instanceof Firstname))
+            throw new ValidationError('first name is corrupted', 'Fullname');
+        if (!v.lastname || !(v.lastname instanceof Lastname))
+            throw new ValidationError('last name is corrupted', 'Fullname');
+        if (v.middlename && !(v.middlename instanceof Array))
+            throw new ValidationError('middle name is corrupted', 'Fullname');
+        if (v.prefix)
+            new PrefixValidator().validate(v.prefix)
+    }
+}
+
+/**
+ * Represents a string full name validator
  * @class
  * @implements {Validator}
  */
@@ -75,11 +102,11 @@ class StringNameValidator implements Validator<string> {
     readonly type: ValidatorType = ValidatorType.FULL_NAME;
     /**
      * Validates the content of a name
-     * @param {string} value a piece of name to validate
+     * @param {string} value data to validate
      */
     validate(value: string): void {
         if (!ValidationRule.fullname.test(value))
-            throw new ValidationError('Invalid string content', 'Full name');
+            throw new ValidationError('invalid string content', 'Full name');
     }
 }
 
@@ -92,12 +119,12 @@ class PrefixValidator implements Validator<string> {
     readonly type: ValidatorType = ValidatorType.PREFIX;
     /**
      * Validates the content of a prefix name
-     * @param {string} value to validate
+     * @param {string} value data to validate
      */
     validate(value: string): void {
         const prefixes: Array<string> = Object.entries(Prefix).map(e => e[1].toLowerCase()); // values
         if (prefixes.indexOf(value.toLowerCase()) === -1)
-            throw new ValidationError('Unknown value', 'Prefix');
+            throw new ValidationError('unknown value', 'Prefix');
     }
 }
 
@@ -110,11 +137,11 @@ class FirstnameValidator implements Validator<string> {
     readonly type: ValidatorType = ValidatorType.FIRST_NAME;
     /**
      * Validates the content of a first name
-     * @param {string} value to validate
+     * @param {string} value data to validate
      */
     validate(value: string): void {
         if (!ValidationRule.firtname.test(value))
-            throw new ValidationError('Invalid string content', 'First name');
+            throw new ValidationError('invalid string content', 'First name');
     }
 }
 
@@ -133,7 +160,7 @@ class MiddlenameValidator implements Validator<string | string[]> {
 
         if (typeof values === 'string') {
             if (!ValidationRule.middlename.test(values))
-                throw new ValidationError('Invalid string content', 'Middle name');
+                throw new ValidationError('invalid string content', 'Middle name');
         } else if (values instanceof Array) {
             const namonValidator = new NamonValidator();
             (values as Array<string>).forEach(v => namonValidator.validate(v));
@@ -152,11 +179,11 @@ class LastnameValidator implements Validator<string> {
     readonly type: ValidatorType = ValidatorType.LAST_NAME;
     /**
      * Validates the content of a last name
-     * @param {string} value to validate
+     * @param {string} value data to validate
      */
     validate(value: string): void {
         if (!ValidationRule.lastname.test(value))
-            throw new ValidationError('Invalid string content', 'Last name');
+            throw new ValidationError('invalid string content', 'Last name');
     }
 }
 
@@ -169,12 +196,12 @@ class SuffixValidator implements Validator<string> {
     readonly type: ValidatorType = ValidatorType.SUFFIX;
     /**
      * Validates the content of a suffix name
-     * @param {string} value to validate
+     * @param {string} value data to validate
      */
     validate(value: string): void {
         const suffixes: Array<string> = Object.entries(Suffix).map(e => e[1].toLowerCase()); // values
         if (suffixes.indexOf(value.toLowerCase()) === -1)
-            throw new ValidationError('Unknown value', 'Suffix');
+            throw new ValidationError('unknown value', 'Suffix');
     }
 }
 
@@ -186,11 +213,11 @@ class NamonValidator implements Validator<string> {
     readonly type: ValidatorType = ValidatorType.NAMON;
     /**
      * Validates the content of a name
-     * @param {string} value to validate
+     * @param {string} value data to validate
      */
     validate(value: string): void {
         if (!ValidationRule.namon.test(value))
-            throw new ValidationError('Invalid string content', 'Name');
+            throw new ValidationError('invalid string content', 'Name');
     }
 }
 
@@ -200,16 +227,16 @@ class NamonValidator implements Validator<string> {
  * @implements {Validator}
  */
 class NamaValidator implements Validator<Nama> {
-    readonly type: ValidatorType = ValidatorType.NAMON;
+    readonly type: ValidatorType = ValidatorType.NAMA;
     /**
      * Validates the content of a JSON-formatted names
-     * @param {string} value to validate
+     * @param {string} value data to validate
      */
     validate(value: Nama): void {
 
         const entries = Object.entries(value);
         if (entries.length <= 1 && entries.length > 5)
-            throw new ValidationError('Incomplete JSON object', 'Nama')
+            throw new ValidationError('incomplete JSON object', 'Nama')
 
         const validators = {
             [Namon.PREFIX]: new PrefixValidator(),
@@ -234,12 +261,12 @@ class ArrayStringValidator implements Validator<string[]> {
     readonly type: ValidatorType = ValidatorType.ARR_STRING;
     /**
      * Validates the content of a name
-     * @param {string} value to validate
+     * @param {string} value data to validate
      */
     validate(values: string[]): void {
 
         if (values.length <= 1 && values.length > 5)
-            throw new ValidationError('Must be an array of 2 - 5 elements', 'Array of names')
+            throw new ValidationError('must be an array of 2 - 5 elements', 'Array of names')
 
         const pf = new PrefixValidator();
         const sf = new SuffixValidator();
@@ -283,11 +310,11 @@ class ArrayNameValidator implements Validator<Name[]> {
     readonly type: ValidatorType = ValidatorType.ARR_NAMES;
     /**
      * Validates the content of a set of custom `Name`s
-     * @param {Array<Name>} value to validate
+     * @param {Array<Name>} value data to validate
      */
     validate(values: Array<Name>): void {
         if (values.length <= 1 && values.length > 5) {
-            throw new ValidationError(`Must be an array of 2 - 5 'Name's`, 'Array of Names');
+            throw new ValidationError(`must be an array of 2 - 5 'Name's`, 'Array of Names');
         }
         const validators = {
             [Namon.PREFIX]: new PrefixValidator(),
@@ -305,26 +332,26 @@ class ArrayNameValidator implements Validator<Name[]> {
                     validators[n.type].validate(n.namon)
                 });
                 break;
-            case 3:
+            case 3: // first name + middle name + last name
                 values.forEach(n => {
                     if ( ![Namon.FIRST_NAME, Namon.MIDDLE_NAME, Namon.LAST_NAME].includes(n.type) )
                         throw new ValidationError('First, middle and last names are required')
                     validators[n.type].validate(n.namon)
                 });
                 break;
-            case 4:
+            case 4: // first name + middle name + last name
                 values.forEach(n => {
                     if ( ![Namon.PREFIX, Namon.FIRST_NAME, Namon.MIDDLE_NAME,
                         Namon.LAST_NAME].includes(n.type) )
-                        throw new ValidationError('More name fields required')
+                        throw new ValidationError('More fields are required')
                     validators[n.type].validate(n.namon)
                 });
                 break;
-            case 5:
+            case 5: // first name + middle name + last name
                 values.forEach(n => {
                     if ( ![Namon.PREFIX, Namon.FIRST_NAME, Namon.MIDDLE_NAME, Namon.LAST_NAME,
                         Namon.SUFFIX].includes(n.type) )
-                        throw new ValidationError('More name fields required')
+                        throw new ValidationError('More fields are required')
                     validators[n.type].validate(n.namon)
                 });
                 break;
@@ -349,4 +376,5 @@ export {
     ArrayNameValidator,
     ArrayStringValidator,
     StringNameValidator,
+    FullnameValidator,
 };

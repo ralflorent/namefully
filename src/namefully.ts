@@ -7,7 +7,7 @@
  * @license GPL-3.0
  * @see {@link https://github.com/ralflorent/namefully|LICENSE} for more info.
  */
-import { StringNameValidator, ArrayStringValidator, ArrayNameValidator, NamaValidator } from './validators/validator';
+import { StringNameValidator, ArrayStringValidator, ArrayNameValidator, NamaValidator, FullnameValidator } from './validators/validator';
 
 /**
  * `Namefully` scheme to keep track of the types and not worry about name
@@ -82,49 +82,11 @@ export class Namefully {
             parser: Parser<string> // (user-defined) custom parser
         }>
     ) {
+        // well, first thing first
         this.configure(options);
 
         // let's try to parse this, baby!
-        if (this.config.parser) {
-            this.initialize(this.config.parser);
-        } else if (typeof raw === 'string') { // check for string type
-            this.initialize(new StringParser(raw));
-        } else if (Array.isArray(raw) && raw.length) { // check for Array<T>
-            if (typeof raw[0] === 'string') { // check for Array<string>
-
-                for (const key of <Array<string>>raw)
-                    if (typeof key !== 'string')
-                        throw new Error(`Cannot parse raw data as array of 'string'`);
-                this.initialize(new ArrayStringParser(raw as Array<string>))
-
-            } else if (raw[0] instanceof Name) { // check for Array<Name>
-
-                for (const obj of <Array<Name>>raw)
-                    if (!(obj instanceof Name))
-                        throw new Error(`Cannot parse raw data as array of '${Name.name}'`);
-                this.initialize(new ArrayNameParser(raw as Array<Name>));
-
-            } else {
-                // typescript should stop them, but let's be paranoid (for JS users)
-                throw new Error(`Cannot parse raw data as arrays that are not of '${Name.name}' or string`);
-            }
-        } else if (raw instanceof Object) { // check for json object
-
-            for (const entry of Object.entries(raw)) { // make sure keys are correct
-                let key = entry[0], value = entry[1];
-                // FIXME: middlename in singular form
-                if (['firstname', 'lastname', 'middlename', 'prefix', 'suffix'].indexOf(key) === -1)
-                    throw new Error(`Cannot parse raw data as json object that does not contains keys of '${Namon}'`);
-
-                if (typeof value !== 'string') // make sure the values are proper string
-                    throw new Error(`Cannot parse raw data. The key <${key}> should be a 'string' type`);
-            }
-            this.initialize(new NamaParser(raw as Nama));
-        } else {
-            // typescript should stop them, but let's be paranoid again (for JS users)
-            throw new Error(`Cannot parse raw data. Review the data type expected.`);
-        }
-        this.stats = new Summary(this.getFullname());
+        this.build(raw);
     }
 
     /**
@@ -500,6 +462,56 @@ export class Namefully {
                 return Separator.EMPTY;
         }
     }
+
+    /**
+     * Builds a high qualitty of data using parsers and validators
+     * @param {string | string[] | Array<Name> | Nama} raw data to parse or
+     * construct the pieces of the name
+     */
+    private build(raw: string | string[] | Array<Name> | Nama): void {
+        if (this.config.parser) {
+            this.initialize(this.config.parser);
+        } else if (typeof raw === 'string') { // check for string type
+            this.initialize(new StringParser(raw));
+        } else if (Array.isArray(raw) && raw.length) { // check for Array<T>
+            if (typeof raw[0] === 'string') { // check for Array<string>
+
+                for (const key of <Array<string>>raw)
+                    if (typeof key !== 'string')
+                        throw new Error(`Cannot parse raw data as array of 'string'`);
+                this.initialize(new ArrayStringParser(raw as Array<string>))
+
+            } else if (raw[0] instanceof Name) { // check for Array<Name>
+
+                for (const obj of <Array<Name>>raw)
+                    if (!(obj instanceof Name))
+                        throw new Error(`Cannot parse raw data as array of '${Name.name}'`);
+                this.initialize(new ArrayNameParser(raw as Array<Name>));
+
+            } else {
+                // typescript should stop them, but let's be paranoid (for JS users)
+                throw new Error(`Cannot parse raw data as arrays that are not of '${Name.name}' or string`);
+            }
+        } else if (raw instanceof Object) { // check for json object
+
+            for (const entry of Object.entries(raw)) { // make sure keys are correct
+                let key = entry[0], value = entry[1];
+                // FIXME: middlename in singular form
+                if (['firstname', 'lastname', 'middlename', 'prefix', 'suffix'].indexOf(key) === -1)
+                    throw new Error(`Cannot parse raw data as json object that does not contains keys of '${Namon}'`);
+
+                if (typeof value !== 'string') // make sure the values are proper string
+                    throw new Error(`Cannot parse raw data. The key <${key}> should be a 'string' type`);
+            }
+            this.initialize(new NamaParser(raw as Nama));
+        } else {
+            // typescript should stop them, but let's be paranoid again (for JS users)
+            throw new Error(`Cannot parse raw data. Review the data type expected.`);
+        }
+        // paranoid coder mode: on :P
+        new FullnameValidator().validate(this.fullname);
+        this.stats = new Summary(this.getFullname());
+    }
 }
 
 /**
@@ -716,7 +728,7 @@ export class StringParser implements Parser<string> {
         // then distribute all the elements accordingly
         const fullname: Fullname = this.distribute(this.raw);
 
-        // TODO: some validators are needed here (use of regex)
+        // finally return high quality of data
         return fullname;
     }
 
@@ -751,13 +763,13 @@ export class ArrayNameParser implements Parser<Name[]> {
         new ArrayNameValidator().validate(this.raw);
 
         // then distribute all the elements accordingly
-        const fullname: Fullname = this.distribute(...this.raw);
+        const fullname: Fullname = this.distribute(this.raw);
 
-        // TODO: validate that `Fullname` contract is met
+        // finally return high quality of data
         return fullname;
     }
 
-    private distribute(...args: Array<Name>): Fullname {
+    private distribute(args: Array<Name>): Fullname {
 
         const fullname: Fullname = {
             firstname: null,
@@ -817,7 +829,7 @@ export class NamaParser implements Parser<Nama> {
         // then distribute all the elements accordingly
         const fullname = this.distribute(this.raw);
 
-        // TODO: validate that `Fullname` contract is met
+        // finally return high quality of data
         return fullname;
     }
 
@@ -880,7 +892,7 @@ export class ArrayStringParser implements Parser<string[]> {
         // then distribute all the elements accordingly
         const fullname = this.distribute(this.raw);
 
-        // TODO: validate that the `Fullname` contract is met
+        // finally return high quality of data
         return fullname;
     }
 
@@ -1019,10 +1031,18 @@ export class Summary {
     top: string;
     unique: number;
 
+    /**
+     * Creates a `Summary` of a given string of alphabetical characters
+     * @param namon piece of name
+     * @param restrictions a set of undesired characters
+     */
     constructor(private namon: string, restrictions: string[] = [Separator.SPACE]) {
         this.compute(restrictions);
     }
 
+    /**
+     * Returns a string representation of the summary
+     */
     tostring(): string {
         return Separator.EMPTY.concat(
             `Descriptive statistics for "${this.namon}" \n`,
