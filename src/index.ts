@@ -1,5 +1,5 @@
 /**
- * Testing typescript
+ * Testing
  *
  * Created on March 03, 2020
  * @author Ralph Florent <ralflornt@gmail.com>

@@ -9,3 +9,4 @@ export * from './firstname';
 export * from './lastname';
 export * from './enums';
 export * from './summary';
+export * from './misc';

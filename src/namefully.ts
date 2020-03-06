@@ -7,8 +7,10 @@
  * @license GPL-3.0
  * @see {@link https://github.com/ralflorent/namefully|LICENSE} for more info.
  */
-import { StringNameValidator, ArrayStringValidator, ArrayNameValidator, NamaValidator, FullnameValidator } from './validators';
-import { Name, Firstname, Lastname, Namon, Separator, Prefix, Suffix, Summary } from './models';
+import { CONFIG } from './core';
+import { FullnameValidator } from './validators';
+import { Fullname, Name, Nama, Namon, Separator, Summary, Config } from './models';
+import { Parser, NamaParser, StringParser, ArrayNameParser, ArrayStringParser } from './core';
 
 /**
  * `Namefully` scheme to keep track of the types and not worry about name
@@ -20,25 +22,6 @@ import { Name, Firstname, Lastname, Namon, Separator, Prefix, Suffix, Summary } 
  */
 // export namespace Namefully {...}
 
-/**
- * The current version of `Namefully`.
- * @constant
- */
-export const version: string = '1.0.0';
-
-
-
-/**
- * @interface Nama represents the JSON signature for the `NamaParser`
- */
-export interface Nama {
-    prefix?: string;
-    firstname: string;
-    middlename?: string;
-    lastname: string;
-    suffix?: string;
-    // nickname?: string;
-}
 
 /**
  * `Namefully` class definition
@@ -135,16 +118,6 @@ export class Namefully {
         return this.fullname.middlename ?
             this.fullname.middlename.map(n => n.namon) :
             [];
-    }
-
-    /**
-     * Gets the nickname part of the full name
-     * @returns {string} the nickname
-     */
-    getNickname(): string {
-        return this.fullname.nickname ?
-            this.fullname.nickname.namon :
-            Separator.EMPTY;
     }
 
     /**
@@ -355,8 +328,6 @@ export class Namefully {
      * 'L': capitalized last name
      * 'm': middle names
      * 'M': Capitalized middle names
-     * 'n': nickname
-     * 'N': capitalized nickname
      * 'O': official document format
      *
      * @example
@@ -429,14 +400,6 @@ export class Namefully {
             case 'M':
                 return this.fullname.middlename
                     .map(n => n.upper()).join(Separator.SPACE);
-            case 'n':
-                return this.fullname.nickname ?
-                    this.fullname.nickname.namon :
-                    Separator.SPACE;
-            case 'N':
-                return this.fullname.nickname ?
-                    this.fullname.nickname.upper() :
-                    Separator.SPACE;
             case 'O':
                 return [
                     this.fullname.prefix ? this.fullname.prefix : Separator.EMPTY,
@@ -498,291 +461,4 @@ export class Namefully {
         new FullnameValidator().validate(this.fullname);
         this.stats = new Summary(this.getFullname());
     }
-}
-
-/**
- * Interface for JSON signature that represents a generic parser
- * @interface
- */
-export interface Parser<T> {
-    /**
-     * raw data to be parsed
-     * @type {T}
-     */
-    raw: T;
-
-    /**
-     * Parses the raw data into a full name
-     * @returns {Fullname}
-     */
-    parse(): Fullname;
-}
-
-/**
- * Represents a string parser
- * @class
- * @implements {Parser}
- * @classdesc
- */
-export class StringParser implements Parser<string> {
-
-    /**
-     * Create a parser ready to parse the raw data
-     * @param {string} raw raw data as a string representation
-     */
-    constructor(public raw: string) {}
-
-    /**
-     * Parses the raw data into a full name
-     * @returns {Fullname}
-     */
-    parse(): Fullname {
-
-        // validate first
-        new StringNameValidator().validate(this.raw);
-
-        // then distribute all the elements accordingly
-        const fullname: Fullname = this.distribute(this.raw);
-
-        // finally return high quality of data
-        return fullname;
-    }
-
-    private distribute(raw: string): Fullname {
-        // assuming this: '[Prefix] Firstname [Middlename] Lastname [Suffix]'
-        const nama = raw.split(Separator.SPACE); // TODO: config separator for this
-        const fullname = new ArrayStringParser(nama).parse();
-        return fullname;
-    }
-}
-
-/**
- * Represents a `Name` parser
- * @class
- * @implements {Parser}
- * @classdesc
- */
-export class ArrayNameParser implements Parser<Name[]> {
-
-    /**
-     * Create a parser ready to parse the raw data
-     * @param {Array<Name>} raw data
-     */
-    constructor(public raw: Name[]) {}
-
-    /**
-     * Parses the raw data into a full name
-     * @returns {Fullname}
-     */
-    parse(): Fullname {
-        // validate first
-        new ArrayNameValidator().validate(this.raw);
-
-        // then distribute all the elements accordingly
-        const fullname: Fullname = this.distribute(this.raw);
-
-        // finally return high quality of data
-        return fullname;
-    }
-
-    private distribute(args: Array<Name>): Fullname {
-
-        const fullname: Fullname = {
-            firstname: null,
-            lastname: null,
-            middlename: [],
-            prefix: null,
-            suffix: null,
-        };
-
-        args.forEach(name => {
-            switch (name.type) {
-                case Namon.PREFIX:
-                    fullname.prefix = name.namon as Prefix;
-                    break;
-                case Namon.FIRST_NAME:
-                    fullname.firstname = new Firstname(name.namon);
-                    break;
-                case Namon.LAST_NAME:
-                    fullname.lastname = new Lastname(name.namon);
-                    break;
-                case Namon.MIDDLE_NAME:
-                    fullname.middlename.push(name);
-                    break;
-                case Namon.SUFFIX:
-                    fullname.suffix = name.namon as Suffix;
-                    break;
-            }
-        });
-
-        return fullname;
-    }
-}
-
-/**
- * Represents a `Nama` parser
- * @class
- * @implements {Parser}
- * @classdesc
- */
-export class NamaParser implements Parser<Nama> {
-
-    /**
-     * Create a parser ready to parse the raw data
-     * @param {Nama} raw data as JSON object
-     */
-    constructor(public raw: Nama) { }
-
-    /**
-     * Parses the raw data into a full name
-     * @returns {Fullname}
-     */
-    parse(): Fullname {
-
-        // validate first
-        new NamaValidator().validate(this.raw);
-
-        // then distribute all the elements accordingly
-        const fullname = this.distribute(this.raw);
-
-        // finally return high quality of data
-        return fullname;
-    }
-
-    private distribute(args: any): Fullname {
-        const fullname: Fullname = {
-            firstname: null,
-            lastname: null,
-            middlename: [],
-            prefix: null,
-            suffix: null,
-        };
-
-        for (const entry of Object.entries(this.raw)) {
-            let key = entry[0] as keyof Nama, value = entry[1] as string;
-            switch (key) {
-                case Namon.FIRST_NAME:
-                    fullname.firstname = new Firstname(value);
-                    break;
-                case Namon.LAST_NAME:
-                    fullname.lastname = new Lastname(value);
-                    break;
-                case Namon.MIDDLE_NAME:
-                    fullname.middlename.push(new Name(value, Namon.MIDDLE_NAME));
-                    break;
-                case Namon.PREFIX:
-                    fullname.prefix = value as Prefix;
-                    break;
-                case Namon.SUFFIX:
-                    fullname.suffix = value as Suffix;
-                    break;
-            }
-        }
-        return fullname;
-    }
-}
-
-/**
- * Represents an array string parser
- * @class
- * @implements {Parser}
- * @classdesc
- */
-export class ArrayStringParser implements Parser<string[]> {
-
-    /**
-     * Create a parser ready to parse the raw data
-     * @param {Array<string>} raw data
-     */
-    constructor(public raw: string[]) { }
-
-    /**
-     * Parses the raw data into a full name
-     * @returns {Fullname}
-     */
-    parse(): Fullname {
-
-        // validate first
-        new ArrayStringValidator().validate(this.raw);
-
-        // then distribute all the elements accordingly
-        const fullname = this.distribute(this.raw);
-
-        // finally return high quality of data
-        return fullname;
-    }
-
-    private distribute(args: string[]): Fullname {
-
-        const fullname: Fullname = {
-            firstname: null,
-            lastname: null,
-            middlename: [],
-            prefix: null,
-            suffix: null,
-        };
-
-        switch (args.length) {
-            case 2: // first name + last name
-                fullname.firstname = new Firstname(args[0]);
-                fullname.lastname = new Lastname(args[1]);
-                break;
-            case 3: // first name + middle name + last name
-                fullname.firstname = new Firstname(args[0]);
-                fullname.middlename.push(new Name(args[1], Namon.MIDDLE_NAME));
-                fullname.lastname = new Lastname(args[2]);
-                break;
-            case 4: // prefix + first name + middle name + last name
-                fullname.prefix = args[0] as Prefix;
-                fullname.firstname = new Firstname(args[1]);
-                fullname.middlename.push(new Name(args[2], Namon.MIDDLE_NAME));
-                fullname.lastname = new Lastname(args[3]);
-                break;
-            case 5: // prefix + first name + middle name + last name + suffix
-                fullname.prefix = args[0] as Prefix;
-                fullname.firstname = new Firstname(args[1]);
-                fullname.middlename.push(new Name(args[2], Namon.MIDDLE_NAME));
-                fullname.lastname = new Lastname(args[3]);
-                fullname.suffix = args[4] as Suffix;
-                break;
-        }
-        return fullname;
-    }
-}
-
-/**
- * Interface for JSON signature that represents the full name
- * @interface
- */
-export interface Fullname {
-    firstname: Firstname;
-    lastname: Lastname;
-    middlename?: Name[];
-    prefix?: Prefix;
-    suffix?: Suffix;
-    nickname?: Name;
-}
-
-
-
-
-/**
- * Interface for JSON signature that represents the configuration of the utility
- * @interface
- */
-export interface Config {
-    orderedBy: Namon;
-    separator: Separator; // ending suffix
-    parser?: Parser<string>; // (user-defined) custom parser
-}
-
-/**
- * CONFIG type definition
- * @constant
- * @type {Config}
- * @default
- */
-export const CONFIG: Config = {
-    orderedBy: Namon.FIRST_NAME,
-    separator: Separator.SPACE,
 }
