@@ -14,6 +14,7 @@
             "@models/*": ["src/models/*"],
             "@validators/*": ["src/validators/*"]
         },
+        "declaration": true
     },
     "include": [
         "src/**/*"
