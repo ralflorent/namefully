@@ -227,8 +227,8 @@ export class Namefully {
      * By default, it compresses by 'firstmid' variant: 'J. M. B. Lennon'.
      */
     compress(
-        limit: number = 25,
-        by: 'firstname' | 'lastname' | 'middlename' | 'firstmid' | 'midlast' = 'firstmid'
+        limit: number = 20,
+        by: 'firstname' | 'lastname' | 'middlename' | 'firstmid' | 'midlast' = 'middlename'
     ): string {
 
         if (this.getFullname().length <= limit) // no need to reduce it

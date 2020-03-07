@@ -86,7 +86,7 @@ So far, we allowed the following punctuations: comma, period, apostrophe
 |*getInitials*|none|none|`string`|Gets the initials of the first and last name|
 |*describe*|none|none|`string`|Gives some descriptive statistics that summarize the central tendency, dispersion and shape of the characters' distribution.|
 |*shorten*|none|none|`string`|Returns a typical name (e.g. first and last name)|
-|*compress*|`limit: number`, `by: 'firstname'` <br> `|'lastname'|'middlename'` <br> `|'firstmid' | 'midlast'`|`25`, `firstmid`|`string`|Compresses a name by using different forms of variants|
+|*compress*|`limit: number`, `by: NameType`|`20`, `middlename`|`string`|Compresses a name by using different forms of variants|
 |*username*|none|none|`string[]`|Suggests possible (randomly) usernames closest to the name|
 |*format*|`how: string`|`null`|`string`|Formats the name as desired|
 
