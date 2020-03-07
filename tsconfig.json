@@ -1,13 +1,19 @@
 {
     "compilerOptions": {
+        "baseUrl": "./",
         "module": "commonjs",
-        "target": "ES5",
+        "target": "es2015",
         "noImplicitAny": true,
         "removeComments": true,
         "preserveConstEnums": true,
         "outDir": "dist",
         "sourceMap": true,
-        "lib": ["dom", "es2017"]
+        "lib": ["dom", "es2018"],
+        "paths": {
+            "@core/*": ["src/core/*"],
+            "@models/*": ["src/models/*"],
+            "@validators/*": ["src/validators/*"]
+        },
     },
     "include": [
         "src/**/*"

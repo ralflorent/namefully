@@ -7,10 +7,9 @@
  * @license GPL-3.0
  * @see {@link https://github.com/ralflorent/namefully|LICENSE} for more info.
  */
-import { CONFIG } from './core';
-import { FullnameValidator } from './validators';
-import { Fullname, Name, Nama, Namon, Separator, Summary, Config } from './models';
-import { Parser, NamaParser, StringParser, ArrayNameParser, ArrayStringParser } from './core';
+import { Parser, NamaParser, StringParser, ArrayNameParser, ArrayStringParser, CONFIG } from '@core/index';
+import { Fullname, Name, Nama, Namon, Separator, Summary, Config } from '@models/index';
+import { FullnameValidator } from '@validators/index';
 
 /**
  * `Namefully` scheme to keep track of the types and not worry about name

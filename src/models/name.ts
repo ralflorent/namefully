@@ -4,7 +4,7 @@
  * Created on March 06, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
  */
-import { Summary, Namon } from '../models';
+import { Summary, Namon } from '@models/index';
 
 /**
  * Represents a namon with some extra functionalities
