@@ -10,7 +10,7 @@
   "scripts": {
     "build": "npx tsc --build",
     "lint": "tslint -p tsconfig.json",
-    "test": "jest --config jestconfig.json"
+    "test": "jest --config jestconfig.json --collectCoverage=true"
   },
   "repository": {
     "type": "git",

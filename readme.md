@@ -1,6 +1,6 @@
 # namefully
 
-[![codecov](https://codecov.io/gh/ralflorent/namefully/branch/master/graph/badge.svg)](https://codecov.io/gh/ralflorent/namefully)
+[![CircleCI](https://circleci.com/gh/ralflorent/namefully.svg?style=shield)](https://circleci.com/gh/ralflorent/namefully)
 
 ## Description
 
@@ -20,10 +20,20 @@ None
 
 ```ts
 // ES6 modules or typescript
-import { Namefully } from 'namefully';
+import { Namefully } from 'namefully'
 
+const nf = new Namefully('John Joe Smith')
+console.log(nf.format('L, f m')) // => SMITH, John Joe
+```
+
+or
+
+```js
 // CommonJS
-const Namefully = require('namefully');
+const Namefully = require('namefully').Namefully
+
+const nf = new Namefully('John Joe Smith')
+console.log(nf.format('L, f m')) // => SMITH, John Joe
 ```
 
 The package comes with its own declaration file for TypeScript support.
