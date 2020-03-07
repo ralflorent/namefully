@@ -1,5 +1,7 @@
 # namefully
 
+[![codecov](https://codecov.io/gh/ralflorent/namefully/branch/master/graph/badge.svg)](https://codecov.io/gh/ralflorent/namefully)
+
 ## Description
 
 Person name handler in the English alphabet.
