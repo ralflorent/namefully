@@ -4,4 +4,7 @@
  * Created on March 03, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
  */
-export { Namefully } from './namefully';
+export * from './namefully';
+export * from './core';
+export * from './models';
+export * from './validators';

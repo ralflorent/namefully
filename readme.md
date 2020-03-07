@@ -21,7 +21,7 @@ None
 import { Namefully } from 'namefully';
 
 // CommonJS
-const Namefully = require('Namefully');
+const Namefully = require('namefully');
 ```
 
 The package comes with its own declaration file for TypeScript support.
