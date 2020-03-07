@@ -62,7 +62,7 @@ export class Summary {
 
     private groupByChar(): any {
         const frequencies: { [key: string]: number } = {};
-        for (let char of this.namon.toUpperCase())
+        for (const char of this.namon.toUpperCase())
             if (Object.keys(frequencies).includes(char))
                 frequencies[char] += 1;
             else

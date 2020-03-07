@@ -12,23 +12,30 @@ import { Fullname, Name, Nama, Namon, Separator, Summary, Config } from './model
 import { FullnameValidator } from './validators/index';
 
 /**
- * `Namefully` scheme to keep track of the types and not worry about name
- * collisions with other objects. Instead of putting lots of different names
- * into the global namespace.
+ * Person name handler in the English alphabet
+ * @class
+ * @classdesc
+ * Note that the name standards used for the current version of this library are as
+ * follows:
+ *      [Prefix] Firstname [Middlename] Lastname [Suffix]
+ * The opening `[` and closing `]` brackets mean that these parts are optional. In
+ * other words, the most basic and typical case is a name that looks like this:
+ * `John Smith`, where `John` is the first name and `Smith`, the last name.
  *
- * How to share namespace:
- *     /// <reference path="namefully.ts" />
- */
-// export namespace Namefully {...}
-
-
-/**
- * `Namefully` class definition
- * @todo docs
+ * **IMPORTANT**: Keep in mind that the order of appearance matters and can be
+ * altered through configured parameters, which we will be seeing later on. By
+ * default, the order of appearance is as shown above and will be used as a basis
+ * for future examples and use cases.
  *
- * namon: piece of a name (e.g., firstname)
- * nama: pieces of a name (e.g., firstname + lastname)
- * @see https://departments.weber.edu/qsupport&training/Data_Standards/Name.htm
+ * Once imported, all that is required to do is to create an instance of
+ * `Namefully` and the rest will follow.
+ *
+ * Terminologies used across the library:
+ * - namon: piece of a name (e.g., firstname)
+ * - nama: pieces of a name (e.g., firstname + lastname)
+ *
+ * @see https://departments.weber.edu/qsupport&training/Data_Standards/Name.htm for
+ * more info on name standards.
  */
 export class Namefully {
 
@@ -146,7 +153,7 @@ export class Namefully {
     getInitials(): string[] {
         // TODO: not considering middle names for now
         const initials = [];
-        if (this.config.orderedBy = Namon.FIRST_NAME) {
+        if (this.config.orderedBy === Namon.FIRST_NAME) {
             initials.push(...this.fullname.firstname.getInitials());
             initials.push(...this.fullname.lastname.getInitials());
         } else {
@@ -424,15 +431,15 @@ export class Namefully {
         } else if (Array.isArray(raw) && raw.length) { // check for Array<T>
             if (typeof raw[0] === 'string') { // check for Array<string>
 
-                for (const key of <Array<string>>raw)
+                for (const key of raw as Array<string>)
                     if (typeof key !== 'string')
                         throw new Error(`Cannot parse raw data as array of 'string'`);
                 this.initialize(new ArrayStringParser(raw as Array<string>))
 
             } else if (raw[0] instanceof Name) { // check for Array<Name>
 
-                for (const obj of <Array<Name>>raw)
-                    if (!(obj instanceof Name))
+                for (const obj of raw as Array<string>)
+                    if (!(obj as any instanceof Name))
                         throw new Error(`Cannot parse raw data as array of '${Name.name}'`);
                 this.initialize(new ArrayNameParser(raw as Array<Name>));
 
@@ -443,7 +450,7 @@ export class Namefully {
         } else if (raw instanceof Object) { // check for json object
 
             for (const entry of Object.entries(raw)) { // make sure keys are correct
-                let key = entry[0], value = entry[1];
+                const key = entry[0], value = entry[1];
                 // FIXME: middlename in singular form
                 if (['firstname', 'lastname', 'middlename', 'prefix', 'suffix'].indexOf(key) === -1)
                     throw new Error(`Cannot parse raw data as json object that does not contains keys of '${Namon}'`);

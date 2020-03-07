@@ -42,44 +42,6 @@ export interface Parser<T> {
 }
 
 /**
- * Represents a string parser
- * @class
- * @implements {Parser}
- * @classdesc
- */
-export class StringParser implements Parser<string> {
-
-    /**
-     * Create a parser ready to parse the raw data
-     * @param {string} raw raw data as a string representation
-     */
-    constructor(public raw: string) {}
-
-    /**
-     * Parses the raw data into a full name
-     * @returns {Fullname}
-     */
-    parse(): Fullname {
-
-        // validate first
-        new StringNameValidator().validate(this.raw);
-
-        // then distribute all the elements accordingly
-        const fullname: Fullname = this.distribute(this.raw);
-
-        // finally return high quality of data
-        return fullname;
-    }
-
-    private distribute(raw: string): Fullname {
-        // assuming this: '[Prefix] Firstname [Middlename] Lastname [Suffix]'
-        const nama = raw.split(Separator.SPACE); // TODO: config separator for this
-        const fullname = new ArrayStringParser(nama).parse();
-        return fullname;
-    }
-}
-
-/**
  * Represents a `Name` parser
  * @class
  * @implements {Parser}
@@ -182,7 +144,8 @@ export class NamaParser implements Parser<Nama> {
         };
 
         for (const entry of Object.entries(this.raw)) {
-            let key = entry[0] as keyof Nama, value = entry[1] as string;
+            const key = entry[0] as keyof Nama;
+            const value = entry[1] as string;
             switch (key) {
                 case Namon.FIRST_NAME:
                     fullname.firstname = new Firstname(value);
@@ -269,6 +232,44 @@ export class ArrayStringParser implements Parser<string[]> {
                 fullname.suffix = args[4] as Suffix;
                 break;
         }
+        return fullname;
+    }
+}
+
+/**
+ * Represents a string parser
+ * @class
+ * @implements {Parser}
+ * @classdesc
+ */
+export class StringParser implements Parser<string> {
+
+    /**
+     * Create a parser ready to parse the raw data
+     * @param {string} raw raw data as a string representation
+     */
+    constructor(public raw: string) {}
+
+    /**
+     * Parses the raw data into a full name
+     * @returns {Fullname}
+     */
+    parse(): Fullname {
+
+        // validate first
+        new StringNameValidator().validate(this.raw);
+
+        // then distribute all the elements accordingly
+        const fullname: Fullname = this.distribute(this.raw);
+
+        // finally return high quality of data
+        return fullname;
+    }
+
+    private distribute(raw: string): Fullname {
+        // assuming this: '[Prefix] Firstname [Middlename] Lastname [Suffix]'
+        const nama = raw.split(Separator.SPACE); // TODO: config separator for this
+        const fullname = new ArrayStringParser(nama).parse();
         return fullname;
     }
 }

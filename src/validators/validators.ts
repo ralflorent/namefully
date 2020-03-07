@@ -16,6 +16,40 @@ interface Validator<T> {
 }
 
 /**
+ * Represents a namon validator to help to parse single pieces of string
+ * @class
+ */
+class NamonValidator implements Validator<string> {
+    readonly type: ValidatorType = ValidatorType.NAMON;
+    /**
+     * Validates the content of a name
+     * @param {string} value data to validate
+     */
+    validate(value: string): void {
+        if (!ValidationRule.namon.test(value))
+            throw new ValidationError('invalid string content', 'Name');
+    }
+}
+
+/**
+ * Represents a prefix validator
+ * @class
+ * @implements {Validator}
+ */
+class PrefixValidator implements Validator<string> {
+    readonly type: ValidatorType = ValidatorType.PREFIX;
+    /**
+     * Validates the content of a prefix name
+     * @param {string} value data to validate
+     */
+    validate(value: string): void {
+        const prefixes: Array<string> = Object.entries(Prefix).map(e => e[1].toLowerCase()); // values
+        if (prefixes.indexOf(value.toLowerCase()) === -1)
+            throw new ValidationError('unknown value', 'Prefix');
+    }
+}
+
+/**
  * Represents a `Fullname` (JSON signature) validator
  * @class
  * @implements {Validator}
@@ -55,23 +89,7 @@ class StringNameValidator implements Validator<string> {
     }
 }
 
-/**
- * Represents a prefix validator
- * @class
- * @implements {Validator}
- */
-class PrefixValidator implements Validator<string> {
-    readonly type: ValidatorType = ValidatorType.PREFIX;
-    /**
-     * Validates the content of a prefix name
-     * @param {string} value data to validate
-     */
-    validate(value: string): void {
-        const prefixes: Array<string> = Object.entries(Prefix).map(e => e[1].toLowerCase()); // values
-        if (prefixes.indexOf(value.toLowerCase()) === -1)
-            throw new ValidationError('unknown value', 'Prefix');
-    }
-}
+
 
 /**
  * Represents a first name validator
@@ -150,21 +168,7 @@ class SuffixValidator implements Validator<string> {
     }
 }
 
-/**
- * Represents a namon validator to help to parse single pieces of string
- * @class
- */
-class NamonValidator implements Validator<string> {
-    readonly type: ValidatorType = ValidatorType.NAMON;
-    /**
-     * Validates the content of a name
-     * @param {string} value data to validate
-     */
-    validate(value: string): void {
-        if (!ValidationRule.namon.test(value))
-            throw new ValidationError('invalid string content', 'Name');
-    }
-}
+
 
 /**
  * Represents a `Nama` validator to help the nama parser
@@ -191,8 +195,9 @@ class NamaValidator implements Validator<Nama> {
             [Namon.SUFFIX]: new SuffixValidator(),
         };
         for (const entry of entries) {
-            let key = entry[0] as keyof Nama, value = entry[1] as string;
-            validators[key].validate(value);
+            const k = entry[0] as keyof Nama;
+            const v = entry[1] as string;
+            validators[k].validate(v);
         }
     }
 }
@@ -306,13 +311,13 @@ class ArrayNameValidator implements Validator<Name[]> {
 
 export {
     Validator,
-    //------------
+
     PrefixValidator,
     FirstnameValidator,
     MiddlenameValidator,
     LastnameValidator,
     SuffixValidator,
-    //------------
+
     NamonValidator,
     NamaValidator,
     ArrayNameValidator,
