@@ -2,76 +2,97 @@
 
 ## Description
 
-Person name handler
+Person name handler in the English alphabet.
 
-## Concept
+## Installation
 
-Given a string name, manipulate the chuncks of the name as desired while
-considering some variants: language, non-unicode chars, latin-like, etc.
-
-## Use cases and examples
-
-English alphabet, ordered by first name:
-
-- typical name `John Smith`
-  - with middle name `John Joe Smith`
-  - with prefix `Mr John Smith`
-  - with suffix `John Smith, PhD`
-  - with prefix and suffix `Mr John Smith, PhD`
-- preferred name or nickname `Johnny`
-
-## Special cases
-
-- mononym:  `Plato`
-- polynymous last names: `De La Cruz`, `Da Vinci`
-- latin last names: `Perez Rodriguez`
-- hyphenated last name: `Pinkett-Smith`
-- last name with apostrophe: `O'Connell`, `O'Connor`
-- middle names: `Stefani Joanne Angelina Germanotta`
-
-## Objectives
-
-- javascript module registered on npm, yarn registries
-- typescript definitely typed and compiled
-- ng-namefully for angular framework
-- react-namefully for react library
-- (equivalent for python)
+```bash
+npm install --save namefully
+```
 
 ## Dependencies
 
-- string utils (if necessary)
+None
 
-## Things to consider
+## Usage
 
-- testing
-- browser support
-- build systems
-- CI / CD
+```ts
+// ES6 modules or typescript
+import { Namefully } from 'namefully';
 
-## Expected API
+// CommonJS
+const Namefully = require('Namefully');
+```
 
-Given a typical name `Mrs Jane O'Connor Pearson-Smith, PhD`:
+The package comes with its own declaration file for TypeScript support.
 
-- nama or body parts (first, last, mid name, prefix, suffix)
-- initials
-- digital signature
-- alphabet
-- stats
+## Examples
 
----
+Note that the name standards used for the current version of this library are as
+follows:
+```[Prefix] Firstname [Middlename] Lastname [Suffix]```.
+The opening `[` and closing `]` brackets mean that these parts are optional. In
+other words, the most basic and typical case is a name that looks like this:
+`John Smith`, where `John` is the first name and `Smith`, the last name.
 
-- describe (descriptive stats: count, freq, top, unique)
-- shorten
-- compress
-- username (suggest usernames, 10+)
-- format (as desired)
+**IMPORTANT**: Keep in mind that the order of appearance matters and can be
+altered through configured parameters, which we will be seeing later on. By
+default, the order of appearance is as shown above and will be used as a basis
+for future examples and use cases.
 
----
+Once imported, all that is required to do is to create an instance of
+`Namefully` and the rest will follow.
 
-- unicode (equivalent of non-unicode chars: ASCII)
-- intl (equivalent in other alphabets: e.g., cyrillic)
-- root (origin and meaning of components)
-- [to be continued]
+### Basic case
+
+Let us take a common example:
+
+```Mr. John Joe Smith, PhD```
+
+So, we undertand that the name can be seen as follows:
+
+- a typical name: `John Smith`
+  - with middle name: `John Joe Smith`
+  - with prefix: `Mr John Smith`
+  - with suffix: `John Smith, PhD`
+  - with both prefix and suffix: `Mr John Smith, PhD`
+  - full name: `Mr. John Joe Smith, PhD`
+- possible usernames: `jsmith, johnsmith, j.smith`, etc.
+
+### The allowed punctuation
+
+So far, we allowed the following punctuations: comma, period, apostrophe
+(single quote), and hyphen.
+
+### Special cases not covered/considered so far
+
+- mononym:  `Plato`
+- multiple last names: `De La Cruz`, `Da Vinci`
+- latin last names: `Perez Rodriguez`
+- hyphenated last name: `Pinkett-Smith`
+- last name with apostrophe: `O'Connell`, `O'Connor`
+- nicknames: `Johnny`
+
+## APIs
+
+| Name | Arguments | Default | Returns | Description |
+|---|---|---|---|---|
+|*getPrefix*|none|none|`string`|Gets the prefix part of the full name, if any|
+|*getFirstname*|none|none|`string`|Gets the first name part of the full name|
+|*getMiddlenames*|none|none|`string[]`|Gets the middle name part of the full name|
+|*getLastname*|none|none|`string`|Gets the last name part of the full name|
+|*getSuffix*|none|none|`string`|Gets the suffix part of the full name, if any|
+|*getFullname*|none|none|`string`|Gets the full name|
+|*getInitials*|none|none|`string`|Gets the initials of the first and last name|
+|*describe*|none|none|`string`|Gives some descriptive statistics that summarize the central tendency, dispersion and shape of the characters' distribution.|
+|*shorten*|none|none|`string`|Returns a typical name (e.g. first and last name)|
+|*compress*|`limit: number`, `by: 'firstname' | 'lastname' | 'middlename' | 'firstmid' | 'midlast'`|`25`, `firstmid`|`string`|Compresses a name by using different forms of variants|
+|*username*|none|none|`string[]`|Suggests possible (randomly) usernames closest to the name|
+|*format*|`how: string`|`null`|`string`|Formats the name as desired|
+
+## Author
+
+Developed by [Ralph Florent](https://github.com/ralflorent)
 
 ## License
 
