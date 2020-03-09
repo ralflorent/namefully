@@ -1,6 +1,7 @@
 version: 2.1
 orbs:
   node: circleci/node@1.1.6
+  codecov: codecov/codecov@1.0.2
 jobs:
   build-and-test:
     executor:
@@ -15,7 +16,24 @@ jobs:
             - run: npm test
       - store_artifacts:
             path: coverage
+      - codecov/upload:
+            token: ${CODECOV_TOKEN}
+  publish:
+    executor:
+      name: node/default
+    steps:
+        - checkout
+        - run:
+            name: Publish to NPM
+            command: |
+                npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN
+                npm publish
+
 workflows:
     build-and-test:
       jobs:
         - build-and-test
+        - publish:
+            filters:
+                tags:
+                    only: /v[0-9]+(\.[0-9]+)*/
