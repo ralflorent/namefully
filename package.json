@@ -10,7 +10,8 @@
   "scripts": {
     "build": "npx tsc --build",
     "lint": "tslint -p tsconfig.json",
-    "test": "jest --config jestconfig.json --collectCoverage=true"
+    "test": "jest --config jestconfig.json --collectCoverage=true",
+    "usecases": "npm run build && node ./dist/__usecases__/index.js"
   },
   "repository": {
     "type": "git",
