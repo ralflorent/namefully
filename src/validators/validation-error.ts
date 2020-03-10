@@ -18,6 +18,6 @@ export class ValidationError extends Error {
      */
     constructor(message?: string, type?: string) {
         super(`${ type ? type + ' :: ' + message : message }`);
-        this.name = ValidationError.name;
+        this.name = 'ValidationError';
     }
 }
