@@ -5,28 +5,19 @@
  * @author Ralph Florent <ralflornt@gmail.com>
  */
 
-/* To access webpack runtime */
-const webpack = require('webpack');
-
 /* Handle OS path resolution: absolute, relative paths */
 const path = require('path');
-
-/* Concatenate arrays and merge objects */
-const webpackMerge = require('webpack-merge');
-
-/* Common configuration shared between development and production environment */
-const commonConfig = require('./webpack.common.js');
 
 /**
  * Merge this with common configuration
  */
-module.exports = webpackMerge(commonConfig, {
+module.exports = {
 
     mode: 'development',
     devtool: 'inline-source-map',
 
     entry: {
-        'index': './src/__usecases__/index.ts',
+        'index': './usecases/index.ts',
     },
 
     output: {
@@ -35,14 +26,23 @@ module.exports = webpackMerge(commonConfig, {
         filename: '[name].js',
     },
 
-    /*  Options passed on the command line (package.json::start) as the dev
-     *  server does not have access to the webpack config
-     */
-    plugins: [
-        new webpack.DefinePlugin({
-            'process.env': {
-                NODE_ENV: JSON.stringify('development')
-            }
-        })
-    ],
-});
+    resolve: {
+        modules: [
+            'node_modules',
+            path.join(__dirname, 'src'),
+            path.join(__dirname, 'usecases')
+        ],
+        extensions: ['.js', '.ts'],
+    },
+
+    module: {
+        // Allows to specify several loaders within the webpack configuration
+        rules: [
+            {
+                test: /\.tsx?$/,
+                exclude: /(node_modules)/,
+                use: 'ts-loader'
+            },
+        ]
+    },
+};

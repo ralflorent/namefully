@@ -1,11 +1,13 @@
 {
-    "compileOnSave": true,
+    "compileOnSave": false,
     "compilerOptions": {
         "baseUrl": "./",
         "module": "commonjs",
         "target": "es2015",
+        "moduleResolution": "node", // for inline -m es6
+        "declaration": true,
         "noImplicitAny": true,
-        "removeComments": true,
+        "removeComments": false,
         "preserveConstEnums": true,
         "outDir": "dist",
         "sourceMap": true,
@@ -15,10 +17,9 @@
             "@models/*": ["src/models/*"],
             "@validators/*": ["src/validators/*"]
         },
-        "declaration": true
     },
     "include": [
-        "src/**/*"
+        "src/**/*",
     ],
     "exclude": [
         "node_modules",
