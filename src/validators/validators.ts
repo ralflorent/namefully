@@ -103,7 +103,7 @@ class FirstnameValidator implements Validator<string> {
      * @param {string} value data to validate
      */
     validate(value: string): void {
-        if (!ValidationRule.firtname.test(value))
+        if (!ValidationRule.firstname.test(value))
             throw new ValidationError('invalid string content', 'First name');
     }
 }

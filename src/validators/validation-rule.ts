@@ -12,10 +12,10 @@
  * @implements {Validator}
  */
 export class ValidationRule {
-    static namon: RegExp = /^[a-zA-Z]+((['-][a-zA-Z])?[a-zA-Z]*)*$/g
-    static fullname: RegExp = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/g
+    static namon: RegExp = /^[a-zA-Z]+((['-][a-zA-Z])?[a-zA-Z]*)*$/
+    static fullname: RegExp = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/
 
-    static firtname: RegExp = /^[a-zA-Z]+((['-][a-zA-Z])?[a-zA-Z]*)*$/g
-    static middlename: RegExp = /^[a-zA-Z]+(([' -][a-zA-Z])?[a-zA-Z]*)*$/g
-    static lastname: RegExp = /^[a-zA-Z]+((['-][a-zA-Z])?[a-zA-Z]*)*$/g
+    static firstname: RegExp = /^[a-zA-Z]+((['-][a-zA-Z])?[a-zA-Z]*)*$/
+    static middlename: RegExp = /^[a-zA-Z]+(([' -][a-zA-Z])?[a-zA-Z]*)*$/
+    static lastname: RegExp = /^[a-zA-Z]+((['-][a-zA-Z])?[a-zA-Z]*)*$/
 }
