@@ -1,6 +1,6 @@
 {
   "name": "namefully",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Person name handler in the English alphabet",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
