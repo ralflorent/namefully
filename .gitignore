@@ -32,7 +32,7 @@ bld/
 [Ll]ogs/
 [Dd]ist/
 [Cc]overage
-usecases
+usecases/**/*.js
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
