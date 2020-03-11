@@ -8,11 +8,12 @@
     "dist/**/*"
   ],
   "scripts": {
-    "build:dev": "webpack --config webpack.dev.js --progress",
-    "build:prod": "webpack --config webpack.prod.js --progress",
+    "build": "webpack --config webpack.dev.js --progress",
+    "build:umd": "webpack --config webpack.prod.js --progress",
     "lint": "tslint -p tsconfig.json",
     "test": "jest --config jestconfig.json --collectCoverage=true",
-    "usecases": "npm run build:dev && node ./usecases/index.js"
+    "usecases": "npm run build && node ./usecases/index.js",
+    "publish": "tsc & npm run build:umd"
   },
   "repository": {
     "type": "git",
