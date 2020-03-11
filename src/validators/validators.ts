@@ -27,7 +27,7 @@ class NamonValidator implements Validator<string> {
      */
     validate(value: string): void {
         if (!ValidationRule.namon.test(value))
-            throw new ValidationError('invalid string content', 'Name');
+            throw new ValidationError(`invalid string content '${value}'`, 'Name');
     }
 }
 
@@ -45,7 +45,7 @@ class PrefixValidator implements Validator<string> {
     validate(value: string): void {
         const prefixes: Array<string> = Object.entries(Prefix).map(e => e[1].toLowerCase()); // values
         if (prefixes.indexOf(value.toLowerCase()) === -1)
-            throw new ValidationError('unknown value', 'Prefix');
+            throw new ValidationError(`unknown value '${value}'`, 'Prefix');
     }
 }
 
@@ -85,7 +85,7 @@ class StringNameValidator implements Validator<string> {
      */
     validate(value: string): void {
         if (!ValidationRule.fullname.test(value))
-            throw new ValidationError('invalid string content', 'Full name');
+            throw new ValidationError(`invalid string content '${value}'`, 'Full name');
     }
 }
 
@@ -104,7 +104,7 @@ class FirstnameValidator implements Validator<string> {
      */
     validate(value: string): void {
         if (!ValidationRule.firstname.test(value))
-            throw new ValidationError('invalid string content', 'First name');
+            throw new ValidationError(`invalid string content '${value}'`, 'First name');
     }
 }
 
@@ -123,7 +123,7 @@ class MiddlenameValidator implements Validator<string | string[]> {
 
         if (typeof values === 'string') {
             if (!ValidationRule.middlename.test(values))
-                throw new ValidationError('invalid string content', 'Middle name');
+                throw new ValidationError(`invalid string content '${values}'`, 'Middle name');
         } else if (values instanceof Array) {
             const namonValidator = new NamonValidator();
             (values as Array<string>).forEach(v => namonValidator.validate(v));
@@ -146,7 +146,7 @@ class LastnameValidator implements Validator<string> {
      */
     validate(value: string): void {
         if (!ValidationRule.lastname.test(value))
-            throw new ValidationError('invalid string content', 'Last name');
+            throw new ValidationError(`invalid string content '${value}'`, 'Last name');
     }
 }
 
@@ -164,7 +164,7 @@ class SuffixValidator implements Validator<string> {
     validate(value: string): void {
         const suffixes: Array<string> = Object.entries(Suffix).map(e => e[1].toLowerCase()); // values
         if (suffixes.indexOf(value.toLowerCase()) === -1)
-            throw new ValidationError('unknown value', 'Suffix');
+            throw new ValidationError(`unknown value '${value}'`, 'Suffix');
     }
 }
 
