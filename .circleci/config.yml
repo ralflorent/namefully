@@ -11,7 +11,6 @@ jobs:
           steps:
             - run: npm install
             - run: npm run lint
-            - run: npm run build:prod
             - run: npm test
       - store_artifacts:
             path: coverage
