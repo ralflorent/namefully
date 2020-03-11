@@ -2,7 +2,7 @@
 
 [![CircleCI](https://circleci.com/gh/ralflorent/namefully.svg?style=shield)](https://circleci.com/gh/ralflorent/namefully)
 
-[![codecov](https://codecov.io/gh/ralflorent/namefully/branch/master/graph/badge.svg)](https://codecov.io/gh/ralflorent/namefully)
+<!-- [![codecov](https://codecov.io/gh/ralflorent/namefully/branch/master/graph/badge.svg)](https://codecov.io/gh/ralflorent/namefully) -->
 
 ## Description
 
@@ -11,7 +11,7 @@ Person name handler in the English alphabet.
 ## Installation
 
 ```bash
-npm install --save namefully
+npm i namefully
 ```
 
 ## Dependencies
@@ -24,8 +24,8 @@ None
 // ES6 modules or typescript
 import { Namefully } from 'namefully'
 
-const nf = new Namefully('John Joe Smith')
-console.log(nf.format('L, f m')) // => SMITH, John Joe
+const name = new Namefully('John Joe Smith')
+console.log(name.format('L, f m')) // => SMITH, John Joe
 ```
 
 or
@@ -34,8 +34,8 @@ or
 // CommonJS
 const Namefully = require('namefully').Namefully
 
-const nf = new Namefully('John Joe Smith')
-console.log(nf.format('L, f m')) // => SMITH, John Joe
+const name = new Namefully('John Joe Smith')
+console.log(name.format('L, f m')) // => SMITH, John Joe
 ```
 
 The package comes with its own declaration file for TypeScript support.
@@ -49,10 +49,9 @@ The opening `[` and closing `]` brackets mean that these parts are optional. In
 other words, the most basic and typical case is a name that looks like this:
 `John Smith`, where `John` is the first name and `Smith`, the last name.
 
-**IMPORTANT**: Keep in mind that the order of appearance matters and can be
-altered through configured parameters, which we will be seeing later on. By
-default, the order of appearance is as shown above and will be used as a basis
-for future examples and use cases.
+**IMPORTANT**: *Keep in mind that the order of appearance matters and can be*
+*altered through configured parameters. By default, the order of appearance is*
+*as shown above and will be used as a basis for future examples and use cases.*
 
 Once imported, all that is required to do is to create an instance of
 `Namefully` and the rest will follow.
@@ -78,7 +77,7 @@ So, we undertand that the name can be seen as follows:
 So far, we allowed the following punctuations: comma, period, apostrophe
 (single quote), and hyphen.
 
-### Special cases not covered/considered so far
+### Special cases not being covered/considered so far
 
 - mononym:  `Plato`
 - multiple last names: `De La Cruz`, `Da Vinci`
@@ -103,6 +102,8 @@ So far, we allowed the following punctuations: comma, period, apostrophe
 |*compress*|`limit: number`, `by: NameType`|`20`, `middlename`|`string`|Compresses a name by using different forms of variants|
 |*username*|none|none|`string[]`|Suggests possible (randomly) usernames closest to the name|
 |*format*|`how: string`|`null`|`string`|Formats the name as desired|
+
+See the [use cases](usecases) for further details.
 
 ## Author
 
