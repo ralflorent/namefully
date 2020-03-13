@@ -21,7 +21,11 @@ function describeFullnameUseCase(): void {
 }
 
 function describeFirstnameUseCase(): void {
-    const names = cases.map(c => new Firstname(c[0]));
+    const names: Name[] = [];
+    names.push(...cases.filter(c => c.length === 2).map(c => new Firstname(c[0])));
+    names.push(...cases.filter(c => c.length === 3).map(c => new Firstname(c[0])));
+    names.push(...cases.filter(c => c.length === 4).map(c => new Firstname(c[1])));
+    names.push(...cases.filter(c => c.length === 5).map(c => new Firstname(c[1])));
 
     let content = '';
     content += `+==============================================================================+\n`
@@ -35,7 +39,10 @@ function describeFirstnameUseCase(): void {
 }
 
 function describeMiddlenameUseCase(): void {
-    const names = cases.map(c => new Name(c[1], Namon.MIDDLE_NAME));
+    const names: Name[] = [];
+    names.push(...cases.filter(c => c.length === 3).map(c => new Name(c[1], Namon.MIDDLE_NAME)));
+    names.push(...cases.filter(c => c.length === 4).map(c => new Name(c[2], Namon.MIDDLE_NAME)));
+    names.push(...cases.filter(c => c.length === 5).map(c => new Name(c[2], Namon.MIDDLE_NAME)));
 
     let content = '';
     content += `+==============================================================================+\n`
@@ -49,7 +56,11 @@ function describeMiddlenameUseCase(): void {
 }
 
 function describeLastnameUseCase(): void {
-    const names = cases.map(c => new Lastname(c[2]));
+    const names: Name[] = [];
+    names.push(...cases.filter(c => c.length === 2).map(c => new Lastname(c[1])));
+    names.push(...cases.filter(c => c.length === 3).map(c => new Lastname(c[2])));
+    names.push(...cases.filter(c => c.length === 4).map(c => new Lastname(c[3])));
+    names.push(...cases.filter(c => c.length === 5).map(c => new Lastname(c[3])));
 
     let content = '';
     content += `+==============================================================================+\n`

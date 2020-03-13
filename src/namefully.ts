@@ -191,8 +191,19 @@ export class Namefully {
      * Another thing to consider is that the summary is case *insensitive*. Note
      * that the letter `a` has the top frequency, be it `3`.
      */
-    describe(): string {
-        return this.stats.tostring();
+    describe(what: 'fullname' | 'firstname' | 'lastname' | 'middlename' = 'fullname'): string {
+        switch(what) {
+            case 'fullname':
+                return this.stats.tostring();
+            case 'firstname':
+                return this.fullname.firstname.describe().tostring();
+            case 'lastname':
+                return this.fullname.lastname.describe().tostring();
+            case 'middlename':
+                return this.fullname.middlename ?
+                    this.fullname.middlename.map(n => n.describe().tostring()).join('\n') :
+                    Separator.EMPTY
+        }
     }
 
     /**
