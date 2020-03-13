@@ -11,6 +11,7 @@ import {
     NamonValidator,
     PrefixValidator,
     SuffixValidator,
+    FirstnameValidator,
 } from '../../src/index';
 
 describe('Validators', () => {
@@ -133,6 +134,55 @@ describe('Validators', () => {
                 s => expect(() => validator.validate(s))
                     .toThrow(ValidationError)
             )
+        })
+    })
+
+    describe('FirstnameValidator', () => {
+        const validator = new FirstnameValidator()
+
+        beforeAll(() => {
+            jest.spyOn(ValidationRule.firstname, 'test')
+        })
+
+        test('should be a firstname validator', () => {
+            expect(validator.type).toStrictEqual(ValidatorType.FIRST_NAME)
+        })
+
+        test('should regex a name-like content', () => {
+            validator.validate('John')
+            expect(ValidationRule.firstname.test).toBeCalledWith('John')
+            expect(ValidationRule.firstname.test).toBeCalledTimes(1)
+            expect(ValidationRule.firstname.test).toReturnWith(true)
+        })
+
+        test('should validate a typical name', () => {
+            validator.validate('Jane')
+            expect(ValidationRule.firstname.test).toReturnWith(true)
+        })
+
+        test('should validate a name with apostrophe', () => {
+            validator.validate(`O'Connell`)
+            expect(ValidationRule.firstname.test).toReturnWith(true)
+        })
+
+        test('should validate a hyphenated name', () => {
+            validator.validate('Pinkett-Smith')
+            expect(ValidationRule.firstname.test).toReturnWith(true)
+        })
+
+        test('should throw error when unmatching regex', () => {
+            const func = () => validator.validate('Rodríguez')
+            expect(func).toThrow(ValidationError)
+        })
+
+        test('should throw error when no name', () => {
+            const func = () => validator.validate('')
+            expect(func).toThrow(ValidationError)
+        })
+
+        test('should throw error when contaning numbers', () => {
+            const func = () => validator.validate('name4you')
+            expect(func).toThrow(ValidationError)
         })
     })
 
