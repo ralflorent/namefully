@@ -12,6 +12,7 @@ import {
     PrefixValidator,
     SuffixValidator,
     FirstnameValidator,
+    LastnameValidator,
 } from '../../src/index';
 
 describe('Validators', () => {
@@ -168,6 +169,55 @@ describe('Validators', () => {
         test('should validate a hyphenated name', () => {
             validator.validate('Pinkett-Smith')
             expect(ValidationRule.firstname.test).toReturnWith(true)
+        })
+
+        test('should throw error when unmatching regex', () => {
+            const func = () => validator.validate('Rodríguez')
+            expect(func).toThrow(ValidationError)
+        })
+
+        test('should throw error when no name', () => {
+            const func = () => validator.validate('')
+            expect(func).toThrow(ValidationError)
+        })
+
+        test('should throw error when contaning numbers', () => {
+            const func = () => validator.validate('name4you')
+            expect(func).toThrow(ValidationError)
+        })
+    })
+
+    describe('LastnameValidator', () => {
+        const validator = new LastnameValidator()
+
+        beforeAll(() => {
+            jest.spyOn(ValidationRule.lastname, 'test')
+        })
+
+        test('should be a lastname validator', () => {
+            expect(validator.type).toStrictEqual(ValidatorType.LAST_NAME)
+        })
+
+        test('should regex a name-like content', () => {
+            validator.validate('Smith')
+            expect(ValidationRule.lastname.test).toBeCalledWith('Smith')
+            expect(ValidationRule.lastname.test).toBeCalledTimes(1)
+            expect(ValidationRule.lastname.test).toReturnWith(true)
+        })
+
+        test('should validate a typical name', () => {
+            validator.validate('Florent')
+            expect(ValidationRule.lastname.test).toReturnWith(true)
+        })
+
+        test('should validate a name with apostrophe', () => {
+            validator.validate(`O'Connell`)
+            expect(ValidationRule.lastname.test).toReturnWith(true)
+        })
+
+        test('should validate a hyphenated name', () => {
+            validator.validate('Pinkett-Smith')
+            expect(ValidationRule.lastname.test).toReturnWith(true)
         })
 
         test('should throw error when unmatching regex', () => {
