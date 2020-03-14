@@ -5,7 +5,7 @@
  * @author Ralph Florent <ralflornt@gmail.com>
  */
 
-import { Namefully } from '../src/index';
+import { Namefully, Firstname, Lastname, Parser, Fullname } from '../src/index';
 
 describe('Namefully', () => {
 
@@ -177,6 +177,14 @@ describe('Namefully', () => {
         test('should output just a middlename', () => {
             expect(name.format('m')).toEqual(middlename)
         })
+
+        test('should output the full name by default', () => {
+            expect(name.format()).toEqual(fullname)
+        })
+
+        test('should output the official name', () => {
+            expect(name.format('O')).toEqual(`Mr SMITH, John Joe`)
+        })
     })
 
 
@@ -190,6 +198,101 @@ describe('Namefully', () => {
     //     ].join(' ')
     //     const name = new Namefully(fullname, { orderedBy: Namon.LAST_NAME })
     // })
-    // TODO: to be continued...
+
+    describe('Build Namefully', () => {
+
+        test('should create an instance with raw string', () => {
+            const name = new Namefully('John Smith')
+            expect(name).toBeTruthy()
+        })
+
+        // test('should confirm that name is newed using StringParser', () => {
+        //     const name = new Namefully('John Smith')
+        //     expect(StringParser).toBeCalledTimes(1) // using class mock impl
+        // })
+
+        test('should create an instance with array string', () => {
+            const name = new Namefully(['John', 'Smith'])
+            expect(name).toBeTruthy()
+        })
+
+        test('should create an instance with class Name', () => {
+            const name = new Namefully([ new Firstname('John'), new Lastname('Smith') ])
+            expect(name).toBeTruthy()
+        })
+
+        test('should create an instance with JSON object', () => {
+            const name = new Namefully({ firstname: 'John', lastname: 'Smith' })
+            expect(name).toBeTruthy()
+        })
+
+        test('should create an instance with a custom parser', () => {
+            class CustomParser implements Parser<string> {
+                constructor(public raw: string) {}
+                parse(): Fullname {
+                    // omit parsing procedure
+                    return {
+                        firstname: new Firstname('John'),
+                        lastname: new Lastname('Smith')
+                    }
+                }
+            }
+            const name = new Namefully(null, { parser: new CustomParser('') })
+            expect(name).toBeTruthy()
+        })
+
+        test('should throw error when wrong string array', () => {
+            const func = () => {
+                new Namefully(['John', 'Smith', undefined, null])
+            }
+            expect(func).toThrow(Error)
+        })
+
+        test('should throw error when wrong Name array', () => {
+            const func = () => {
+                new Namefully([
+                    new Firstname('John'),
+                    new Lastname('Smith'),
+                    null, undefined
+                ])
+            }
+            expect(func).toThrow(Error)
+        })
+
+        test('should throw error when wrong array', () => {
+            const func = () => {
+                new Namefully([null, undefined])
+            }
+            expect(func).toThrow(Error)
+        })
+
+        test('should throw error when wrong Name array', () => {
+            const func = () => {
+                new Namefully([
+                    new Firstname('John'),
+                    new Lastname('Smith'),
+                    null, undefined
+                ])
+            }
+            expect(func).toThrow(Error)
+        })
+
+        test('should throw error when wrong object values', () => {
+            const func = () => {
+                const json = {'firstname': 'John', 'lastname': 'Smith' }
+                json['firstname'] = null
+                json['lastname'] = undefined
+                new Namefully(json)
+            }
+            expect(func).toThrow(Error)
+        })
+
+        test('should throw error when wrong data input', () => {
+            [null, undefined, ''].forEach(
+                e => expect(() => { new Namefully(e) }).toThrow(Error)
+            )
+        })
+
+    })
 
 })
