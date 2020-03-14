@@ -33,4 +33,3 @@ workflows:
                 branches:
                     only:
                         - master
-                        - feature/tests
