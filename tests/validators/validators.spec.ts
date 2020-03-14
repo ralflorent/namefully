@@ -13,6 +13,12 @@ import {
     SuffixValidator,
     FirstnameValidator,
     LastnameValidator,
+    StringNameValidator,
+    MiddlenameValidator,
+    FullnameValidator,
+    NamaValidator,
+    ArrayStringValidator,
+    ArrayNameValidator,
 } from '../../src/index';
 
 describe('Validators', () => {
@@ -232,6 +238,104 @@ describe('Validators', () => {
 
         test('should throw error when contaning numbers', () => {
             const func = () => validator.validate('name4you')
+            expect(func).toThrow(ValidationError)
+        })
+    })
+
+    describe('StringNameValidator', () => {
+        const validator = new StringNameValidator()
+
+        beforeAll(() => {
+            jest.spyOn(ValidationRule.fullname, 'test')
+        })
+
+        test('should be a string array validator', () => {
+            expect(validator.type).toStrictEqual(ValidatorType.FULL_NAME)
+        })
+
+        test('should regex a name-like content', () => {
+            validator.validate('Mrs Jada Joanna Pinkett-Smith II')
+            expect(ValidationRule.fullname.test).toBeCalledWith('Mrs Jada Joanna Pinkett-Smith II')
+            expect(ValidationRule.fullname.test).toBeCalledTimes(1)
+            expect(ValidationRule.fullname.test).toReturnWith(true)
+        })
+
+        test('should validate a typical name', () => {
+            validator.validate('Dominique Toreto')
+            expect(ValidationRule.fullname.test).toReturnWith(true)
+        })
+
+        test('should validate a name with apostrophe', () => {
+            validator.validate(`Jean O'Connell`)
+            expect(ValidationRule.fullname.test).toReturnWith(true)
+        })
+
+        test('should validate a hyphenated name', () => {
+            validator.validate('Angelina Jolie-Pitt')
+            expect(ValidationRule.lastname.test).toReturnWith(true)
+        })
+
+        test('should throw error when unmatching regex', () => {
+            const func = () => validator.validate('Carlos Slim Rodríguez')
+            expect(func).toThrow(ValidationError)
+        })
+
+        test('should throw error when no name', () => {
+            const func = () => validator.validate('')
+            expect(func).toThrow(ValidationError)
+        })
+
+        test('should throw error when contaning numbers', () => {
+            const func = () => validator.validate('4nn ka7rinn')
+            expect(func).toThrow(ValidationError)
+        })
+    })
+
+    describe('MiddlenameValidator', () => {
+        const validator = new MiddlenameValidator()
+
+        beforeAll(() => {
+            jest.spyOn(ValidationRule.middlename, 'test')
+        })
+
+        test('should be a string array validator', () => {
+            expect(validator.type).toStrictEqual(ValidatorType.MIDDLE_NAME)
+        })
+
+        test('should regex a name-like content', () => {
+            validator.validate('Johnathan')
+            expect(ValidationRule.middlename.test).toBeCalledWith('Johnathan')
+            expect(ValidationRule.middlename.test).toBeCalledTimes(1)
+            expect(ValidationRule.middlename.test).toReturnWith(true)
+        })
+
+        test('should validate a name using array', () => {
+            validator.validate(['Dominique', 'DiPierro'])
+            expect(ValidationRule.namon.test).toReturnWith(true)
+        })
+
+        test('should validate a name with apostrophe', () => {
+            validator.validate(`O'Connell`)
+            expect(ValidationRule.middlename.test).toReturnWith(true)
+        })
+
+        test('should validate a hyphenated name', () => {
+            validator.validate('Jolie-Pitt')
+            expect(ValidationRule.middlename.test).toReturnWith(true)
+        })
+
+        test('should throw error when unmatching regex', () => {
+            const func = () => validator.validate(['Carlos','Rodríguez'])
+            expect(func).toThrow(ValidationError)
+        })
+
+        test('should throw error when no name', () => {
+            const func = () => validator.validate(['', null, undefined])
+            expect(func).toThrow(ValidationError)
+        })
+
+        test('should throw error when contaning numbers', () => {
+            const func = () => validator.validate('4nn ka7rinn')
             expect(func).toThrow(ValidationError)
         })
     })
