@@ -9,7 +9,7 @@ import {
     ArrayStringValidator,
     ArrayNameValidator,
     NamaValidator,
-} from '../validators/index';
+} from '@validators/index';
 import {
     Namon,
     Separator,
@@ -20,7 +20,7 @@ import {
     Fullname,
     Prefix,
     Suffix
-} from '../models/index';
+} from '@models/index';
 
 
 /**

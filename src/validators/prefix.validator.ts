@@ -4,7 +4,7 @@
  * Created on March 15, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
  */
-import { Prefix } from '../models/index';
+import { Prefix } from '@models/index';
 import { Validator, ValidatorType, ValidationError } from './index';
 
 /**
