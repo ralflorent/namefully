@@ -184,7 +184,7 @@ class NamaValidator implements Validator<Nama> {
     validate(value: Nama): void {
 
         const entries = Object.entries(value);
-        if (entries.length <= 1 && entries.length > 5)
+        if (entries.length <= 1 || entries.length > 5)
             throw new ValidationError('incomplete JSON object', 'Nama')
 
         const validators = {
@@ -215,7 +215,7 @@ class ArrayStringValidator implements Validator<string[]> {
      */
     validate(values: string[]): void {
 
-        if (values.length <= 1 && values.length > 5)
+        if (values.length <= 1 || values.length > 5)
             throw new ValidationError('must be an array of 2 - 5 elements', 'Array of names')
 
         const pf = new PrefixValidator();
@@ -263,9 +263,9 @@ class ArrayNameValidator implements Validator<Name[]> {
      * @param {Array<Name>} value data to validate
      */
     validate(values: Array<Name>): void {
-        if (values.length <= 1 && values.length > 5) {
+        if (values.length <= 1 || values.length > 5)
             throw new ValidationError(`must be an array of 2 - 5 'Name's`, 'Array of Names');
-        }
+
         const validators = {
             [Namon.PREFIX]: new PrefixValidator(),
             [Namon.FIRST_NAME]: new FirstnameValidator(),
