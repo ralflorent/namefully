@@ -52,7 +52,7 @@ export class Namefully {
     constructor(
         raw: string | Array<string> | Array<Name> | Nama,
         options?: Partial<{
-            orderedBy: Namon,
+            orderedBy: 'firstname' | 'lastname',
             separator: Separator, // for ending suffix
             parser: Parser<string> // (user-defined) custom parser
         }>
@@ -66,27 +66,30 @@ export class Namefully {
 
     /**
      * Gets the full name ordered as configured
+     * @param {'firstname'|'lastname'} orderedBy force to order by first or last
+     * name by overriding the preset configuration
      * @returns {string} the suffix
      *
      * @see {format} to alter manually the order of appearance of the full name.
      * For example, ::format('l f m') outputs `lastname firstname middlename`.
      */
-    getFullname(): string {
+    getFullname(orderedBy: 'firstname' | 'lastname' = 'firstname'): string {
+        orderedBy = orderedBy || this.config.orderedBy; // override config
         const nama: string[] = [];
 
         if (this.fullname.prefix)
             nama.push(this.fullname.prefix)
 
-        switch (this.config.orderedBy) {
-            case Namon.FIRST_NAME:
+        switch (orderedBy) {
+            case 'firstname':
                 nama.push(this.getFirstname());
                 nama.push(...this.getMiddlenames());
                 nama.push(this.getLastname());
                 break;
-            case Namon.LAST_NAME:
+            case 'lastname':
                 nama.push(this.getLastname());
-                nama.push(...this.getMiddlenames());
                 nama.push(this.getFirstname());
+                nama.push(...this.getMiddlenames());
                 break;
         }
 
@@ -148,18 +151,50 @@ export class Namefully {
 
     /**
      * Gets the initials of the full name
+     * @param {'firstname'|'lastname'} orderedBy force to order by first or last
+     * name by overriding the preset configuration
+     * @param {boolean} [withMid] whether to include middle names's
      * @returns {Array<string>} the initials
+     *
+     * @example
+     * Given the names:
+     * - `John Smith` => ['J', 'S']
+     * - `John Ben Smith` => ['J', 'S']
+     * when `withMid` is set to true:
+     * - `John Ben Smith` => ['J', 'B', 'S']
+     *
+     * **NOTE**:
+     * Ordered by last name obeys the following format:
+     *  `lastname firstname [middlename]`
+     * which means that if no middle name was set, setting `withMid` to true
+     * will output nothing and warn the end user about it.
      */
-    getInitials(): string[] {
-        // TODO: not considering middle names for now
-        const initials = [];
-        if (this.config.orderedBy === Namon.FIRST_NAME) {
-            initials.push(...this.fullname.firstname.getInitials());
-            initials.push(...this.fullname.lastname.getInitials());
-        } else {
-            initials.push(...this.fullname.lastname.getInitials());
-            initials.push(...this.fullname.firstname.getInitials());
+    getInitials(
+        orderedBy: 'firstname' | 'lastname' = 'firstname',
+        withMid: boolean = false
+    ): string[] {
+
+        const midInits = this.fullname.middlename ?
+            this.fullname.middlename.map(n => n.getInitials()) : [];
+
+        if (withMid && !this.fullname.middlename) {
+            console.warn('No initials for middle names since none was set.');
         }
+
+        const initials = [];
+        switch(orderedBy) {
+            case 'firstname':
+                initials.push(...this.fullname.firstname.getInitials());
+                if (withMid) midInits.forEach(m => initials.push(...m));
+                initials.push(...this.fullname.lastname.getInitials());
+                break;
+            case 'lastname':
+                initials.push(...this.fullname.lastname.getInitials());
+                initials.push(...this.fullname.firstname.getInitials());
+                if (withMid) midInits.forEach(m => initials.push(...m));
+                break;
+        }
+
         return initials;
     }
 

@@ -33,7 +33,7 @@ export interface Fullname {
  * @interface
  */
 export interface Config {
-    orderedBy: Namon;
+    orderedBy: 'firstname' | 'lastname';
     separator: Separator; // ending suffix
     parser?: Parser<string>; // (user-defined) custom parser
 }

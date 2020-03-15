@@ -1,6 +1,7 @@
 # Use cases
 
-The part intends to explain how to use `namefully` and what to expect.
+This part of the utility intends to explain how to use `namefully` and what to
+expect the output to be.
 
 Run the following command:
 

@@ -4,7 +4,7 @@
  * Created on March 07, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
  */
-import { Namon, Separator, Config } from '../models/index';
+import { Separator, Config } from '@models/index';
 
 /**
  * The current version of `Namefully`.
@@ -19,6 +19,6 @@ export const version = '1.0.3';
  * @default
  */
 export const CONFIG: Config = {
-    orderedBy: Namon.FIRST_NAME,
+    orderedBy: 'firstname',
     separator: Separator.SPACE,
 }
