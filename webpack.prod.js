@@ -11,6 +11,9 @@ const path = require('path');
 /* To access webpack runtime */
 const webpack = require('webpack');
 
+/* Load modules whose location is specified in the paths section of tsconfig.json */
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+
 /* Cleaner for the context path: .dist/ (no need for rimraf) */
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
@@ -38,7 +41,8 @@ module.exports = {
 
     resolve: {
         modules: ['node_modules', path.join(__dirname, 'src')],
-        extensions: ['.js', '.ts']
+        extensions: ['.js', '.ts'],
+        plugins: [new TsconfigPathsPlugin()],
     },
 
     optimization: {

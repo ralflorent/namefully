@@ -8,6 +8,9 @@
 /* Handle OS path resolution: absolute, relative paths */
 const path = require('path');
 
+/* Load modules whose location is specified in the paths section of tsconfig.json */
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+
 /**
  * Merge this with common configuration
  */
@@ -33,6 +36,7 @@ module.exports = {
             path.join(__dirname, 'usecases')
         ],
         extensions: ['.js', '.ts'],
+        plugins: [new TsconfigPathsPlugin()],
     },
 
     module: {
