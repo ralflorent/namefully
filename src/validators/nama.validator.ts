@@ -10,7 +10,7 @@ import {
     LastnameValidator, MiddlenameValidator, SuffixValidator
 } from './index';
 
- /**
+/**
  * Represents a `Nama` validator to help the nama parser
  * @class
  * @implements {Validator}
