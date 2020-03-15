@@ -16,7 +16,7 @@ import {
     StringNameValidator,
     MiddlenameValidator,
     FullnameValidator,
-    NamaValidator,
+    NamaValidator, Nama,
     ArrayStringValidator,
     ArrayNameValidator,
 } from '../../src/index';
@@ -338,6 +338,60 @@ describe('Validators', () => {
             const func = () => validator.validate('4nn ka7rinn')
             expect(func).toThrow(ValidationError)
         })
+    })
+
+    describe('NamaValidator', () => {
+        const validator = new NamaValidator()
+
+        test('should be a nama validator', () => {
+            expect(validator.type).toStrictEqual(ValidatorType.NAMA)
+        })
+
+        test('should throw error when wrong entries', () => {
+            const func = () => {
+                new NamaValidator().validate({ firstname: 'John', lastname: '' })
+            }
+            expect(func).toThrow(ValidationError)
+        })
+    })
+
+    describe('ArrayStringValidator', () => {
+        const validator = new ArrayStringValidator()
+
+        test('should be a string array validator', () => {
+            expect(validator.type).toStrictEqual(ValidatorType.ARR_STRING)
+        })
+
+        test('should throw error when insufficient entries', () => {
+            [
+                [], ['John'], ['', '', '', '', '', '', '']
+            ].map(arr =>
+                expect(() => new ArrayStringValidator()
+                    .validate(arr))
+                    .toThrow(ValidationError)
+            )
+        })
+
+        test('should throw error when wrong entries', () => {
+            const func = () => new ArrayStringValidator().validate(['', '', ''])
+            expect(func).toThrow(ValidationError)
+        })
+
+        // test('should validate and map 2 entries to firstname and lastname', () => {
+        //     // TODO: repeat for 3, 4, 5 entries
+        //     const name = ['John', 'Smith']
+        //     validator.validate(name)
+        //     const mockFirstnameValidate = jest.fn()
+        //     const mockMiddlenameValidate = jest.fn()
+        //     const mockLastnameValidate = jest.fn()
+        //     const mockPrefixValidate = jest.fn()
+        //     const mockSuffixValidate = jest.fn()
+        //     expect(mockFirstnameValidate).toBeCalledTimes(1)
+        //     expect(mockLastnameValidate).toBeCalledTimes(1)
+        //     expect(mockPrefixValidate).not.toBeCalled()
+        //     expect(mockSuffixValidate).not.toBeCalled()
+        //     expect(mockMiddlenameValidate).not.toBeCalled()
+        // })
     })
 
 })
