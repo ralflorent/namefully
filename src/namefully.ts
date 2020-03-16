@@ -5,22 +5,39 @@
  * @author Ralph Florent <ralflornt@gmail.com>
  *
  * @license GPL-3.0
- * @see {@link https://github.com/ralflorent/namefully|LICENSE} for more info.
+ * @see {@link https://github.com/ralflorent/namefully|namefully} for more info.
  */
-import { Parser, NamaParser, StringParser, ArrayNameParser, ArrayStringParser, CONFIG } from './core/index';
-import { Fullname, Name, Nama, Namon, Separator, Summary, Config } from './models/index';
-import { FullnameValidator } from './validators/index';
+import { Parser, NamaParser, StringParser, ArrayNameParser, ArrayStringParser, CONFIG } from '@core/index';
+import { Fullname, Name, Nama, Namon, Separator, Summary, Config } from '@models/index';
+import { FullnameValidator } from '@validators/index';
 
 /**
  * Person name handler in the English alphabet
  * @class
  * @classdesc
- * Note that the name standards used for the current version of this library are as
- * follows:
+ * `Namefully` does not magically guess which part of the name is what. It relies
+ * actually on how the developer indicates the roles of the name parts so that
+ * it, internally, can perform certain operations and saves the developer some
+ * calculations/processings. Nevertheless, Namefully can be constructed using
+ * distinct raw data shape. This is intended to give some flexibility to the
+ * developer so that he or she is not bound to a particular data format. Please,
+ * do follow closely the APIs to know how to properly use it in order to avoid
+ * some errors (mainly validation's).
+ *
+ * `Namefully` also works like a trap door. Once a raw data is provided and
+ * validated, a developer can only ACCESS in a vast amount of, yet effective ways
+ * the name info. NO EDITING is possible. If the name is mistaken, a new instance
+ * of `Namefully` must be created. Remember, this utility's primary objective is
+ * to help to **handle** a person name.
+ *
+ * Note that the name standards used for the current version of this library are
+ * as follows:
  *      [Prefix] Firstname [Middlename] Lastname [Suffix]
- * The opening `[` and closing `]` brackets mean that these parts are optional. In
- * other words, the most basic and typical case is a name that looks like this:
+ * The opening `[` and closing `]` brackets mean that these parts are optional.
+ * In other words, the most basic and typical case is a name that looks like this:
  * `John Smith`, where `John` is the first name and `Smith`, the last name.
+ * @see https://departments.weber.edu/qsupport&training/Data_Standards/Name.htm
+ * for more info on name standards.
  *
  * **IMPORTANT**: Keep in mind that the order of appearance matters and can be
  * altered through configured parameters, which we will be seeing later on. By
@@ -30,17 +47,27 @@ import { FullnameValidator } from './validators/index';
  * Once imported, all that is required to do is to create an instance of
  * `Namefully` and the rest will follow.
  *
- * Terminologies used across the library:
+ * Some terminologies used across the library are:
  * - namon: piece of a name (e.g., firstname)
  * - nama: pieces of a name (e.g., firstname + lastname)
  *
- * @see https://departments.weber.edu/qsupport&training/Data_Standards/Name.htm for
- * more info on name standards.
+ * Happy naming!
  */
 export class Namefully {
-
+    /**
+     * Holds a json-like high quality of data
+     * @see {Fullname} description for more details
+     */
     private fullname: Fullname;
+    /**
+     * Holds statistical info on the name
+     * @see {Summary} class description for more details
+     */
     private stats: Summary;
+    /**
+     * Holds a json-like copy of the preset configuration
+     * @see {Config} description for more details
+     */
     private config: Config;
 
     /**
@@ -52,9 +79,10 @@ export class Namefully {
     constructor(
         raw: string | Array<string> | Array<Name> | Nama,
         options?: Partial<{
-            orderedBy: Namon,
-            separator: Separator, // for ending suffix
-            parser: Parser<string> // (user-defined) custom parser
+            orderedBy: 'firstname' | 'lastname',
+            separator: Separator, // how to split string names
+            ending: Separator, // for ending suffix
+            parser: Parser<any> // (user-defined) custom parser
         }>
     ) {
         // well, first thing first
@@ -66,32 +94,35 @@ export class Namefully {
 
     /**
      * Gets the full name ordered as configured
+     * @param {'firstname'|'lastname'} orderedBy force to order by first or last
+     * name by overriding the preset configuration
      * @returns {string} the suffix
      *
      * @see {format} to alter manually the order of appearance of the full name.
      * For example, ::format('l f m') outputs `lastname firstname middlename`.
      */
-    getFullname(): string {
+    getFullname(orderedBy?: 'firstname' | 'lastname'): string {
+        orderedBy = orderedBy || this.config.orderedBy; // override config
         const nama: string[] = [];
 
         if (this.fullname.prefix)
             nama.push(this.fullname.prefix)
 
-        switch (this.config.orderedBy) {
-            case Namon.FIRST_NAME:
+        switch (orderedBy) {
+            case 'firstname':
                 nama.push(this.getFirstname());
                 nama.push(...this.getMiddlenames());
                 nama.push(this.getLastname());
                 break;
-            case Namon.LAST_NAME:
+            case 'lastname':
                 nama.push(this.getLastname());
-                nama.push(...this.getMiddlenames());
                 nama.push(this.getFirstname());
+                nama.push(...this.getMiddlenames());
                 break;
         }
 
         if (this.fullname.suffix) {
-            const suffix = this.config.separator !== Separator.SPACE ?
+            const suffix = this.config.ending !== Separator.SPACE ?
                 `${this.config.separator} ${this.fullname.suffix}` : // => ', PhD'
                 this.fullname.suffix;
             nama.push(suffix);
@@ -121,9 +152,7 @@ export class Namefully {
      * @returns {Array<string>} the middle names
      */
     getMiddlenames(): string[] {
-        return this.fullname.middlename ?
-            this.fullname.middlename.map(n => n.namon) :
-            [];
+        return this.fullname.middlename.map(n => n.namon);
     }
 
     /**
@@ -148,18 +177,50 @@ export class Namefully {
 
     /**
      * Gets the initials of the full name
+     * @param {'firstname'|'lastname'} orderedBy force to order by first or last
+     * name by overriding the preset configuration
+     * @param {boolean} [withMid] whether to include middle names's
      * @returns {Array<string>} the initials
+     *
+     * @example
+     * Given the names:
+     * - `John Smith` => ['J', 'S']
+     * - `John Ben Smith` => ['J', 'S']
+     * when `withMid` is set to true:
+     * - `John Ben Smith` => ['J', 'B', 'S']
+     *
+     * **NOTE**:
+     * Ordered by last name obeys the following format:
+     *  `lastname firstname [middlename]`
+     * which means that if no middle name was set, setting `withMid` to true
+     * will output nothing and warn the end user about it.
      */
-    getInitials(): string[] {
-        // TODO: not considering middle names for now
-        const initials = [];
-        if (this.config.orderedBy === Namon.FIRST_NAME) {
-            initials.push(...this.fullname.firstname.getInitials());
-            initials.push(...this.fullname.lastname.getInitials());
-        } else {
-            initials.push(...this.fullname.lastname.getInitials());
-            initials.push(...this.fullname.firstname.getInitials());
+    getInitials(
+        orderedBy?: 'firstname' | 'lastname',
+        withMid: boolean = false
+    ): string[] {
+        orderedBy = orderedBy || this.config.orderedBy; // override config
+        const midInits = this.fullname.middlename ?
+            this.fullname.middlename.map(n => n.getInitials()) : [];
+
+        if (withMid && !this.fullname.middlename) {
+            console.warn('No initials for middle names since none was set.');
         }
+
+        const initials = [];
+        switch(orderedBy) {
+            case 'firstname':
+                initials.push(...this.fullname.firstname.getInitials());
+                if (withMid) midInits.forEach(m => initials.push(...m));
+                initials.push(...this.fullname.lastname.getInitials());
+                break;
+            case 'lastname':
+                initials.push(...this.fullname.lastname.getInitials());
+                initials.push(...this.fullname.firstname.getInitials());
+                if (withMid) midInits.forEach(m => initials.push(...m));
+                break;
+        }
+
         return initials;
     }
 
@@ -269,7 +330,7 @@ export class Namefully {
             middlename.map(n => n.getInitials())
             .join(Separator.PERIOD)
             .concat(Separator.PERIOD) :
-            ''
+            Separator.EMPTY
         ;
         let cname = '';
         switch (by) {
@@ -383,7 +444,8 @@ export class Namefully {
      * @param parser customized or user-defined parser to get the full name
      */
     private initialize<T>(parser: Parser<T>): void {
-        this.fullname = parser.parse();
+        const { orderedBy, separator } = this.config;
+        this.fullname = parser.parse({ orderedBy, separator });
     }
 
     /**
@@ -455,14 +517,13 @@ export class Namefully {
                 this.initialize(new ArrayNameParser(raw as Array<Name>));
 
             } else {
-                // typescript should stop them, but let's be paranoid (for JS users)
+                // typescript should stop them, but let's be paranoid (for JS developers)
                 throw new Error(`Cannot parse raw data as arrays that are not of '${Name.name}' or string`);
             }
         } else if (raw instanceof Object) { // check for json object
 
             for (const entry of Object.entries(raw)) { // make sure keys are correct
                 const key = entry[0], value = entry[1];
-                // FIXME: middlename in singular form
                 if (['firstname', 'lastname', 'middlename', 'prefix', 'suffix'].indexOf(key) === -1)
                     throw new Error(`Cannot parse raw data as json object that does not contains keys of '${Namon}'`);
 
@@ -471,7 +532,7 @@ export class Namefully {
             }
             this.initialize(new NamaParser(raw as Nama));
         } else {
-            // typescript should stop them, but let's be paranoid again (for JS users)
+            // typescript should stop them, but let's be paranoid again (for JS developers)
             throw new Error(`Cannot parse raw data. Review the data type expected.`);
         }
         // paranoid coder mode: on :P

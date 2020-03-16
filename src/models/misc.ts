@@ -4,16 +4,8 @@
  * Created on March 07, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
  */
-import { Parser } from '../core/index';
-import {
-    Name,
-    Firstname,
-    Lastname,
-    Prefix,
-    Suffix,
-    Separator,
-    Namon
-} from './index';
+import { Parser } from '@core/index';
+import { Name, Firstname, Lastname, Prefix, Suffix, Separator } from './index';
 
 /**
  * Interface for JSON signature that represents the full name
@@ -25,7 +17,6 @@ export interface Fullname {
     middlename?: Name[];
     prefix?: Prefix;
     suffix?: Suffix;
-    // nickname?: Name;
 }
 
 /**
@@ -33,9 +24,10 @@ export interface Fullname {
  * @interface
  */
 export interface Config {
-    orderedBy: Namon;
-    separator: Separator; // ending suffix
-    parser?: Parser<string>; // (user-defined) custom parser
+    orderedBy: 'firstname' | 'lastname';
+    separator: Separator; // how to split names
+    ending: Separator; // ending suffix
+    parser?: Parser<any>; // (user-defined) custom parser
 }
 
 /**
@@ -47,5 +39,22 @@ export interface Nama {
     middlename?: string;
     lastname: string;
     suffix?: string;
-    // nickname?: string;
 }
+
+/**
+ * @interface Index represents the JSON signature for indexing name parts
+ */
+interface Index<T> {
+    prefix: T;
+    firstname: T;
+    middlename: T;
+    lastname: T;
+    suffix: T;
+}
+
+/**
+ * @interface NameIndex represents the JSON signature for indexing name parts
+ * using numbered index
+ * @extends Index<number>
+ */
+export interface NameIndex extends Index<number> {}

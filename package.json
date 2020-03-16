@@ -13,6 +13,7 @@
     "lint": "tslint -p tsconfig.json",
     "test": "jest --collectCoverage=true",
     "usecases": "npm run build && node ./usecases/index.js",
+    "uc": "npm run usecases",
     "publish": "tsc & npm run build:umd"
   },
   "repository": {
@@ -52,6 +53,7 @@
     "terser-webpack-plugin": "^2.3.5",
     "ts-jest": "^25.2.1",
     "ts-loader": "^6.2.1",
+    "tsconfig-paths-webpack-plugin": "^3.2.0",
     "tslint": "^6.0.0",
     "typescript": "^3.8.3",
     "webpack": "^4.42.0",

@@ -6,7 +6,7 @@
  */
 
 /**
- * Enum `Namon` contains the finite set of a representative piece of a name.
+ * Enum `Namon` contains the finite set of a representative piece of a name
  * @readonly
  * @enum {string}
  * The word `Namon` is the singular form used to refer to a chunk|part|piece of
@@ -18,8 +18,6 @@ export enum Namon {
     MIDDLE_NAME = 'middlename',
     FIRST_NAME = 'firstname',
     SUFFIX = 'suffix',
-    // NICK_NAME = 'nickname',
-    // MONO_NAME = 'mononame'
 }
 
 /**
@@ -81,18 +79,17 @@ export enum Suffix {
     DOCTOR_OF_OSTEO = 'DO'
 }
 
-
 /**
  * Enum for the separator values representing some of the ASCII characters
  * @readonly
  * @enum {string}
  */
 export enum Separator {
-    EMPTY = '',
-    SPACE = ' ',
+    COLON = ':',
     COMMA = ',',
-    PERIOD = '.',
+    EMPTY = '',
     HYPHEN = '-',
+    PERIOD = '.',
+    SPACE = ' ',
     UNDERSCORE = '_',
-    APOSTROPHE = `'`,
 }

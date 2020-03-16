@@ -1,8 +1,9 @@
 # namefully
 
-[![CircleCI](https://circleci.com/gh/ralflorent/namefully.svg?style=shield)](https://circleci.com/gh/ralflorent/namefully)
-
-[![codecov](https://codecov.io/gh/ralflorent/namefully/branch/master/graph/badge.svg)](https://codecov.io/gh/ralflorent/namefully)
+[![npm version][version-img]][version-url]
+[![CircleCI][circleci-img]][circleci-url]
+[![Coverage Status][codecov-img]][codecov-url]
+[![GPL-3.0 License][license-img]][license-url]
 
 ## Description
 
@@ -112,3 +113,12 @@ Developed by [Ralph Florent](https://github.com/ralflorent)
 ## License
 
 The underlying content of this project is licensed under [GPL-3.0](LICENSE).
+
+[version-img]: https://img.shields.io/npm/v/namefully
+[version-url]: https://www.npmjs.com/package/namefully
+[circleci-img]: https://circleci.com/gh/ralflorent/namefully.svg?style=shield
+[circleci-url]: https://circleci.com/gh/ralflorent/namefully
+[codecov-img]: https://codecov.io/gh/ralflorent/namefully/branch/master/graph/badge.svg
+[codecov-url]: https://codecov.io/gh/ralflorent/namefully
+[license-img]: https://img.shields.io/npm/l/namefully
+[license-url]: http://www.gnu.org/licenses/gpl-3.0.en.html

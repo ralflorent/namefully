@@ -11,7 +11,7 @@ import compressCases from './compress.usecase';
 import formatCases from './format.usecase';
 
 // execute all cases
-// Object.entries(namefullyCases).forEach(e => (e[1] as Function)());
+Object.entries(namefullyCases).forEach(e => (e[1] as Function)());
 Object.entries(describeCases).forEach(e => (e[1] as Function)());
 Object.entries(shortenCases).forEach(e => (e[1] as Function)());
 Object.entries(compressCases).forEach(e => (e[1] as Function)());
