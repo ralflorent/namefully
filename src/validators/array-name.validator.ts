@@ -14,6 +14,10 @@ import {
  * Represents a validator to help the array `Name` parser
  * @class
  * @classdesc
+ * This validator validates a array of `Name` objects following a specific order
+ * based on the count of elements. It is expected that the array has to be
+ * between two and five elements.
+ *
  */
 export default class ArrayNameValidator implements Validator<Name[]> {
     readonly type: ValidatorType = ValidatorType.ARR_NAMES;
@@ -22,7 +26,7 @@ export default class ArrayNameValidator implements Validator<Name[]> {
      * @param {Array<Name>} value data to validate
      */
     validate(values: Array<Name>): void {
-        if (values.length <= 1 && values.length > 5) {
+        if (values.length <= 1 || values.length > 5) {
             throw new ValidationError(`must be an array of 2 - 5 'Name's`, 'Array of Names');
         }
         const validators = {

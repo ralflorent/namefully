@@ -55,7 +55,7 @@ export class Namefully {
             orderedBy: 'firstname' | 'lastname',
             separator: Separator, // how to split string names
             ending: Separator, // for ending suffix
-            parser: Parser<string> // (user-defined) custom parser
+            parser: Parser<any> // (user-defined) custom parser
         }>
     ) {
         // well, first thing first
@@ -125,9 +125,7 @@ export class Namefully {
      * @returns {Array<string>} the middle names
      */
     getMiddlenames(): string[] {
-        return this.fullname.middlename ?
-            this.fullname.middlename.map(n => n.namon) :
-            [];
+        return this.fullname.middlename.map(n => n.namon);
     }
 
     /**

@@ -13,8 +13,8 @@ import { Parser, ArrayStringParser } from './index';
  * @class
  * @implements {Parser}
  * @classdesc
- * This parser parses a string name using a separator, if set, or simply use space
- * as a basis for the split.
+ * This parser parses a string name using a separator, if set, or simply using
+ * the space character <' '> as a basis for the split.
  *
  * **NOTE**:
  * A string name is basically a string type containing the name parts differentiated
@@ -32,11 +32,15 @@ import { Parser, ArrayStringParser } from './index';
  * separator different than <space> will definitely throw an error. So, if the proper
  * proper of doing when `De La Cruz` is the last name:
  * ```
- *  > const name = new Namefully('Maria:De La Cruz', { orderedBy: Separator.COLON })
+ *  > const name = new Namefully('Maria:De La Cruz', { separator: Separator.COLON })
+ *  > console.log(name.getLastname())
+ *  De La Cruz
  * ```
  * Or
  * ```
  *  > const name = new Namefully(['Maria', 'De La Cruz'])
+ *  > console.log(name.getLastname())
+ *  De La Cruz
  * ```
  */
 export default class StringParser implements Parser<string> {
@@ -49,6 +53,7 @@ export default class StringParser implements Parser<string> {
 
     /**
      * Parses the raw data into a full name
+     * @param options how to parse
      * @returns {Fullname}
      */
     parse(options: {

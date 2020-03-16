@@ -14,6 +14,10 @@ import { Parser } from './parser';
  * @class
  * @implements {Parser}
  * @classdesc
+ * This parser parses a JSON signature of the name parts provided as string
+ * values. This is to facilitate a developer's life that holds users' info in a
+ * JSON format. In other words, the developer only needs to provide similar info
+ * and the rest will follow.
  */
 export default class NamaParser implements Parser<Nama> {
 

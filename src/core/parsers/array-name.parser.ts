@@ -12,14 +12,25 @@ import { Parser } from './parser';
 /**
  * Represents a `Name[]` parser
  * @class
- * @implements {Parser}
+ * @implements {Parser<Name[]>}
  * @classdesc
+ * This parser parses an array of the class `Name` while checking that every part
+ * plays the role they are supposed to play. The class `Name` is a ready-made
+ * recipe that saves the how-to parsing for a raw data.
+ *
+ * **NOTE**:
+ * In this specific case, the user is expected to carefully set each name part
+ * and submits a high quality of data. Why is this parser if the data is already
+ * shaped as wanted? Well, it is better to be safe than sorry, so we implement a
+ * double-check of these values and re-confirm a cleaner data. Remember, namefully
+ * works like a trapdoor, once the data is set and confirmed safe, no editing is
+ * possible.
  */
 export default class ArrayNameParser implements Parser<Name[]> {
 
     /**
      * Create a parser ready to parse the raw data
-     * @param {Array<Name>} raw data
+     * @param {Name[]} raw data
      */
     constructor(public raw: Name[]) {}
 
@@ -32,13 +43,13 @@ export default class ArrayNameParser implements Parser<Name[]> {
         new ArrayNameValidator().validate(this.raw);
 
         // then distribute all the elements accordingly
-        const fullname: Fullname = this.distribute(this.raw);
+        const fullname: Fullname = this.distribute();
 
         // finally return high quality of data
         return fullname;
     }
 
-    private distribute(args: Array<Name>): Fullname {
+    private distribute(): Fullname {
 
         const fullname: Fullname = {
             firstname: null,
@@ -48,7 +59,7 @@ export default class ArrayNameParser implements Parser<Name[]> {
             suffix: null,
         };
 
-        args.forEach(name => {
+        this.raw.forEach(name => {
             switch (name.type) {
                 case Namon.PREFIX:
                     fullname.prefix = name.namon as Prefix;

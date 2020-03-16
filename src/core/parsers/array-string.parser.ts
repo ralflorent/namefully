@@ -4,9 +4,9 @@
  * Created on March 15, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
  */
-import { Namon, Fullname, Firstname, Lastname, Name, Prefix, Suffix, Separator } from '@models/index';
-import { organizeNameIndex } from '@models/index';
+import { Namon, Fullname, Firstname, Lastname, Name, Prefix, Suffix, NameIndex } from '@models/index';
 import { ArrayStringValidator } from '@validators/index';
+import { organizeNameIndex } from '@core/index';
 import { Parser } from './parser';
 
 
@@ -15,6 +15,23 @@ import { Parser } from './parser';
  * @class
  * @implements {Parser}
  * @classdesc
+ * This parser parses an array of string name following a specific order based
+ * on the count of elements. It is expected that the array has to be between two
+ * and five elements. Also, the order of appearance set in the configuration
+ * influences how this parsing is carried out.
+ *
+ * Ordered by first name, the parser works as follows:
+ * - 2 elements: firstname lastname
+ * - 3 elements: firstname middlename lastname
+ * - 4 elements: prefix firstname middlename lastname
+ * - 5 elements: prefix firstname middlename lastname suffix
+ *
+ * Ordered by last name, the parser works as follows:
+ * - 2 elements: lastname firstname
+ * - 3 elements: lastname firstname middlename
+ * - 4 elements: prefix lastname firstname middlename
+ * - 5 elements: prefix lastname firstname middlename suffix
+ *
  */
 export default class ArrayStringParser implements Parser<string[]> {
 
@@ -34,17 +51,19 @@ export default class ArrayStringParser implements Parser<string[]> {
         const { orderedBy } = options;
 
         // validate first
-        new ArrayStringValidator().validate(this.raw);
+        const raw = this.raw.map(n => n.trim()); // cleanup
+        const index = organizeNameIndex(orderedBy, raw.length);
+        new ArrayStringValidator(index).validate(raw);
 
         // then distribute all the elements accordingly
-        const fullname = this.distribute(orderedBy);
+        const fullname = this.distribute(raw, index);
 
         // finally return high quality of data
         return fullname;
     }
 
-    private distribute(orderedBy: 'firstname' | 'lastname'): Fullname {
-        const raw: string[] = this.raw;
+    private distribute(raw: string[], index: NameIndex): Fullname {
+
         const fullname: Fullname = {
             firstname: null,
             lastname: null,
@@ -52,8 +71,6 @@ export default class ArrayStringParser implements Parser<string[]> {
             prefix: null,
             suffix: null,
         };
-
-        const index = organizeNameIndex(orderedBy, raw.length);
 
         switch (raw.length) {
             case 2: // first name + last name

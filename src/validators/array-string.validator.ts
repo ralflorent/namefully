@@ -8,21 +8,45 @@ import {
     Validator, ValidatorType, ValidationError , PrefixValidator, FirstnameValidator,
     LastnameValidator, MiddlenameValidator, SuffixValidator
 } from './index';
+import { NameIndex } from '@models/index';
 
 /**
  * Represents a validator to help the array string parser
  * @class
  * @classdesc
+ * This validator validates an array of string name following a specific order
+ * based on the count of elements. It is expected that the array has to be between
+ * two and five elements. Also, the order of appearance set in the configuration
+ * influences how this validation is carried out.
+ *
+ * Ordered by first name, the validator validates the following:
+ * - 2 elements: firstname lastname
+ * - 3 elements: firstname middlename lastname
+ * - 4 elements: prefix firstname middlename lastname
+ * - 5 elements: prefix firstname middlename lastname suffix
+ *
+ * Ordered by last name, the validator validates the following:
+ * - 2 elements: lastname firstname
+ * - 3 elements: lastname firstname middlename
+ * - 4 elements: prefix lastname firstname middlename
+ * - 5 elements: prefix lastname firstname middlename suffix
  */
 export default class ArrayStringValidator implements Validator<string[]> {
     readonly type: ValidatorType = ValidatorType.ARR_STRING;
+
+    /**
+     * Creates an instance of the validator
+     * @param indexing how to index the name parts
+     */
+    constructor(public indexing: NameIndex) {}
+
     /**
      * Validates the content of a name
      * @param {string} value data to validate
      */
     validate(values: string[]): void {
 
-        if (values.length <= 1 && values.length > 5)
+        if (values.length <= 1 || values.length > 5)
             throw new ValidationError('must be an array of 2 - 5 elements', 'Array of names')
 
         const pf = new PrefixValidator();
@@ -31,28 +55,30 @@ export default class ArrayStringValidator implements Validator<string[]> {
         const ln = new LastnameValidator();
         const mn = new MiddlenameValidator();
 
+        const index = this.indexing;
+
         switch(values.length) {
-            case 2: // first name + last name
-                fn.validate(values[0]);
-                ln.validate(values[1]);
+            case 2:
+                fn.validate(values[index.firstname]);
+                ln.validate(values[index.lastname]);
                 break;
-            case 3: // first name + middle name + last name
-                fn.validate(values[0]);
-                mn.validate(values[1]);
-                ln.validate(values[2]);
+            case 3:
+                fn.validate(values[index.firstname]);
+                mn.validate(values[index.middlename]);
+                ln.validate(values[index.lastname]);
                 break;
-            case 4: // prefix + first name + middle name + last name
-                pf.validate(values[0])
-                fn.validate(values[1]);
-                mn.validate(values[2]);
-                ln.validate(values[3]);
+            case 4:
+                pf.validate(values[index.prefix]);
+                fn.validate(values[index.firstname]);
+                mn.validate(values[index.middlename]);
+                ln.validate(values[index.lastname]);
                 break;
-            case 5: // prefix + first name + middle name + last name + suffix
-                pf.validate(values[0])
-                fn.validate(values[1]);
-                mn.validate(values[2]);
-                ln.validate(values[3]);
-                sf.validate(values[4])
+            case 5:
+                pf.validate(values[index.prefix]);
+                fn.validate(values[index.firstname]);
+                mn.validate(values[index.middlename]);
+                ln.validate(values[index.lastname]);
+                sf.validate(values[index.suffix])
                 break;
         }
     }
