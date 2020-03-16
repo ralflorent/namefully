@@ -5,7 +5,7 @@
  * @author Ralph Florent <ralflornt@gmail.com>
  *
  * @license GPL-3.0
- * @see {@link https://github.com/ralflorent/namefully|LICENSE} for more info.
+ * @see {@link https://github.com/ralflorent/namefully|namefully} for more info.
  */
 import { Parser, NamaParser, StringParser, ArrayNameParser, ArrayStringParser, CONFIG } from '@core/index';
 import { Fullname, Name, Nama, Namon, Separator, Summary, Config } from '@models/index';
@@ -15,12 +15,29 @@ import { FullnameValidator } from '@validators/index';
  * Person name handler in the English alphabet
  * @class
  * @classdesc
- * Note that the name standards used for the current version of this library are as
- * follows:
+ * `Namefully` does not magically guess which part of the name is what. It relies
+ * actually on how the developer indicates the roles of the name parts so that
+ * it, internally, can perform certain operations and saves the developer some
+ * calculations/processings. Nevertheless, Namefully can be constructed using
+ * distinct raw data shape. This is intended to give some flexibility to the
+ * developer so that he or she is not bound to a particular data format. Please,
+ * do follow closely the APIs to know how to properly use it in order to avoid
+ * some errors (mainly validation's).
+ *
+ * `Namefully` also works like a trap door. Once a raw data is provided and
+ * validated, a developer can only ACCESS in a vast amount of, yet effective ways
+ * the name info. NO EDITING is possible. If the name is mistaken, a new instance
+ * of `Namefully` must be created. Remember, this utility's primary objective is
+ * to help to **handle** a person name.
+ *
+ * Note that the name standards used for the current version of this library are
+ * as follows:
  *      [Prefix] Firstname [Middlename] Lastname [Suffix]
- * The opening `[` and closing `]` brackets mean that these parts are optional. In
- * other words, the most basic and typical case is a name that looks like this:
+ * The opening `[` and closing `]` brackets mean that these parts are optional.
+ * In other words, the most basic and typical case is a name that looks like this:
  * `John Smith`, where `John` is the first name and `Smith`, the last name.
+ * @see https://departments.weber.edu/qsupport&training/Data_Standards/Name.htm
+ * for more info on name standards.
  *
  * **IMPORTANT**: Keep in mind that the order of appearance matters and can be
  * altered through configured parameters, which we will be seeing later on. By
@@ -30,17 +47,27 @@ import { FullnameValidator } from '@validators/index';
  * Once imported, all that is required to do is to create an instance of
  * `Namefully` and the rest will follow.
  *
- * Terminologies used across the library:
+ * Some terminologies used across the library are:
  * - namon: piece of a name (e.g., firstname)
  * - nama: pieces of a name (e.g., firstname + lastname)
  *
- * @see https://departments.weber.edu/qsupport&training/Data_Standards/Name.htm for
- * more info on name standards.
+ * Happy naming!
  */
 export class Namefully {
-
+    /**
+     * Holds a json-like high quality of data
+     * @see {Fullname} description for more details
+     */
     private fullname: Fullname;
+    /**
+     * Holds statistical info on the name
+     * @see {Summary} class description for more details
+     */
     private stats: Summary;
+    /**
+     * Holds a json-like copy of the preset configuration
+     * @see {Config} description for more details
+     */
     private config: Config;
 
     /**
@@ -490,14 +517,13 @@ export class Namefully {
                 this.initialize(new ArrayNameParser(raw as Array<Name>));
 
             } else {
-                // typescript should stop them, but let's be paranoid (for JS users)
+                // typescript should stop them, but let's be paranoid (for JS developers)
                 throw new Error(`Cannot parse raw data as arrays that are not of '${Name.name}' or string`);
             }
         } else if (raw instanceof Object) { // check for json object
 
             for (const entry of Object.entries(raw)) { // make sure keys are correct
                 const key = entry[0], value = entry[1];
-                // FIXME: middlename in singular form
                 if (['firstname', 'lastname', 'middlename', 'prefix', 'suffix'].indexOf(key) === -1)
                     throw new Error(`Cannot parse raw data as json object that does not contains keys of '${Namon}'`);
 
@@ -506,7 +532,7 @@ export class Namefully {
             }
             this.initialize(new NamaParser(raw as Nama));
         } else {
-            // typescript should stop them, but let's be paranoid again (for JS users)
+            // typescript should stop them, but let's be paranoid again (for JS developers)
             throw new Error(`Cannot parse raw data. Review the data type expected.`);
         }
         // paranoid coder mode: on :P

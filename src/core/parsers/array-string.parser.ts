@@ -13,7 +13,7 @@ import { Parser } from './parser';
 /**
  * Represents an array string parser
  * @class
- * @implements {Parser}
+ * @implements {Parser<string[]>}
  * @classdesc
  * This parser parses an array of string name following a specific order based
  * on the count of elements. It is expected that the array has to be between two

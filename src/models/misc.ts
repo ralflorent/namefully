@@ -17,7 +17,6 @@ export interface Fullname {
     middlename?: Name[];
     prefix?: Prefix;
     suffix?: Suffix;
-    // nickname?: Name;
 }
 
 /**
@@ -28,7 +27,7 @@ export interface Config {
     orderedBy: 'firstname' | 'lastname';
     separator: Separator; // how to split names
     ending: Separator; // ending suffix
-    parser?: Parser<string>; // (user-defined) custom parser
+    parser?: Parser<any>; // (user-defined) custom parser
 }
 
 /**
@@ -40,7 +39,6 @@ export interface Nama {
     middlename?: string;
     lastname: string;
     suffix?: string;
-    // nickname?: string;
 }
 
 /**

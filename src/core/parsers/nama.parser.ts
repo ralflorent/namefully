@@ -12,7 +12,7 @@ import { Parser } from './parser';
 /**
  * Represents a `Nama` parser
  * @class
- * @implements {Parser}
+ * @implements {Parser<Nama>}
  * @classdesc
  * This parser parses a JSON signature of the name parts provided as string
  * values. This is to facilitate a developer's life that holds users' info in a
