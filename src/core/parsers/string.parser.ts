@@ -5,7 +5,6 @@
  * @author Ralph Florent <ralflornt@gmail.com>
  */
 import { Separator, Fullname } from '@models/index';
-import { StringNameValidator } from '@validators/index';
 import { Parser, ArrayStringParser } from './index';
 
 
@@ -14,6 +13,31 @@ import { Parser, ArrayStringParser } from './index';
  * @class
  * @implements {Parser}
  * @classdesc
+ * This parser parses a string name using a separator, if set, or simply use space
+ * as a basis for the split.
+ *
+ * **NOTE**:
+ * A string name is basically a string type containing the name parts differentiated
+ * with the help of a separator. The default separator is the character <space>
+ * or <' '>. However, it can be very, very helpful to use a distinct separator
+ * (e.g., a colon <:>) to handle multiple names for a `Namon`. That is to say,
+ * a piece of name shaped as `De La Cruz` is a last name that needs to be handled
+ * as a whole, and therefore requires that a different type of separator to split
+ * up the name parts. Alternatively, the `ArrayStringParser` can be used by indicating
+ * specifically which part of the name is what. Do note that this parser is actually
+ * a wrapper of the `ArrayStringParser`.
+ *
+ * @example
+ * Given the name `Maria De La Cruz`, using this parser without indicating a
+ * separator different than <space> will definitely throw an error. So, if the proper
+ * proper of doing when `De La Cruz` is the last name:
+ * ```
+ *  > const name = new Namefully('Maria:De La Cruz', { orderedBy: Separator.COLON })
+ * ```
+ * Or
+ * ```
+ *  > const name = new Namefully(['Maria', 'De La Cruz'])
+ * ```
  */
 export default class StringParser implements Parser<string> {
 
@@ -27,22 +51,19 @@ export default class StringParser implements Parser<string> {
      * Parses the raw data into a full name
      * @returns {Fullname}
      */
-    parse(): Fullname {
+    parse(options: {
+        orderedBy: 'firstname' | 'lastname',
+        separator: Separator
+    }): Fullname {
 
-        // validate first
-        new StringNameValidator().validate(this.raw);
+        // given this setting
+        const { orderedBy, separator } = options;
 
         // then distribute all the elements accordingly
-        const fullname: Fullname = this.distribute(this.raw);
+        const nama = this.raw.split(separator);
+        const fullname = new ArrayStringParser(nama).parse({ orderedBy });
 
         // finally return high quality of data
-        return fullname;
-    }
-
-    private distribute(raw: string): Fullname {
-        // assuming this: '[Prefix] Firstname [Middlename] Lastname [Suffix]'
-        const nama = raw.split(Separator.SPACE); // TODO: config separator for this
-        const fullname = new ArrayStringParser(nama).parse();
         return fullname;
     }
 }

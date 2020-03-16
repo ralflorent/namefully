@@ -53,7 +53,8 @@ export class Namefully {
         raw: string | Array<string> | Array<Name> | Nama,
         options?: Partial<{
             orderedBy: 'firstname' | 'lastname',
-            separator: Separator, // for ending suffix
+            separator: Separator, // how to split string names
+            ending: Separator, // for ending suffix
             parser: Parser<string> // (user-defined) custom parser
         }>
     ) {
@@ -73,7 +74,7 @@ export class Namefully {
      * @see {format} to alter manually the order of appearance of the full name.
      * For example, ::format('l f m') outputs `lastname firstname middlename`.
      */
-    getFullname(orderedBy: 'firstname' | 'lastname' = 'firstname'): string {
+    getFullname(orderedBy?: 'firstname' | 'lastname'): string {
         orderedBy = orderedBy || this.config.orderedBy; // override config
         const nama: string[] = [];
 
@@ -94,7 +95,7 @@ export class Namefully {
         }
 
         if (this.fullname.suffix) {
-            const suffix = this.config.separator !== Separator.SPACE ?
+            const suffix = this.config.ending !== Separator.SPACE ?
                 `${this.config.separator} ${this.fullname.suffix}` : // => ', PhD'
                 this.fullname.suffix;
             nama.push(suffix);
@@ -170,10 +171,10 @@ export class Namefully {
      * will output nothing and warn the end user about it.
      */
     getInitials(
-        orderedBy: 'firstname' | 'lastname' = 'firstname',
+        orderedBy?: 'firstname' | 'lastname',
         withMid: boolean = false
     ): string[] {
-
+        orderedBy = orderedBy || this.config.orderedBy; // override config
         const midInits = this.fullname.middlename ?
             this.fullname.middlename.map(n => n.getInitials()) : [];
 
@@ -304,7 +305,7 @@ export class Namefully {
             middlename.map(n => n.getInitials())
             .join(Separator.PERIOD)
             .concat(Separator.PERIOD) :
-            ''
+            Separator.EMPTY
         ;
         let cname = '';
         switch (by) {
@@ -418,7 +419,8 @@ export class Namefully {
      * @param parser customized or user-defined parser to get the full name
      */
     private initialize<T>(parser: Parser<T>): void {
-        this.fullname = parser.parse();
+        const { orderedBy, separator } = this.config;
+        this.fullname = parser.parse({ orderedBy, separator });
     }
 
     /**

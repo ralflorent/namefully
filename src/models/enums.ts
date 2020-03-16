@@ -81,18 +81,17 @@ export enum Suffix {
     DOCTOR_OF_OSTEO = 'DO'
 }
 
-
 /**
  * Enum for the separator values representing some of the ASCII characters
  * @readonly
  * @enum {string}
  */
 export enum Separator {
-    EMPTY = '',
-    SPACE = ' ',
+    COLON = ':',
     COMMA = ',',
-    PERIOD = '.',
+    EMPTY = '',
     HYPHEN = '-',
+    PERIOD = '.',
+    SPACE = ' ',
     UNDERSCORE = '_',
-    APOSTROPHE = `'`,
 }

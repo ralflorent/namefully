@@ -4,7 +4,7 @@
  * Created on March 07, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
  */
-import { Separator, Config } from '@models/index';
+import { Separator, Config, NameIndex } from '@models/index';
 
 /**
  * The current version of `Namefully`.
@@ -21,4 +21,19 @@ export const version = '1.0.3';
 export const CONFIG: Config = {
     orderedBy: 'firstname',
     separator: Separator.SPACE,
+    ending: Separator.SPACE,
+}
+
+/**
+ * CONFIG type definition
+ * @constant
+ * @type {NameIndex}
+ * @default
+ */
+export const NAME_INDEX: NameIndex = {
+    prefix: 0,
+    firstname: 1,
+    middlename: 2,
+    lastname: 3,
+    suffix: 4,
 }
