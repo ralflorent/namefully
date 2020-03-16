@@ -16,9 +16,10 @@ import {
     StringNameValidator,
     MiddlenameValidator,
     FullnameValidator,
-    NamaValidator, Nama,
+    NamaValidator,
     ArrayStringValidator,
     ArrayNameValidator,
+    NAME_INDEX,
 } from '../../src/index';
 
 describe('Validators', () => {
@@ -57,17 +58,17 @@ describe('Validators', () => {
         })
 
         test('should throw error when unmatching regex', () => {
-            const func = () => validator.validate('Sánchez')
+            const func = () => new NamonValidator().validate('Sánchez')
             expect(func).toThrow(ValidationError)
         })
 
         test('should throw error when no name', () => {
-            const func = () => validator.validate('')
+            const func = () => new NamonValidator().validate('')
             expect(func).toThrow(ValidationError)
         })
 
         test('should throw error when contaning numbers', () => {
-            const func = () => validator.validate('hello2world')
+            const func = () => new NamonValidator().validate('hello2world')
             expect(func).toThrow(ValidationError)
         })
     })
@@ -81,28 +82,28 @@ describe('Validators', () => {
 
         test('should accept predefined prefixes only', () => {
             ['Mr', 'Ms', 'Dr', 'Prof'].forEach(
-                p => expect(() => validator.validate(p))
+                p => expect(() => new PrefixValidator().validate(p))
                     .not.toThrow(ValidationError)
             )
         })
 
         test('should be case-insensitive for predefined prefixes', () => {
             ['mr', 'MS', 'Dr', 'PrOf'].forEach(
-                p => expect(() => validator.validate(p))
+                p => expect(() => new PrefixValidator().validate(p))
                     .not.toThrow(ValidationError)
             )
         })
 
         test('should throw error for unknown prefixes', () => {
             ['miss', 'mrss', 'Dra', 'Profe'].forEach(
-                p => expect(() => validator.validate(p))
+                p => expect(() => new PrefixValidator().validate(p))
                     .toThrow(ValidationError)
             )
         })
 
         test('should throw error for prefixes with punctuations (,.)', () => {
             ['mr.', 'mr,'].forEach(
-                p => expect(() => validator.validate(p))
+                p => expect(() => new PrefixValidator().validate(p))
                     .toThrow(ValidationError)
             )
         })
@@ -117,28 +118,28 @@ describe('Validators', () => {
 
         test('should accept predefined suffixes only', () => {
             ['Jr', 'Sr', 'PhD', 'II'].forEach(
-                s => expect(() => validator.validate(s))
+                s => expect(() => new SuffixValidator().validate(s))
                     .not.toThrow(ValidationError)
             )
         })
 
         test('should be case-insensitive for predefined suffixes', () => {
             ['jr', 'SR', 'pHd', 'iI'].forEach(
-                s => expect(() => validator.validate(s))
+                s => expect(() => new SuffixValidator().validate(s))
                     .not.toThrow(ValidationError)
             )
         })
 
         test('should throw error for unknown suffixes', () => {
             ['jra', 'sro', 'phh', 'vi'].forEach(
-                s => expect(() => validator.validate(s))
+                s => expect(() => new SuffixValidator().validate(s))
                     .toThrow(ValidationError)
             )
         })
 
         test('should throw error for suffixes with punctuations (,.)', () => {
             [',phd', '.sr'].forEach(
-                s => expect(() => validator.validate(s))
+                s => expect(() => new SuffixValidator().validate(s))
                     .toThrow(ValidationError)
             )
         })
@@ -178,17 +179,17 @@ describe('Validators', () => {
         })
 
         test('should throw error when unmatching regex', () => {
-            const func = () => validator.validate('Rodríguez')
+            const func = () => new FirstnameValidator().validate('Rodríguez')
             expect(func).toThrow(ValidationError)
         })
 
         test('should throw error when no name', () => {
-            const func = () => validator.validate('')
+            const func = () => new FirstnameValidator().validate('')
             expect(func).toThrow(ValidationError)
         })
 
         test('should throw error when contaning numbers', () => {
-            const func = () => validator.validate('name4you')
+            const func = () => new FirstnameValidator().validate('name4you')
             expect(func).toThrow(ValidationError)
         })
     })
@@ -227,17 +228,17 @@ describe('Validators', () => {
         })
 
         test('should throw error when unmatching regex', () => {
-            const func = () => validator.validate('Rodríguez')
+            const func = () => new LastnameValidator().validate('Rodríguez')
             expect(func).toThrow(ValidationError)
         })
 
         test('should throw error when no name', () => {
-            const func = () => validator.validate('')
+            const func = () => new LastnameValidator().validate('')
             expect(func).toThrow(ValidationError)
         })
 
         test('should throw error when contaning numbers', () => {
-            const func = () => validator.validate('name4you')
+            const func = () => new LastnameValidator().validate('name4you')
             expect(func).toThrow(ValidationError)
         })
     })
@@ -276,17 +277,17 @@ describe('Validators', () => {
         })
 
         test('should throw error when unmatching regex', () => {
-            const func = () => validator.validate('Carlos Slim Rodríguez')
+            const func = () => new StringNameValidator().validate('Carlos Slim Rodríguez')
             expect(func).toThrow(ValidationError)
         })
 
         test('should throw error when no name', () => {
-            const func = () => validator.validate('')
+            const func = () => new StringNameValidator().validate('')
             expect(func).toThrow(ValidationError)
         })
 
         test('should throw error when contaning numbers', () => {
-            const func = () => validator.validate('4nn ka7rinn')
+            const func = () => new StringNameValidator().validate('4nn ka7rinn')
             expect(func).toThrow(ValidationError)
         })
     })
@@ -325,17 +326,17 @@ describe('Validators', () => {
         })
 
         test('should throw error when unmatching regex', () => {
-            const func = () => validator.validate(['Carlos','Rodríguez'])
+            const func = () => new MiddlenameValidator().validate(['Carlos','Rodríguez'])
             expect(func).toThrow(ValidationError)
         })
 
         test('should throw error when no name', () => {
-            const func = () => validator.validate(['', null, undefined])
+            const func = () => new MiddlenameValidator().validate(['', null, undefined])
             expect(func).toThrow(ValidationError)
         })
 
         test('should throw error when contaning numbers', () => {
-            const func = () => validator.validate('4nn ka7rinn')
+            const func = () => new MiddlenameValidator().validate('4nn ka7rinn')
             expect(func).toThrow(ValidationError)
         })
     })
@@ -356,7 +357,8 @@ describe('Validators', () => {
     })
 
     describe('ArrayStringValidator', () => {
-        const validator = new ArrayStringValidator()
+
+        const validator = new ArrayStringValidator(NAME_INDEX)
 
         test('should be a string array validator', () => {
             expect(validator.type).toStrictEqual(ValidatorType.ARR_STRING)
@@ -366,32 +368,16 @@ describe('Validators', () => {
             [
                 [], ['John'], ['', '', '', '', '', '', '']
             ].map(arr =>
-                expect(() => new ArrayStringValidator()
+                expect(() => new ArrayStringValidator(NAME_INDEX)
                     .validate(arr))
                     .toThrow(ValidationError)
             )
         })
 
         test('should throw error when wrong entries', () => {
-            const func = () => new ArrayStringValidator().validate(['', '', ''])
+            const func = () => new ArrayStringValidator(NAME_INDEX).validate(['', '', ''])
             expect(func).toThrow(ValidationError)
         })
-
-        // test('should validate and map 2 entries to firstname and lastname', () => {
-        //     // TODO: repeat for 3, 4, 5 entries
-        //     const name = ['John', 'Smith']
-        //     validator.validate(name)
-        //     const mockFirstnameValidate = jest.fn()
-        //     const mockMiddlenameValidate = jest.fn()
-        //     const mockLastnameValidate = jest.fn()
-        //     const mockPrefixValidate = jest.fn()
-        //     const mockSuffixValidate = jest.fn()
-        //     expect(mockFirstnameValidate).toBeCalledTimes(1)
-        //     expect(mockLastnameValidate).toBeCalledTimes(1)
-        //     expect(mockPrefixValidate).not.toBeCalled()
-        //     expect(mockSuffixValidate).not.toBeCalled()
-        //     expect(mockMiddlenameValidate).not.toBeCalled()
-        // })
     })
 
 })
