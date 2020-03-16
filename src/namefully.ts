@@ -152,7 +152,9 @@ export class Namefully {
      * @returns {Array<string>} the middle names
      */
     getMiddlenames(): string[] {
-        return this.fullname.middlename.map(n => n.namon);
+        return this.fullname.middlename ?
+            this.fullname.middlename.map(n => n.namon) :
+            [];
     }
 
     /**
@@ -276,10 +278,16 @@ export class Namefully {
      * For a given name such as `Mr Keanu Charles Reeves`, shortening this name
      * is equivalent to making it `Keanu Reeves`.
      */
-    shorten(): string {
-        return [
+    shorten(orderedBy?: 'firstname' | 'lastname'): string {
+        orderedBy = orderedBy || this.config.orderedBy; // override config
+        return orderedBy === 'firstname' ?
+        [
             this.fullname.firstname.namon,
-            this.fullname.lastname.namon
+            this.fullname.lastname.namon,
+        ].join(Separator.SPACE) :
+        [
+            this.fullname.lastname.namon,
+            this.fullname.firstname.namon,
         ].join(Separator.SPACE);
     }
 
@@ -310,59 +318,84 @@ export class Namefully {
         by: 'firstname' | 'lastname' | 'middlename' | 'firstmid' | 'midlast' = 'middlename'
     ): string {
 
-        if (this.getFullname().length <= limit) // no need to reduce it
+        if (this.getFullname().length <= limit) // no need to compress
             return this.getFullname();
 
-        const { firstname, lastname, middlename } = this.fullname;
+        const { firstname: fn, lastname: ln, middlename } = this.fullname;
+        const mn = this.getMiddlenames().join(Separator.SPACE);
         const hasmid: boolean = Array.isArray(middlename) && middlename.length > 0;
 
-        const firsts = firstname
-            .getInitials()
-            .join(Separator.PERIOD)
-            .concat(Separator.PERIOD)
-        ;
-        const lasts = lastname
-            .getInitials()
-            .join(Separator.SPACE)
-            .concat(Separator.PERIOD)
-        ;
+        const firsts = fn.getInitials().join(Separator.PERIOD).concat(Separator.PERIOD);
+        const lasts = ln.getInitials().join(Separator.SPACE).concat(Separator.PERIOD);
         const mids = hasmid ?
             middlename.map(n => n.getInitials())
             .join(Separator.PERIOD)
             .concat(Separator.PERIOD) :
-            Separator.EMPTY
-        ;
+            Separator.EMPTY;
         let cname = '';
-        switch (by) {
-            case 'firstname':
-                cname = hasmid ?
-                    [firsts, this.getMiddlenames().join(Separator.SPACE), lastname.tostring()].join(Separator.SPACE) :
-                    [firsts, lastname.tostring()].join(Separator.SPACE);
+
+        if (this.config.orderedBy === 'firstname') {
+            switch (by) {
+                case 'firstname':
+                    cname = hasmid ?
+                        [firsts, mn, ln.tostring()].join(Separator.SPACE) :
+                        [firsts, ln.tostring()].join(Separator.SPACE);
+                        break;
+                case 'lastname':
+                    cname = hasmid ?
+                        [fn.tostring(), mn, lasts].join(Separator.SPACE) :
+                        [fn.tostring(), lasts].join(Separator.SPACE);
+                        break;
+                case 'middlename':
+                    cname = hasmid ?
+                        [fn.tostring(), mids, ln.tostring()].join(Separator.SPACE) :
+                        [fn.tostring(), ln.tostring()].join(Separator.SPACE);
+                        break;
+                case 'firstmid':
+                    cname = hasmid ?
+                        [firsts, mids, ln.tostring()].join(Separator.SPACE) :
+                        [firsts, ln.tostring()].join(Separator.SPACE);
+                        break;
+                case 'midlast':
+                    cname = hasmid ?
+                        [fn.tostring(), mids, lasts].join(Separator.SPACE) :
+                        [fn.tostring(), lasts].join(Separator.SPACE);
                     break;
-            case 'lastname':
-                cname = hasmid ?
-                    [firstname.tostring(), this.getMiddlenames().join(Separator.SPACE), lasts].join(Separator.SPACE) :
-                    [firstname.tostring(), lasts].join(Separator.SPACE);
-                    break;
-            case 'middlename':
-                cname = hasmid ?
-                    [firstname.tostring(), mids, lastname.tostring()].join(Separator.SPACE) :
-                    [firstname.tostring(), lastname.tostring()].join(Separator.SPACE);
-                    break;
-            case 'firstmid':
-                cname = hasmid ?
-                    [firsts, mids, lastname.tostring()].join(Separator.SPACE) :
-                    [firsts, lastname.tostring()].join(Separator.SPACE);
-                    break;
-            case 'midlast':
-                cname = hasmid ?
-                    [firstname.tostring(), mids, lasts].join(Separator.SPACE) :
-                    [firstname.tostring(), lasts].join(Separator.SPACE);
-                break;
+            }
         }
-        if (cname.length > limit) {
+        else {
+            switch (by) {
+                case 'firstname':
+                    cname = hasmid ?
+                        [ln.tostring(), firsts, mn].join(Separator.SPACE) :
+                        [ln.tostring(), firsts].join(Separator.SPACE);
+                        break;
+                case 'lastname':
+                    cname = hasmid ?
+                        [lasts, fn.tostring(), mn].join(Separator.SPACE) :
+                        [lasts, fn.tostring()].join(Separator.SPACE);
+                        break;
+                case 'middlename':
+                    cname = hasmid ?
+                        [ln.tostring(), fn.tostring(), mids].join(Separator.SPACE) :
+                        [ln.tostring(), fn.tostring()].join(Separator.SPACE);
+                        break;
+                case 'firstmid':
+                    cname = hasmid ?
+                        [ln.tostring(), firsts, mids].join(Separator.SPACE) :
+                        [ln.tostring(), firsts].join(Separator.SPACE);
+                        break;
+                case 'midlast':
+                    cname = hasmid ?
+                        [lasts, fn.tostring(), mids].join(Separator.SPACE) :
+                        [lasts, fn.tostring()].join(Separator.SPACE);
+                    break;
+            }
+        }
+
+        if (cname.length > limit)
             console.warn(`The compressed name <${cname}> still surpasses the set limit ${limit}`);
-        }
+
         return cname;
     }
 
