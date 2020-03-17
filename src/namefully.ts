@@ -63,7 +63,7 @@ export class Namefully {
      * Holds statistical info on the name
      * @see {Summary} class description for more details
      */
-    private stats: Summary;
+    private summary: Summary;
     /**
      * Holds a json-like copy of the preset configuration
      * @see {Config} description for more details
@@ -257,7 +257,7 @@ export class Namefully {
     describe(what: 'fullname' | 'firstname' | 'lastname' | 'middlename' = 'fullname'): string {
         switch(what) {
             case 'fullname':
-                return this.stats.tostring();
+                return this.summary.tostring();
             case 'firstname':
                 return this.fullname.firstname.describe().tostring();
             case 'lastname':
@@ -570,6 +570,29 @@ export class Namefully {
         }
         // paranoid coder mode: on :P
         new FullnameValidator().validate(this.fullname);
-        this.stats = new Summary(this.getFullname());
+        this.summary = new Summary(this.getFullname());
     }
 }
+
+/**
+ * Aliases for `Namefully`
+ */
+export interface Namefully {
+    full: typeof Namefully.prototype.getFullname;
+    fn: typeof Namefully.prototype.getFirstname;
+    ln: typeof Namefully.prototype.getLastname;
+    mn: typeof Namefully.prototype.getMiddlenames;
+    px: typeof Namefully.prototype.getPrefix;
+    sx: typeof Namefully.prototype.getSuffix;
+    inits: typeof Namefully.prototype.getInitials;
+    stats: typeof Namefully.prototype.describe;
+}
+
+Namefully.prototype.full = Namefully.prototype.getFullname;
+Namefully.prototype.fn = Namefully.prototype.getFirstname;
+Namefully.prototype.ln = Namefully.prototype.getLastname;
+Namefully.prototype.mn = Namefully.prototype.getMiddlenames;
+Namefully.prototype.px = Namefully.prototype.getPrefix;
+Namefully.prototype.sx =  Namefully.prototype.getSuffix;
+Namefully.prototype.inits = Namefully.prototype.getInitials;
+Namefully.prototype.stats = Namefully.prototype.describe;
