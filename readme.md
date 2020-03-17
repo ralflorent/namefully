@@ -96,13 +96,27 @@ So far, we allowed the following punctuations: comma, period, apostrophe
 |*getMiddlenames*|none|none|`string[]`|Gets the middle name part of the full name|
 |*getLastname*|none|none|`string`|Gets the last name part of the full name|
 |*getSuffix*|none|none|`string`|Gets the suffix part of the full name, if any|
-|*getFullname*|none|none|`string`|Gets the full name|
-|*getInitials*|none|none|`string`|Gets the initials of the first and last name|
-|*describe*|none|none|`string`|Gives some descriptive statistics that summarize the central tendency, dispersion and shape of the characters' distribution.|
-|*shorten*|none|none|`string`|Returns a typical name (e.g. first and last name)|
-|*compress*|`limit: number`, `by: NameType`|`20`, `middlename`|`string`|Compresses a name by using different forms of variants|
+|*getFullname*|`orderedBy`|`null`|`string`|Gets the full name|
+|*getInitials*|`orderedBy`, `withMid`|`null`, `false`|`string`|Gets the initials of the first and last name|
+|*describe*|`what`|`fullname`|`string`|Gives some descriptive statistics that summarize the central tendency, dispersion and shape of the characters' distribution.|
+|*shorten*|`orderedBy`|`null`|`string`|Returns a typical name (e.g. first and last name)|
+|*compress*|`limit`, `by`|`20`, `middlename`|`string`|Compresses a name by using different forms of variants|
 |*username*|none|none|`string[]`|Suggests possible (randomly) usernames closest to the name|
 |*format*|`how: string`|`null`|`string`|Formats the name as desired|
+
+If you find the names of the method somewhat too long, we provide aliases to make
+your life as a coder easier.
+
+|Method|Aliases|
+|---|---|
+|*getPrefix*|*px*|
+|*getSuffix*|*sx*|
+|*getFirstname*|*fn*|
+|*getLastname*|*ln*|
+|*getMiddlenames*|*mn*|
+|*getFullname*|*full*|
+|*getInitials*|*inits*|
+|*describe*|*stats*|
 
 See the [use cases](usecases) for further details.
 
