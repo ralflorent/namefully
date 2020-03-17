@@ -4,7 +4,7 @@
  * Created on March 15, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
  */
-import { Separator, Fullname } from '@models/index';
+import { Separator, Fullname } from '../../models/index';
 import { Parser, ArrayStringParser } from './index';
 
 

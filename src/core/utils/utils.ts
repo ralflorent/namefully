@@ -4,8 +4,8 @@
  * Created on March 16, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
  */
-import { NameIndex } from '@models/index';
-import { NAME_INDEX } from '@core/index';
+import { NameIndex } from '../../models/index';
+import { NAME_INDEX } from '../../core/index';
 
 /**
  * Re-organizes the existing global indexes for array of name parts

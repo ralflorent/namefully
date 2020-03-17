@@ -4,8 +4,8 @@
  * Created on March 15, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
  */
-import { Namon, Nama, Fullname, Firstname, Lastname, Name, Prefix, Suffix } from '@models/index';
-import { NamaValidator } from '@validators/index';
+import { Namon, Nama, Fullname, Firstname, Lastname, Name, Prefix, Suffix } from '../../models/index';
+import { NamaValidator } from '../../validators/index';
 import { Parser } from './parser';
 
 

@@ -4,7 +4,7 @@
  * Created on March 15, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
  */
-import { Fullname, Firstname, Lastname } from '@models/index';
+import { Fullname, Firstname, Lastname } from '../models/index';
 import { Validator, ValidatorType, ValidationError, PrefixValidator } from './index';
 
 /**

@@ -8,7 +8,7 @@ import {
     Validator, ValidatorType, ValidationError , PrefixValidator, FirstnameValidator,
     LastnameValidator, MiddlenameValidator, SuffixValidator
 } from './index';
-import { NameIndex } from '@models/index';
+import { NameIndex } from '../models/index';
 
 /**
  * Represents a validator to help the array string parser

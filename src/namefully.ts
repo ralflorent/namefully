@@ -7,9 +7,9 @@
  * @license GPL-3.0
  * @see {@link https://github.com/ralflorent/namefully|namefully} for more info.
  */
-import { Parser, NamaParser, StringParser, ArrayNameParser, ArrayStringParser, CONFIG } from '@core/index';
-import { Fullname, Name, Nama, Namon, Separator, Summary, Config } from '@models/index';
-import { FullnameValidator } from '@validators/index';
+import { Parser, NamaParser, StringParser, ArrayNameParser, ArrayStringParser, CONFIG } from './core/index';
+import { Fullname, Name, Nama, Namon, Separator, Summary, Config } from './models/index';
+import { FullnameValidator } from './validators/index';
 
 /**
  * Person name handler in the English alphabet

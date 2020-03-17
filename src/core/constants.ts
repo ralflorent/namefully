@@ -4,13 +4,13 @@
  * Created on March 07, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
  */
-import { Separator, Config, NameIndex } from '@models/index';
+import { Separator, Config, NameIndex } from '../models/index';
 
 /**
  * The current version of `Namefully`.
  * @constant
  */
-export const version = '1.0.4';
+export const version = '1.0.5';
 
 /**
  * CONFIG type definition
