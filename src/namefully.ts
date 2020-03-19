@@ -12,7 +12,7 @@ import { Fullname, Name, Nama, Namon, Separator, Summary, Config } from './model
 import { FullnameValidator } from './validators/index';
 
 /**
- * Person name handler in the English alphabet
+ * Person name handler in the Latin alphabet
  * @class
  * @classdesc
  * `Namefully` does not magically guess which part of the name is what. It relies

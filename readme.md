@@ -7,7 +7,7 @@
 
 ## Description
 
-Person name handler in the English alphabet.
+Person name handler in the Latin alphabet.
 
 ## Installation
 
@@ -80,11 +80,9 @@ So far, we allowed the following punctuations: comma, period, apostrophe
 
 ### Special cases not being covered/considered so far
 
-- mononym:  `Plato`
-- multiple last names: `De La Cruz`, `Da Vinci`
-- latin last names: `Perez Rodriguez`
-- hyphenated last name: `Pinkett-Smith`
-- last name with apostrophe: `O'Connell`, `O'Connor`
+- mononame:  `Plato`
+- multiple surnames: `De La Cruz`, `Da Vinci`
+- names with tilde: `Perez Rodriguez`
 - nicknames: `Johnny`
 
 ## APIs
