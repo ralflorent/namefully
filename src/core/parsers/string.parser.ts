@@ -58,15 +58,16 @@ export default class StringParser implements Parser<string> {
      */
     parse(options: {
         orderedBy: NameOrder,
-        separator: Separator
+        separator: Separator,
+        bypass: boolean,
     }): Fullname {
 
         // given this setting
-        const { orderedBy, separator } = options;
+        const { orderedBy, separator, bypass } = options;
 
         // then distribute all the elements accordingly
         const nama = this.raw.split(separator);
-        const fullname = new ArrayStringParser(nama).parse({ orderedBy });
+        const fullname = new ArrayStringParser(nama).parse({ orderedBy, bypass });
 
         // finally return high quality of data
         return fullname;

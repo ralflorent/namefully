@@ -82,6 +82,7 @@ export class Namefully {
             orderedBy: NameOrder,
             separator: Separator, // how to split string names
             ending: Separator, // for ending suffix
+            bypass: boolean,
             parser: Parser<any> // (user-defined) custom parser
         }>
     ) {
@@ -477,8 +478,8 @@ export class Namefully {
      * @param parser customized or user-defined parser to get the full name
      */
     private initialize<T>(parser: Parser<T>): void {
-        const { orderedBy, separator } = this.config;
-        this.fullname = parser.parse({ orderedBy, separator });
+        const { orderedBy, separator, bypass } = this.config;
+        this.fullname = parser.parse({ orderedBy, separator, bypass });
     }
 
     /**

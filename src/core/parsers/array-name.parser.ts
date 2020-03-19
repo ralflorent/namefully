@@ -38,9 +38,9 @@ export default class ArrayNameParser implements Parser<Name[]> {
      * Parses the raw data into a full name
      * @returns {Fullname}
      */
-    parse(): Fullname {
+    parse(options: { bypass: boolean }): Fullname {
         // validate first
-        new ArrayNameValidator().validate(this.raw);
+        if (!options.bypass) new ArrayNameValidator().validate(this.raw);
 
         // then distribute all the elements accordingly
         const fullname: Fullname = this.distribute();

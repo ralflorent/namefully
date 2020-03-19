@@ -45,15 +45,15 @@ export default class ArrayStringParser implements Parser<string[]> {
      * Parses the raw data into a full name
      * @returns {Fullname}
      */
-    parse(options: { orderedBy: NameOrder }): Fullname {
+    parse(options: { orderedBy: NameOrder, bypass: boolean }): Fullname {
 
         // given this setting
-        const { orderedBy } = options;
+        const { orderedBy, bypass } = options;
 
         // validate first
         const raw = this.raw.map(n => n.trim()); // cleanup
         const index = organizeNameIndex(orderedBy, raw.length);
-        new ArrayStringValidator(index).validate(raw);
+        if (!bypass) new ArrayStringValidator(index).validate(raw);
 
         // then distribute all the elements accordingly
         const fullname = this.distribute(raw, index);

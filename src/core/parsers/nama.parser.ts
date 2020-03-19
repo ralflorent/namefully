@@ -31,19 +31,19 @@ export default class NamaParser implements Parser<Nama> {
      * Parses the raw data into a full name
      * @returns {Fullname}
      */
-    parse(): Fullname {
+    parse(options: { bypass: boolean }): Fullname {
 
         // validate first
-        new NamaValidator().validate(this.raw);
+        if (!options.bypass) new NamaValidator().validate(this.raw);
 
         // then distribute all the elements accordingly
-        const fullname = this.distribute(this.raw);
+        const fullname = this.distribute();
 
         // finally return high quality of data
         return fullname;
     }
 
-    private distribute(args: any): Fullname {
+    private distribute(): Fullname {
         const fullname: Fullname = {
             firstname: null,
             lastname: null,

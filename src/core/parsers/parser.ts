@@ -25,6 +25,7 @@ export interface Parser<T> {
      */
     parse(options?: Partial<{
         orderedBy: NameOrder,
-        separator: Separator
+        separator: Separator,
+        bypass: boolean,
     }>): Fullname;
 }
