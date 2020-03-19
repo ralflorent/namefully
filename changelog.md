@@ -9,6 +9,7 @@ This project also adheres to [Semantic Versioning](https://semver.org/)
 **Added**:
 
 - Add support for Latin (European and Spanish) names
+- Add a bypass validator
 
 ## [1.0.5] - 2020-03-17
 
