@@ -33,13 +33,32 @@ or
 
 ```js
 // CommonJS
-const Namefully = require('namefully').Namefully
+const { Namefully } = require('namefully')
 
 const name = new Namefully('John Joe Smith')
 console.log(name.format('L, f m')) // => SMITH, John Joe
 ```
 
 The package comes with its own declaration file for TypeScript support.
+
+## Support
+
+This utility supports names of the following nature:
+
+- English
+- European (e.g., German, Icelandic names)
+- Spanish
+- hyphenated
+- with apostrophe
+- with comma
+- with a period
+- with space
+
+**IMPORTANT**:
+*If you want to use this utility while it does not offer support for your language (*
+*e.g., Cyrillic alphabet), you can always bypass the validation rules by configuring*
+*an optional parameter `bypass` to `true`. Do note though that you risk to face*
+*some validation errors for certain API.*
 
 ## Examples
 
@@ -63,7 +82,7 @@ Let us take a common example:
 
 ```Mr. John Joe Smith, PhD```
 
-So, we undertand that the name can be seen as follows:
+So, we understand that the name can be seen as follows:
 
 - a typical name: `John Smith`
   - with middle name: `John Joe Smith`
@@ -78,12 +97,15 @@ So, we undertand that the name can be seen as follows:
 So far, we allowed the following punctuations: comma, period, apostrophe
 (single quote), and hyphen.
 
-### Special cases not being covered/considered so far
+### Special cases not being covered so far
 
-- mononame:  `Plato`
-- multiple surnames: `De La Cruz`, `Da Vinci`
-- names with tilde: `Perez Rodriguez`
-- nicknames: `Johnny`
+`namefully` does not have support for certain use cases:
+
+- mononame:  `Plato`. You can still trick it though by setting the mononame as both
+first and last name;
+- multiple surnames: `De La Cruz`, `Da Vinci`. You can also trick it by using your
+own parsing method or by setting separately each name part via the `Nama|Name` type
+or the string array input.
 
 ## APIs
 
