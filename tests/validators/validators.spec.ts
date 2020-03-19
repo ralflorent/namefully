@@ -57,9 +57,14 @@ describe('Validators', () => {
             expect(ValidationRule.namon.test).toReturnWith(true)
         })
 
-        test('should throw error when unmatching regex', () => {
-            const func = () => new NamonValidator().validate('Sánchez')
-            expect(func).toThrow(ValidationError)
+        test('should not throw error when Latin name(s)', () => {
+            [
+                () => new NamonValidator().validate('SchäferSchröderMüller'),
+                () => new NamonValidator().validate('LópezFernándezGarcíaJoséPeñaEstúpido'),
+                () => new NamonValidator().validate('BjörkGuðmundsdótti'),
+            ].forEach(
+                func => expect(func).not.toThrow(ValidationError)
+            )
         })
 
         test('should throw error when no name', () => {
@@ -178,9 +183,14 @@ describe('Validators', () => {
             expect(ValidationRule.firstname.test).toReturnWith(true)
         })
 
-        test('should throw error when unmatching regex', () => {
-            const func = () => new FirstnameValidator().validate('Rodríguez')
-            expect(func).toThrow(ValidationError)
+        test('should not throw error when Latin name(s)', () => {
+            [
+                () => new FirstnameValidator().validate('SchäferSchröderMüller'),
+                () => new FirstnameValidator().validate('LópezFernándezGarcíaJoséPeñaEstúpido'),
+                () => new FirstnameValidator().validate('BjörkGuðmundsdótti'),
+            ].forEach(
+                func => expect(func).not.toThrow(ValidationError)
+            )
         })
 
         test('should throw error when no name', () => {
@@ -227,9 +237,14 @@ describe('Validators', () => {
             expect(ValidationRule.lastname.test).toReturnWith(true)
         })
 
-        test('should throw error when unmatching regex', () => {
-            const func = () => new LastnameValidator().validate('Rodríguez')
-            expect(func).toThrow(ValidationError)
+        test('should not throw error when Latin name(s)', () => {
+            [
+                () => new LastnameValidator().validate('Schäfer-Schröder-Müller'),
+                () => new LastnameValidator().validate('López-Fernández-GarcíaJoséPeñaEstúpido'),
+                () => new LastnameValidator().validate('Björk-Guðmundsdótti'),
+            ].forEach(
+                func => expect(func).not.toThrow(ValidationError)
+            )
         })
 
         test('should throw error when no name', () => {
@@ -276,9 +291,14 @@ describe('Validators', () => {
             expect(ValidationRule.lastname.test).toReturnWith(true)
         })
 
-        test('should throw error when unmatching regex', () => {
-            const func = () => new StringNameValidator().validate('Carlos Slim Rodríguez')
-            expect(func).toThrow(ValidationError)
+        test('should not throw error when Latin name(s)', () => {
+            [
+                () => new StringNameValidator().validate('Schäfer Schröder Müller'),
+                () => new StringNameValidator().validate('López FernándezGarcíaJoséPeña Estúpido'),
+                () => new StringNameValidator().validate('Björk Guðmundsdótti'),
+            ].forEach(
+                func => expect(func).not.toThrow(ValidationError)
+            )
         })
 
         test('should throw error when no name', () => {
@@ -325,9 +345,14 @@ describe('Validators', () => {
             expect(ValidationRule.middlename.test).toReturnWith(true)
         })
 
-        test('should throw error when unmatching regex', () => {
-            const func = () => new MiddlenameValidator().validate(['Carlos','Rodríguez'])
-            expect(func).toThrow(ValidationError)
+        test('should not throw error when Latin name(s)', () => {
+            [
+                () => new MiddlenameValidator().validate(['Schäfer', 'Schröder', 'Müller']),
+                () => new MiddlenameValidator().validate(['López', 'Fernández', 'García', 'José', 'Peña', 'Estúpido']),
+                () => new MiddlenameValidator().validate(['Björk','Guðmundsdótti']),
+            ].forEach(
+                func => expect(func).not.toThrow(ValidationError)
+            )
         })
 
         test('should throw error when no name', () => {
