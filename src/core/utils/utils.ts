@@ -4,7 +4,7 @@
  * Created on March 16, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
  */
-import { NameIndex } from '../../models/index';
+import { NameIndex, NameOrder } from '../../models/index';
 import { NAME_INDEX } from '../../core/index';
 
 /**
@@ -14,7 +14,7 @@ import { NAME_INDEX } from '../../core/index';
  * @param nameIndex global preset of indexing
  */
 export function organizeNameIndex(
-    orderedBy: 'firstname' | 'lastname',
+    orderedBy: NameOrder,
     argLength: number,
     nameIndex: NameIndex = NAME_INDEX
 ): NameIndex {

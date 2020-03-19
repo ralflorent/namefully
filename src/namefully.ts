@@ -8,7 +8,7 @@
  * @see {@link https://github.com/ralflorent/namefully|namefully} for more info.
  */
 import { Parser, NamaParser, StringParser, ArrayNameParser, ArrayStringParser, CONFIG } from './core/index';
-import { Fullname, Name, Nama, Namon, Separator, Summary, Config } from './models/index';
+import { Fullname, Name, Nama, Namon, Separator, Summary, Config, NameOrder } from './models/index';
 import { FullnameValidator } from './validators/index';
 
 /**
@@ -79,7 +79,7 @@ export class Namefully {
     constructor(
         raw: string | Array<string> | Array<Name> | Nama,
         options?: Partial<{
-            orderedBy: 'firstname' | 'lastname',
+            orderedBy: NameOrder,
             separator: Separator, // how to split string names
             ending: Separator, // for ending suffix
             parser: Parser<any> // (user-defined) custom parser
@@ -101,7 +101,7 @@ export class Namefully {
      * @see {format} to alter manually the order of appearance of the full name.
      * For example, ::format('l f m') outputs `lastname firstname middlename`.
      */
-    getFullname(orderedBy?: 'firstname' | 'lastname'): string {
+    getFullname(orderedBy?: NameOrder): string {
         orderedBy = orderedBy || this.config.orderedBy; // override config
         const nama: string[] = [];
 
@@ -198,7 +198,7 @@ export class Namefully {
      * will output nothing and warn the end user about it.
      */
     getInitials(
-        orderedBy?: 'firstname' | 'lastname',
+        orderedBy?: NameOrder,
         withMid: boolean = false
     ): string[] {
         orderedBy = orderedBy || this.config.orderedBy; // override config

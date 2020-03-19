@@ -4,7 +4,7 @@
  * Created on March 15, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
  */
-import { Separator, Fullname } from '../../models/index';
+import { Separator, Fullname, NameOrder } from '../../models/index';
 import { Parser, ArrayStringParser } from './index';
 
 
@@ -57,7 +57,7 @@ export default class StringParser implements Parser<string> {
      * @returns {Fullname}
      */
     parse(options: {
-        orderedBy: 'firstname' | 'lastname',
+        orderedBy: NameOrder,
         separator: Separator
     }): Fullname {
 

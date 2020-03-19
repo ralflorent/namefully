@@ -13,7 +13,7 @@ import { Separator, Config, NameIndex } from '../models/index';
 export const version = '1.0.6';
 
 /**
- * CONFIG type definition
+ * CONFIG constant
  * @constant
  * @type {Config}
  * @default
@@ -22,10 +22,11 @@ export const CONFIG: Config = {
     orderedBy: 'firstname',
     separator: Separator.SPACE,
     ending: Separator.SPACE,
+    bypass: false,
 }
 
 /**
- * CONFIG type definition
+ * NAME_INDEX constant
  * @constant
  * @type {NameIndex}
  * @default

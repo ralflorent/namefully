@@ -4,7 +4,7 @@
  * Created on March 15, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
  */
-import { Namon, Fullname, Firstname, Lastname, Name, Prefix, Suffix, NameIndex } from '../../models/index';
+import { Namon, Fullname, Firstname, Lastname, Name, Prefix, Suffix, NameIndex, NameOrder } from '../../models/index';
 import { ArrayStringValidator } from '../../validators/index';
 import { organizeNameIndex } from '../../core/index';
 import { Parser } from './parser';
@@ -45,7 +45,7 @@ export default class ArrayStringParser implements Parser<string[]> {
      * Parses the raw data into a full name
      * @returns {Fullname}
      */
-    parse(options: { orderedBy: 'firstname' | 'lastname' }): Fullname {
+    parse(options: { orderedBy: NameOrder }): Fullname {
 
         // given this setting
         const { orderedBy } = options;

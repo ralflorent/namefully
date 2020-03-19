@@ -20,13 +20,20 @@ export interface Fullname {
 }
 
 /**
+ * Defines the two ways that a full name can be ordered: first or last name
+ * @typedef NameOrder
+ */
+export type NameOrder = 'firstname' | 'lastname';
+
+/**
  * Interface for JSON signature that represents the configuration of the utility
  * @interface
  */
 export interface Config {
-    orderedBy: 'firstname' | 'lastname';
+    orderedBy: NameOrder;
     separator: Separator; // how to split names
     ending: Separator; // ending suffix
+    bypass: boolean; // bypass the validation rules
     parser?: Parser<any>; // (user-defined) custom parser
 }
 
