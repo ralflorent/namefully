@@ -8,7 +8,7 @@
  * @see {@link https://github.com/ralflorent/namefully|namefully} for more info.
  */
 import { Parser, NamaParser, StringParser, ArrayNameParser, ArrayStringParser, CONFIG } from './core/index';
-import { Fullname, Name, Nama, Namon, Separator, Summary, Config, NameOrder } from './models/index';
+import { Fullname, Name, Nama, Namon, Separator, Summary, Config, NameOrder, AbbrTitle } from './models/index';
 import { FullnameValidator } from './validators/index';
 
 /**
@@ -81,6 +81,7 @@ export class Namefully {
         options?: Partial<{
             orderedBy: NameOrder,
             separator: Separator, // how to split string names
+            titling: AbbrTitle, // whether to add a period to a prefix
             ending: Separator, // for ending suffix
             bypass: boolean, // a bypass for validators
             parser: Parser<any> // (user-defined) custom parser
@@ -104,11 +105,13 @@ export class Namefully {
      */
     getFullname(orderedBy?: NameOrder): string {
         orderedBy = orderedBy || this.config.orderedBy; // override config
-        const sxSep = this.config.ending !== Separator.SPACE ? this.config.ending : Separator.EMPTY;
+        const { titling, ending } = this.config;
+        const pxSep = titling === 'us' ? Separator.PERIOD : Separator.EMPTY; // Mr[.]
+        const sxSep = ending !== Separator.SPACE ? ending : Separator.EMPTY; // [,] PhD
         const nama: string[] = [];
 
         if (this.fullname.prefix)
-            nama.push(this.fullname.prefix)
+            nama.push(Separator.EMPTY.concat(this.fullname.prefix, pxSep))
 
         switch (orderedBy) {
             case 'firstname':
@@ -160,8 +163,9 @@ export class Namefully {
      * @returns {string} the prefix
      */
     getPrefix(): string {
+        const pxSep = this.config.titling === 'us' ? Separator.PERIOD : Separator.EMPTY;
         return this.fullname.prefix ?
-            this.fullname.prefix :
+            Separator.EMPTY.concat(this.fullname.prefix, pxSep) :
             Separator.EMPTY;
     }
 
@@ -453,8 +457,12 @@ export class Namefully {
             return this.getFullname();
 
         const formatted: Array<string> = [];
+        const tokens = [
+            '.', ',', ' ', '-', '_', 'f', 'F', 'l', 'L', 'm', 'M',
+            'n', 'N', 'o', 'O', 'p', 'P', 's', 'S'
+        ];
         for (const c of how) {
-            if (['.', ',', ' ', '-', '_', 'f', 'F', 'l', 'L', 'm', 'M', 'n', 'N', 'O'].indexOf(c) === -1)
+            if (tokens.indexOf(c) === -1)
                 throw new Error(`<${c}> is an invalid character for the formatting.`)
             formatted.push(this.map(c));
         }
@@ -510,13 +518,28 @@ export class Namefully {
             case 'M':
                 return this.fullname.middlename
                     .map(n => n.upper()).join(Separator.SPACE);
-            case 'O':
-                return [
-                    this.fullname.prefix ? this.fullname.prefix : Separator.EMPTY,
+            case 'o': case 'O':
+                const { titling, ending } = this.config;
+                const pxSep = titling === 'us' ? Separator.PERIOD : Separator.EMPTY;
+                const sxSep = ending !== Separator.SPACE ? ending : Separator.EMPTY;
+
+                const official = [
+                    this.fullname.prefix ? Separator.EMPTY.concat(this.fullname.prefix, pxSep) : Separator.EMPTY,
                     this.fullname.lastname.upper().concat(Separator.COMMA),
                     this.fullname.firstname.tostring(),
-                    this.fullname.middlename.map(n => n.namon).join(Separator.SPACE)
+                    this.fullname.middlename.map(n => n.namon).join(Separator.SPACE).concat(sxSep),
+                    this.fullname.suffix || Separator.EMPTY,
                 ].join(Separator.SPACE).trim();
+
+                return c === 'o' ? official : official.toUpperCase();
+            case 'p':
+                return this.fullname.prefix || Separator.EMPTY;
+            case 'P':
+                return this.fullname.prefix ? this.fullname.prefix.toUpperCase() : Separator.EMPTY;
+            case 's':
+                return this.fullname.suffix || Separator.EMPTY;
+            case 'S':
+                return this.fullname.suffix ? this.fullname.suffix.toUpperCase() : Separator.EMPTY;
             default:
                 return Separator.EMPTY;
         }

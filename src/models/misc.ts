@@ -26,12 +26,24 @@ export interface Fullname {
 export type NameOrder = 'firstname' | 'lastname';
 
 /**
+ * Defines the ways the international community defines a title
+ *
+ * American and Canadian English follow slightly different rules for abbreviated
+ * titles than British and Australian English. In North American English, titles
+ * before a name require a period: `Mr., Mrs., Ms., Dr.` In British and Australian
+ * English, no full stops are used in these abbreviations.
+ * @typedef AbbrTitle
+ */
+export type AbbrTitle = 'us' | 'uk';
+
+/**
  * Interface for JSON signature that represents the configuration of the utility
  * @interface
  */
 export interface Config {
     orderedBy: NameOrder;
     separator: Separator; // how to split names
+    titling: AbbrTitle, // whether to add period to a prefix
     ending: Separator; // ending suffix
     bypass: boolean; // bypass the validation rules
     parser?: Parser<any>; // (user-defined) custom parser

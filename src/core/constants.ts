@@ -21,6 +21,7 @@ export const version = '1.0.6';
 export const CONFIG: Config = {
     orderedBy: 'firstname',
     separator: Separator.SPACE,
+    titling: 'uk', // no period
     ending: Separator.SPACE,
     bypass: false,
 }
