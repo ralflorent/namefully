@@ -80,12 +80,12 @@ The package comes with its own declaration file for TypeScript support.
 
 ```json
 {
-    orderedBy: 'firstname',
-    separator: Separator.SPACE,
-    titling: 'uk',
-    ending: Separator.SPACE,
-    bypass: false,
-    parser: null
+    "orderedBy": "firstname",
+    "separator": " ", // Separator.SPACE
+    "titling": "uk",
+    "ending": " ", // Separator.SPACE
+    "bypass": false,
+    "parser": null
 }
 ```
 
