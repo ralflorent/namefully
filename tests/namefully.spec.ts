@@ -136,13 +136,14 @@ describe('Namefully', () => {
             expect(name.format('F')).toEqual(firstname.toUpperCase())
             expect(name.format('L')).toEqual(lastname.toUpperCase())
             expect(name.format('M')).toEqual(middlename.toUpperCase())
+            expect(name.format('O')).toEqual('MR SMITH, JOHN JOE PHD')
         })
 
         test('should output just a name part', () => {
             expect(name.format('f')).toEqual(firstname)
             expect(name.format('l')).toEqual(lastname)
             expect(name.format('m')).toEqual(middlename)
-            expect(name.format('O')).toEqual(`Mr SMITH, John Joe`)
+            expect(name.format('o')).toEqual('Mr SMITH, John Joe PhD')
             expect(name.format()).toEqual(fullname)
         })
     })
@@ -225,7 +226,7 @@ describe('Namefully', () => {
             expect(name.format('F')).toEqual(firstname.toUpperCase())
             expect(name.format('L')).toEqual(lastname.toUpperCase())
             expect(name.format('M')).toEqual(middlename.toUpperCase())
-            expect(name.format('O')).toEqual(`Mr SMITH, John Joe`)
+            expect(name.format('O')).toEqual(`MR SMITH, JOHN JOE PHD`)
         })
 
         test('should output just a name part', () => {
@@ -233,6 +234,7 @@ describe('Namefully', () => {
             expect(name.format('f')).toEqual(firstname)
             expect(name.format('l')).toEqual(lastname)
             expect(name.format('m')).toEqual(middlename)
+            expect(name.format('o')).toEqual('Mr SMITH, John Joe PhD')
         })
     })
 
