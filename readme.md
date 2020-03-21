@@ -76,6 +76,19 @@ console.log(name.format('L, f m')) // => SMITH, John Joe
 
 The package comes with its own declaration file for TypeScript support.
 
+## Optional parameters' default values
+
+```json
+{
+    orderedBy: 'firstname',
+    separator: Separator.SPACE,
+    titling: 'uk',
+    ending: Separator.SPACE,
+    bypass: false,
+    parser: null
+}
+```
+
 ## Examples
 
 The name standards used for the current version of this library are as
@@ -116,7 +129,8 @@ So, we understand that the name can be seen as follows:
 first and last name;
 - multiple surnames: `De La Cruz`, `Da Vinci`. You can also trick it by using your
 own parsing method or by setting separately each name part via the `Nama|Name` type
-or the string array input.
+or the string array input;
+- multiple prefixes: `Prof. Dr. Einstein`.
 
 See the [use cases](usecases) for further details.
 
