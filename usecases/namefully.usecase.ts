@@ -140,7 +140,7 @@ function createWithOptionalParamsUseCase(): void {
     }
 
     const options: Partial<Config>[] = [
-        { orderedBy: 'lastname', separator: Separator.COLON, ending: Separator.COMMA },
+        { orderedBy: 'lastname', separator: Separator.COLON, titling: 'us', ending: Separator.COMMA },
         { parser: new MyParser('John#Smith') }, // e.g., we don't cover this '#' separator
         // use this 'bypass' when it's very necessary, i.e, when you want to skip the regex
         { orderedBy: 'lastname', separator: Separator.COLON, bypass: true },
