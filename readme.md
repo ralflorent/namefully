@@ -9,6 +9,41 @@
 
 Person name handler in the Latin alphabet.
 
+## Motivation
+
+Have you ever had to format a user's name in a particular order (or shape)?
+Probably yes. If not, it will come at some point. Be patient. Anyway, that is
+simple and easy to implement. Then, a new requirement for a different project
+comes up and demands that you reuse and/or readjust that old implementation for some
+reason. And trust me, more requirements will keep coming, and you'll have to do
+it over and over. When you face this sort of situation on many occasions, it
+surely becomes annoying and forces you to proceed by copy-paste. Well, as you
+probably guess, that has been my situation for a while.
+
+## Key features
+
+1. Offer supports for the Latin alphabet, including other European languages
+(e.g., German, Icelandic names)
+2. Accept different data shape as input
+3. Allow a developer to configure optional parameters
+4. Accept customized parsers
+5. Format a name as desired
+6. Offer support for prefixes and suffixes
+7. Suggest possible usernames associated with the name
+8. Allow hyphenated names, including with apostrophes
+
+## Advanced configurable options
+
+1. Alter the order of appearance a name: by given name or surname
+2. Provide a token/separator to indicate how to split up the name parts
+3. Use your own customized parser (do it yourself)
+
+**IMPORTANT**:
+*If you want to use this utility while it does not offer support for your language (*
+*e.g., Cyrillic alphabet), you can always bypass the validation rules by configuring*
+*the optional parameter `bypass` to `true`. Do note though that you risk facing*
+*some validation errors for certain API.*
+
 ## Installation
 
 ```bash
@@ -41,28 +76,9 @@ console.log(name.format('L, f m')) // => SMITH, John Joe
 
 The package comes with its own declaration file for TypeScript support.
 
-## Support
-
-This utility supports names of the following nature:
-
-- English
-- European (e.g., German, Icelandic names)
-- Spanish
-- hyphenated
-- with apostrophe
-- with comma
-- with a period
-- with space
-
-**IMPORTANT**:
-*If you want to use this utility while it does not offer support for your language (*
-*e.g., Cyrillic alphabet), you can always bypass the validation rules by configuring*
-*an optional parameter `bypass` to `true`. Do note though that you risk to face*
-*some validation errors for certain API.*
-
 ## Examples
 
-Note that the name standards used for the current version of this library are as
+The name standards used for the current version of this library are as
 follows:
 ```[Prefix] Firstname [Middlename] Lastname [Suffix]```.
 The opening `[` and closing `]` brackets mean that these parts are optional. In
@@ -76,7 +92,7 @@ other words, the most basic and typical case is a name that looks like this:
 Once imported, all that is required to do is to create an instance of
 `Namefully` and the rest will follow.
 
-### Basic case
+### Basic cases
 
 Let us take a common example:
 
@@ -92,11 +108,6 @@ So, we understand that the name can be seen as follows:
   - full name: `Mr. John Joe Smith, PhD`
 - possible usernames: `jsmith, johnsmith, j.smith`, etc.
 
-### The allowed punctuation
-
-So far, we allowed the following punctuations: comma, period, apostrophe
-(single quote), and hyphen.
-
 ### Special cases not being covered so far
 
 `namefully` does not have support for certain use cases:
@@ -106,6 +117,8 @@ first and last name;
 - multiple surnames: `De La Cruz`, `Da Vinci`. You can also trick it by using your
 own parsing method or by setting separately each name part via the `Nama|Name` type
 or the string array input.
+
+See the [use cases](usecases) for further details.
 
 ## APIs
 
@@ -124,8 +137,10 @@ or the string array input.
 |*username*|none|none|`string[]`|Suggests possible (randomly) usernames closest to the name|
 |*format*|`how: string`|`null`|`string`|Formats the name as desired|
 
+## Aliases
+
 If you find the names of the method somewhat too long, we provide aliases to make
-your life as a coder easier.
+your life easier as a coder.
 
 |Method|Aliases|
 |---|---|
@@ -137,8 +152,6 @@ your life as a coder easier.
 |*getFullname*|*full*|
 |*getInitials*|*inits*|
 |*describe*|*stats*|
-
-See the [use cases](usecases) for further details.
 
 ## Author
 
