@@ -82,7 +82,7 @@ export class Namefully {
             orderedBy: NameOrder,
             separator: Separator, // how to split string names
             ending: Separator, // for ending suffix
-            bypass: boolean,
+            bypass: boolean, // a bypass for validators
             parser: Parser<any> // (user-defined) custom parser
         }>
     ) {
@@ -104,6 +104,7 @@ export class Namefully {
      */
     getFullname(orderedBy?: NameOrder): string {
         orderedBy = orderedBy || this.config.orderedBy; // override config
+        const sxSep = this.config.ending !== Separator.SPACE ? this.config.ending : Separator.EMPTY;
         const nama: string[] = [];
 
         if (this.fullname.prefix)
@@ -113,21 +114,17 @@ export class Namefully {
             case 'firstname':
                 nama.push(this.getFirstname());
                 nama.push(...this.getMiddlenames());
-                nama.push(this.getLastname());
+                nama.push(Separator.EMPTY.concat(this.getLastname(), sxSep));
                 break;
             case 'lastname':
                 nama.push(this.getLastname());
                 nama.push(this.getFirstname());
-                nama.push(...this.getMiddlenames());
+                nama.push(this.getMiddlenames().join(Separator.SPACE).concat(sxSep));
                 break;
         }
 
-        if (this.fullname.suffix) {
-            const suffix = this.config.ending !== Separator.SPACE ?
-                `${this.config.separator} ${this.fullname.suffix}` : // => ', PhD'
-                this.fullname.suffix;
-            nama.push(suffix);
-        }
+        if (this.fullname.suffix)
+            nama.push(this.fullname.suffix);
 
         return nama.join(Separator.SPACE);
     }
