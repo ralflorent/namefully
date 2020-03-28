@@ -4,12 +4,24 @@ This file contains the documentation on the notable changes and bug fixes, and
 is formatted following this [standard](https://keepachangelog.com/en/1.0.0/).
 This project also adheres to [Semantic Versioning](https://semver.org/)
 
+## [1.0.7] - 2020-03-28
+
+**Added**:
+
+- Add `titling` option to config
+- Add support for prefixes and suffixes when formatting names
+  - including a clear cut for (de)-capitalized official names
+
+**Fixed**:
+
+- Fix wrong ending reference for suffixes
+
 ## [1.0.6] - 2020-03-20
 
 **Added**:
 
 - Add support for Latin (European and Spanish) names
-- Add a bypass validator
+- Add a bypass to skip validation rules (regex)
 
 ## [1.0.5] - 2020-03-17
 
@@ -66,6 +78,7 @@ This project also adheres to [Semantic Versioning](https://semver.org/)
 
 Initial version
 
+[1.0.7]: https://github.com/ralflorent/namefully/compare/v1.0.6...v1.0.7
 [1.0.6]: https://github.com/ralflorent/namefully/compare/v1.0.5...v1.0.6
 [1.0.5]: https://github.com/ralflorent/namefully/compare/v1.0.4...v1.0.5
 [1.0.4]: https://github.com/ralflorent/namefully/compare/v1.0.3...v1.0.4

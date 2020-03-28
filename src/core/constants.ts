@@ -10,7 +10,7 @@ import { Separator, Config, NameIndex } from '../models/index';
  * The current version of `Namefully`.
  * @constant
  */
-export const version = '1.0.6';
+export const version = '1.0.7';
 
 /**
  * CONFIG constant

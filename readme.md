@@ -81,9 +81,9 @@ The package comes with its own declaration file for TypeScript support.
 ```json
 {
     "orderedBy": "firstname",
-    "separator": " ", // Separator.SPACE
+    "separator": " ",
     "titling": "uk",
-    "ending": " ", // Separator.SPACE
+    "ending": " ",
     "bypass": false,
     "parser": null
 }
@@ -166,6 +166,10 @@ your life easier as a coder.
 |*getFullname*|*full*|
 |*getInitials*|*inits*|
 |*describe*|*stats*|
+
+## Related packages
+
+- [@namefully/react](https://www.npmjs.com/package/@namefully/react)
 
 ## Author
 

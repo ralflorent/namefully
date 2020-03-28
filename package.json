@@ -2,8 +2,8 @@
   "name": "namefully",
   "version": "1.0.6",
   "description": "Person name handler in the Latin alphabet",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/lib/index.js",
+  "types": "dist/lib/index.d.ts",
   "files": [
     "dist/**/*"
   ],
@@ -14,7 +14,7 @@
     "test": "jest --collectCoverage=true",
     "usecases": "npm run build && node ./usecases/index.js",
     "uc": "npm run usecases",
-    "publish": "tsc & npm run build:umd"
+    "prepublish": "tsc & npm run build:umd"
   },
   "repository": {
     "type": "git",
@@ -23,21 +23,17 @@
   "keywords": [
     "fullname",
     "person-name",
-    "name-handler",
-    "namefull",
-    "namefully",
     "firstname",
     "lastname",
     "middlename",
     "prefix",
     "suffix",
-    "nickname",
     "surname",
     "givenname"
   ],
   "author": {
     "name": "Ralph Florent",
-    "email": "hi@ralflorent.com",
+    "email": "ralflornt@gmail.com",
     "url": "https://ralflorent.com"
   },
   "license": "GPL-3.0",

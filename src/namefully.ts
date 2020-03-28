@@ -174,9 +174,7 @@ export class Namefully {
      * @returns {string} the suffix
      */
     getSuffix(): string {
-        return this.fullname.suffix ?
-            this.fullname.suffix :
-            Separator.EMPTY;
+        return this.fullname.suffix || Separator.EMPTY;
     }
 
     /**
