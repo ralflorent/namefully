@@ -9,6 +9,8 @@
 
 Person name handler in the Latin alphabet.
 
+[Try it live](https://stackblitz.com/edit/namefully).
+
 ## Motivation
 
 Have you ever had to format a user's name in a particular order (or shape)?
@@ -34,7 +36,7 @@ probably guess, that has been my situation for a while.
 
 ## Advanced configurable options
 
-1. Alter the order of appearance a name: by given name or surname
+1. Alter the order of appearance of a name: by given name or surname
 2. Provide a token/separator to indicate how to split up the name parts
 3. Use your own customized parser (do it yourself)
 
