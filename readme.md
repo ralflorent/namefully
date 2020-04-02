@@ -172,6 +172,7 @@ your life easier as a coder.
 ## Related packages
 
 - [@namefully/react](https://www.npmjs.com/package/@namefully/react)
+- [@namefully/ng](https://www.npmjs.com/package/@namefully/ng)
 
 ## Author
 
