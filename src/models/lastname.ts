@@ -43,7 +43,7 @@ export class Lastname extends Name {
      */
     tostring(format?: LastnameFormat): string {
         format = format || this.format;
-        switch(this.format) {
+        switch(format) {
             case 'father':
                 return this.father;
             case 'mother':
@@ -52,8 +52,8 @@ export class Lastname extends Name {
                 return this.mother ? this.father.concat(Separator.HYPHEN, this.mother) : this.father;
             case 'all':
                 return this.mother ? this.father.concat(Separator.SPACE, this.mother) : this.father;
-            default:
-                return this.father;
+            // default:
+            //     return this.father;
         }
     }
 
@@ -61,10 +61,23 @@ export class Lastname extends Name {
      * Gets the initials of the last name
      * @returns {Array<string>} the initials
      */
-    getInitials(): string[] {
-        const initials: string[] = [this.father[0]];
-        if (!!this.mother && this.mother.length) {
-            initials.push(this.mother[0]);
+    getInitials(format?: LastnameFormat): string[] {
+        format = format || this.format;
+        const initials: string[] = [];
+
+        switch(format) {
+            case 'father':
+                initials.push(this.father[0]);
+                break;
+            case 'mother':
+                if (!!this.mother && this.mother.length)
+                    initials.push(this.mother[0]);
+                break;
+            case 'hyphenated': case 'all':
+                initials.push(this.father[0]);
+                if (!!this.mother && this.mother.length)
+                    initials.push(this.mother[0]);
+                break;
         }
         return initials;
     }
