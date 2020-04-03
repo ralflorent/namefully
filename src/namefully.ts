@@ -255,18 +255,17 @@ export class Namefully {
      * Another thing to consider is that the summary is case *insensitive*. Note
      * that the letter `a` has the top frequency, be it `3`.
      */
-    describe(what: 'fullname' | 'firstname' | 'lastname' | 'middlename' = 'fullname'): string {
+    describe(what: 'fullname' | 'firstname' | 'lastname' | 'middlename' = 'fullname'): Summary {
         switch(what) {
             case 'fullname':
-                return this.summary.tostring();
+                return this.summary;
             case 'firstname':
-                return this.fullname.firstname.describe().tostring();
+                return this.fullname.firstname.describe();
             case 'lastname':
-                return this.fullname.lastname.describe().tostring();
+                return this.fullname.lastname.describe();
             case 'middlename':
-                return this.fullname.middlename ?
-                    this.fullname.middlename.map(n => n.describe().tostring()).join('\n') :
-                    Separator.EMPTY
+                return !this.fullname.middlename ? null :
+                    new Summary(this.fullname.middlename.map(n => n.namon).join(Separator.SPACE))
         }
     }
 

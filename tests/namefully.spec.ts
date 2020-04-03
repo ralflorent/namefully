@@ -58,7 +58,7 @@ describe('Namefully', () => {
         })
 
         test('should describe statistically the fullname', () => {
-            const summary = name.describe()
+            const summary = name.describe().tostring()
             expect(summary).toContain('count')
             expect(summary).toContain('frequency')
             expect(summary).toContain('top')
@@ -66,7 +66,7 @@ describe('Namefully', () => {
         })
 
         test('should describe statistically the firstname', () => {
-            const summary = name.describe('firstname')
+            const summary = name.describe('firstname').tostring()
             expect(summary).toContain('count')
             expect(summary).toContain('frequency')
             expect(summary).toContain('top')
@@ -74,7 +74,7 @@ describe('Namefully', () => {
         })
 
         test('should describe statistically the lastname', () => {
-            const summary = name.describe('lastname')
+            const summary = name.describe('lastname').tostring()
             expect(summary).toContain('count')
             expect(summary).toContain('frequency')
             expect(summary).toContain('top')
@@ -82,7 +82,7 @@ describe('Namefully', () => {
         })
 
         test('should describe statistically the middlename', () => {
-            const summary = name.describe('middlename')
+            const summary = name.describe('middlename').tostring()
             expect(summary).toContain('count')
             expect(summary).toContain('frequency')
             expect(summary).toContain('top')
