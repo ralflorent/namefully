@@ -26,6 +26,12 @@ export interface Fullname {
 export type NameOrder = 'firstname' | 'lastname';
 
 /**
+ * Defines the distinct formats to output a surname
+ * @typedef LastnameFormat
+ */
+export type LastnameFormat = 'father' | 'mother' | 'hyphenated' | 'all';
+
+/**
  * Defines the ways the international community defines a title
  *
  * American and Canadian English follow slightly different rules for abbreviated

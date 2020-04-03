@@ -26,10 +26,12 @@ export class Firstname extends Name {
     /**
      * Gives some descriptive statistics that summarize the central tendency,
      * dispersion and shape of the characters' distribution.
+     * @param {boolean} includeAll whether to include other pieces of the first
+     * name in the summary
      * @see {@link describe} in `Namefully` class for further information
      */
-    describe(): Summary {
-        return new Summary(this.tostring());
+    describe(includeAll: boolean = false): Summary {
+        return new Summary(this.tostring(includeAll));
     }
 
     /**

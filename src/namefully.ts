@@ -8,7 +8,7 @@
  * @see {@link https://github.com/ralflorent/namefully|namefully} for more info.
  */
 import { Parser, NamaParser, StringParser, ArrayNameParser, ArrayStringParser, CONFIG } from './core/index';
-import { Fullname, Name, Nama, Namon, Separator, Summary, Config, NameOrder, AbbrTitle } from './models/index';
+import { Fullname, Name, Nama, Namon, Separator, Summary, Config, NameOrder, AbbrTitle, LastnameFormat } from './models/index';
 import { FullnameValidator } from './validators/index';
 
 /**
@@ -142,10 +142,12 @@ export class Namefully {
 
     /**
      * Gets the last name part of the full name
+     * @param {LastnameFormat} [format] overrides the how-to format of a surname
+     * output, considering its subparts.
      * @returns {string} the last name
      */
-    getLastname(): string {
-        return this.fullname.lastname.tostring();
+    getLastname(format?: LastnameFormat): string {
+        return this.fullname.lastname.tostring(format);
     }
 
     /**
@@ -153,9 +155,7 @@ export class Namefully {
      * @returns {Array<string>} the middle names
      */
     getMiddlenames(): string[] {
-        return this.fullname.middlename ?
-            this.fullname.middlename.map(n => n.namon) :
-            [];
+        return this.fullname.middlename ? this.fullname.middlename.map(n => n.namon) : [];
     }
 
     /**
