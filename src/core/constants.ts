@@ -24,6 +24,7 @@ export const CONFIG: Config = {
     titling: 'uk', // no period
     ending: Separator.SPACE,
     bypass: false,
+    lastnameFormat: 'father',
 }
 
 /**

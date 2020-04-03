@@ -4,7 +4,7 @@
  * Created on March 15, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
  */
-import { Name, Namon, Fullname, Firstname, Lastname, Prefix, Suffix } from '../../models/index';
+import { Name, Namon, Fullname, Firstname, Lastname, Prefix, Suffix, LastnameFormat } from '../../models/index';
 import { ArrayNameValidator } from '../../validators/index';
 import { Parser } from './parser';
 
@@ -38,18 +38,19 @@ export default class ArrayNameParser implements Parser<Name[]> {
      * Parses the raw data into a full name
      * @returns {Fullname}
      */
-    parse(options: { bypass: boolean }): Fullname {
+    parse(options: { bypass: boolean, lastnameFormat: LastnameFormat }): Fullname {
+        const { bypass, lastnameFormat } = options;
         // validate first
-        if (!options.bypass) new ArrayNameValidator().validate(this.raw);
+        if (!bypass) new ArrayNameValidator().validate(this.raw);
 
         // then distribute all the elements accordingly
-        const fullname: Fullname = this.distribute();
+        const fullname: Fullname = this.distribute(lastnameFormat);
 
         // finally return high quality of data
         return fullname;
     }
 
-    private distribute(): Fullname {
+    private distribute(lastnameFormat: LastnameFormat): Fullname {
 
         const fullname: Fullname = {
             firstname: null,
@@ -68,7 +69,10 @@ export default class ArrayNameParser implements Parser<Name[]> {
                     fullname.firstname = new Firstname(name.namon);
                     break;
                 case Namon.LAST_NAME:
-                    fullname.lastname = new Lastname(name.namon);
+                    if (name instanceof Lastname)
+                        fullname.lastname = new Lastname(name.father, name.mother, lastnameFormat)
+                    else
+                        fullname.lastname = new Lastname(name.namon, null, lastnameFormat);
                     break;
                 case Namon.MIDDLE_NAME:
                     fullname.middlename.push(name);

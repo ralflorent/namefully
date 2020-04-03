@@ -85,6 +85,7 @@ export class Namefully {
             ending: Separator, // for ending suffix
             bypass: boolean, // a bypass for validators
             parser: Parser<any> // (user-defined) custom parser
+            lastnameFormat: LastnameFormat // how to format a surname
         }>
     ) {
         // well, first thing first
@@ -481,8 +482,8 @@ export class Namefully {
      * @param parser customized or user-defined parser to get the full name
      */
     private initialize<T>(parser: Parser<T>): void {
-        const { orderedBy, separator, bypass } = this.config;
-        this.fullname = parser.parse({ orderedBy, separator, bypass });
+        const { orderedBy, separator, bypass, lastnameFormat } = this.config;
+        this.fullname = parser.parse({ orderedBy, separator, bypass, lastnameFormat });
     }
 
     /**

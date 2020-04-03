@@ -4,7 +4,7 @@
  * Created on March 15, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
  */
-import { Fullname, Separator, NameOrder } from '../../models/index';
+import { Fullname, Separator, NameOrder, LastnameFormat } from '../../models/index';
 
 
 /**
@@ -27,5 +27,6 @@ export interface Parser<T> {
         orderedBy: NameOrder,
         separator: Separator,
         bypass: boolean,
+        lastnameFormat: LastnameFormat
     }>): Fullname;
 }

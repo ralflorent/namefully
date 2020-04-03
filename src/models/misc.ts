@@ -53,6 +53,7 @@ export interface Config {
     ending: Separator; // ending suffix
     bypass: boolean; // bypass the validation rules
     parser?: Parser<any>; // (user-defined) custom parser
+    lastnameFormat?: LastnameFormat; // how to format a surname
 }
 
 /**

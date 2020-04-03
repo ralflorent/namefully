@@ -4,7 +4,7 @@
  * Created on March 15, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
  */
-import { Name, Namon } from '../models/index';
+import { Name, Namon, Lastname } from '../models/index';
 import {
     Validator, ValidatorType, ValidationError , PrefixValidator, FirstnameValidator,
     LastnameValidator, MiddlenameValidator, SuffixValidator
@@ -42,6 +42,8 @@ export default class ArrayNameValidator implements Validator<Name[]> {
                 values.forEach(n => {
                     if ( ![Namon.FIRST_NAME, Namon.LAST_NAME].includes(n.type) )
                         throw new ValidationError('Both first and last names are required')
+                    if (n.type === Namon.LAST_NAME && n instanceof Lastname)
+                        validators[n.type].validate(n.mother)
                     validators[n.type].validate(n.namon)
                 });
                 break;
@@ -49,6 +51,8 @@ export default class ArrayNameValidator implements Validator<Name[]> {
                 values.forEach(n => {
                     if ( ![Namon.FIRST_NAME, Namon.MIDDLE_NAME, Namon.LAST_NAME].includes(n.type) )
                         throw new ValidationError('First, middle and last names are required')
+                    if (n.type === Namon.LAST_NAME && n instanceof Lastname)
+                        validators[n.type].validate(n.mother)
                     validators[n.type].validate(n.namon)
                 });
                 break;
@@ -57,6 +61,8 @@ export default class ArrayNameValidator implements Validator<Name[]> {
                     if ( ![Namon.PREFIX, Namon.FIRST_NAME, Namon.MIDDLE_NAME,
                         Namon.LAST_NAME].includes(n.type) )
                         throw new ValidationError('More fields are required')
+                    if (n.type === Namon.LAST_NAME && n instanceof Lastname)
+                        validators[n.type].validate(n.mother)
                     validators[n.type].validate(n.namon)
                 });
                 break;
@@ -65,6 +71,8 @@ export default class ArrayNameValidator implements Validator<Name[]> {
                     if ( ![Namon.PREFIX, Namon.FIRST_NAME, Namon.MIDDLE_NAME, Namon.LAST_NAME,
                         Namon.SUFFIX].includes(n.type) )
                         throw new ValidationError('More fields are required')
+                    if (n.type === Namon.LAST_NAME && n instanceof Lastname)
+                        validators[n.type].validate(n.mother)
                     validators[n.type].validate(n.namon)
                 });
                 break;
