@@ -324,14 +324,11 @@ export class Namefully {
         const { firstname: fn, lastname: ln, middlename } = this.fullname;
         const mn = this.getMiddlenames().join(Separator.SPACE);
         const hasmid: boolean = Array.isArray(middlename) && middlename.length > 0;
+        const sep = this.config.titling === 'us' ? Separator.PERIOD : Separator.EMPTY;
 
-        const firsts = fn.getInitials().join(Separator.PERIOD).concat(Separator.PERIOD);
-        const lasts = ln.getInitials().join(Separator.SPACE).concat(Separator.PERIOD);
-        const mids = hasmid ?
-            middlename.map(n => n.getInitials())
-            .join(Separator.PERIOD)
-            .concat(Separator.PERIOD) :
-            Separator.EMPTY;
+        const firsts = fn.getInitials().join(sep).concat(sep);
+        const lasts = ln.getInitials().join(sep).concat(sep);
+        const mids = hasmid ? middlename.map(n => n.getInitials()).join(sep).concat(sep) : Separator.EMPTY;
         let cname = '';
 
         if (this.config.orderedBy === 'firstname') {
