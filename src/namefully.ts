@@ -588,7 +588,7 @@ export class Namefully {
             throw new Error(`Cannot parse raw data. Review the data type expected.`);
         }
         // paranoid coder mode: on :P
-        new FullnameValidator().validate(this.fullname);
+        if (!this.config.bypass) new FullnameValidator().validate(this.fullname);
         this.summary = new Summary(this.getFullname());
     }
 }

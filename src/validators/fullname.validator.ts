@@ -5,7 +5,7 @@
  * @author Ralph Florent <ralflornt@gmail.com>
  */
 import { Fullname, Firstname, Lastname } from '../models/index';
-import { Validator, ValidatorType, ValidationError, PrefixValidator } from './index';
+import { Validator, ValidatorType, ValidationError, PrefixValidator, SuffixValidator } from './index';
 
 /**
  * Represents a `Fullname` (JSON signature) validator for provided custom parser
@@ -27,5 +27,7 @@ export default class FullnameValidator implements Validator<Fullname> {
             throw new ValidationError('middle name is corrupted', 'Fullname');
         if (v.prefix)
             new PrefixValidator().validate(v.prefix)
+        if (v.suffix)
+            new SuffixValidator().validate(v.suffix)
     }
 }

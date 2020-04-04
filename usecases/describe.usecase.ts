@@ -14,7 +14,7 @@ function describeFullnameUseCase(): void {
     content += `| USE CASE: Describe the full name                                             |\n`
     content += `+==============================================================================+\n`
     names.forEach(name => {
-        content += name.describe();
+        content += name.describe().tostring();
         content += `----------------------------------------------------------------------------\n`
     })
     console.log(content);

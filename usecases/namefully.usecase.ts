@@ -4,7 +4,7 @@
  * Created on March 09, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
  */
-import { Namefully, Name, Namon, Firstname, Lastname, Config, Separator, Parser, Fullname } from '../src/index';
+import { Namefully, Name, Namon, Firstname, Lastname, Config, Separator, Parser, Fullname, Prefix, Suffix } from '../src/index';
 
 function createFromLiteralStringUseCase() {
     const cases = [
@@ -133,15 +133,17 @@ function createWithOptionalParamsUseCase(): void {
         parse(): Fullname {
             const names = this.raw.split('#');
             return {
+                prefix: 'Sr' as Prefix, // unknown prefix
                 firstname: new Firstname(names[0].trim()),
-                lastname: new Lastname(names[1].trim())
+                lastname: new Lastname(names[1].trim()),
+                suffix: 'Lic' as Suffix // unknown suffix
             };
         }
     }
 
     const options: Partial<Config>[] = [
-        { orderedBy: 'lastname', separator: Separator.COLON, titling: 'us', ending: Separator.COMMA },
-        { parser: new MyParser('John#Smith') }, // e.g., we don't cover this '#' separator
+        { orderedBy: 'lastname', separator: Separator.COLON, titling: 'us', ending: Separator.COMMA},
+        { parser: new MyParser('Juan#Garcia'), bypass: true }, // e.g., we don't cover this '#' separator
         // use this 'bypass' when it's very necessary, i.e, when you want to skip the regex
         { orderedBy: 'lastname', separator: Separator.COLON, bypass: true },
     ];
