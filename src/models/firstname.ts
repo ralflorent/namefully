@@ -52,10 +52,10 @@ export class Firstname extends Name {
      * Gets the initials of the first name
      * @returns {Array<string>} the initials
      */
-    getInitials(): string[] {
+    getInitials(includeAll: boolean = false): string[] {
         const initials: string[] = [this.namon[0]];
-        if (Array.isArray(this.more) && this.more.length) {
-            initials.push(...this.more);
+        if (includeAll && Array.isArray(this.more) && this.more.length) {
+            initials.push(...this.more.map(n => n[0]));
         }
         return initials;
     }
