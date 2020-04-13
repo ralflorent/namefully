@@ -20,6 +20,7 @@ import {
     ArrayStringValidator,
     ArrayNameValidator,
     NAME_INDEX,
+    Name, Namon, Lastname,
 } from '../../src/index';
 
 describe('Validators', () => {
@@ -405,4 +406,37 @@ describe('Validators', () => {
         })
     })
 
+    describe('ArrayNameValidator', () => {
+
+        const validator = new ArrayNameValidator()
+        let fn: Name, ln: Lastname, mn: Name, px: Name, sx: Name
+
+        beforeEach(() => {
+            fn = new Name('John', Namon.FIRST_NAME)
+            mn = new Name('Joe', Namon.MIDDLE_NAME)
+            ln = new Lastname('Pitt', 'Jolie', 'hyphenated')
+            px = new Name('Mr', Namon.PREFIX)
+            sx = new Name('PhD', Namon.SUFFIX)
+        })
+
+        test('should be a Name array validator', () => {
+            expect(validator.type).toStrictEqual(ValidatorType.ARR_NAMES)
+        })
+
+        test('should throw error when wrong entries', () => {
+            [
+                () => new ArrayNameValidator().validate([]), // insufficient
+                () => new ArrayNameValidator().validate([fn, fn, fn, fn, fn, fn]), // too many
+            ].forEach(func => expect(func).toThrow(ValidationError))
+        })
+
+        test('should throw error when incomplete entries', () => {
+            [
+                () => new ArrayNameValidator().validate([px]),
+                () => new ArrayNameValidator().validate([px, px]),
+                () => new ArrayNameValidator().validate([px, px, px]),
+                () => new ArrayNameValidator().validate([fn, ln, mn, sx]),
+            ].forEach(func => expect(func).toThrow(ValidationError))
+        })
+    })
 })
