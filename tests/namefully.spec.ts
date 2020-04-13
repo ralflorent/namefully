@@ -102,15 +102,15 @@ describe('Namefully', () => {
 
         test('should limit name to 10 chars', () => {
             const compressed = name.compress(10)
-            expect(compressed).toBe(`${firstname} J. ${lastname}`)
+            expect(compressed).toBe(`${firstname} J ${lastname}`)
             expect(console.warn).toBeCalledTimes(1)
         })
 
         test('should limit name to 10 chars while compressing', () => {
-            expect(name.compress(10, 'firstname')).toBe('J. Joe Smith')
-            expect(name.compress(10, 'lastname')).toBe('John Joe S.')
-            expect(name.compress(10, 'firstmid')).toBe('J. J. Smith')
-            expect(name.compress(10, 'midlast')).toBe('John J. S.')
+            expect(name.compress(10, 'firstname')).toBe('J Joe Smith')
+            expect(name.compress(10, 'lastname')).toBe('John Joe S')
+            expect(name.compress(10, 'firstmid')).toBe('J J Smith')
+            expect(name.compress(10, 'midlast')).toBe('John J S')
         })
 
         test('should output possible usernames', () => {
@@ -192,15 +192,15 @@ describe('Namefully', () => {
 
         test('should limit name to 10 chars', () => {
             const compressed = name.compress(10)
-            expect(compressed).toBe('Smith John J.')
+            expect(compressed).toBe('Smith John J')
             expect(console.warn).toBeCalledTimes(1)
         })
 
         test('should limit name to 10 chars while compressing', () => {
-            expect(name.compress(10, 'firstname')).toBe('Smith J. Joe')
-            expect(name.compress(10, 'lastname')).toBe('S. John Joe')
-            expect(name.compress(10, 'firstmid')).toBe('Smith J. J.')
-            expect(name.compress(10, 'midlast')).toBe('S. John J.')
+            expect(name.compress(10, 'firstname')).toBe('Smith J Joe')
+            expect(name.compress(10, 'lastname')).toBe('S John Joe')
+            expect(name.compress(10, 'firstmid')).toBe('Smith J J')
+            expect(name.compress(10, 'midlast')).toBe('S John J')
         })
 
         test('should output possible usernames', () => {
