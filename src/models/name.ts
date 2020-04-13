@@ -21,9 +21,10 @@ export class Name {
      * @param namon a piece of string that will be defined as a namon
      * @param type which namon that is
      */
-    constructor(public namon: string, public type: Namon) {
+    constructor(public namon: string, public type: Namon, capitalized?: 'initial' | 'all') {
         this.initial = namon[0];
         this.body = namon.slice(1, namon.length);
+        if (!!capitalized) this.capitalize(capitalized);
     }
 
     /**
@@ -52,6 +53,7 @@ export class Name {
             this.initial = this.initial.toUpperCase();
             this.namon = this.initial.concat(this.body);
         } else {
+            this.initial = this.initial.toUpperCase();
             this.namon = this.namon.toUpperCase();
         }
     }
