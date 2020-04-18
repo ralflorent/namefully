@@ -79,7 +79,7 @@ export class Namefully {
     constructor(
         raw: string | Array<string> | Array<Name> | Nama,
         options?: Partial<{
-            orderedBy: NameOrder,
+            orderedBy: NameOrder, // indicate order of appearance
             separator: Separator, // how to split string names
             titling: AbbrTitle, // whether to add a period to a prefix
             ending: Separator, // for ending suffix
@@ -293,11 +293,12 @@ export class Namefully {
 
     /**
      * Compresses a name by using different forms of variants
-     * @param {number} limit a threshold to limit the number of characters
-     * @param {'firstname'|'lastname'|'middlename'|'firstmid'|'midlast'} by
+     * @param {number} [limit] a threshold to limit the number of characters
+     * @param {'firstname'|'lastname'|'middlename'|'firstmid'|'midlast'} [by]
      * a variant to use when compressing the long name. The last two variants
      * represent respectively the combination of `firstname + middlename` and
      * `middlename + lastname`.
+     * @param {boolean} [warning] should warn when the set limit is violated
      *
      * @example
      * The compressing operation is only executed iff there is valid entry and it
@@ -315,7 +316,8 @@ export class Namefully {
      */
     compress(
         limit: number = 20,
-        by: 'firstname' | 'lastname' | 'middlename' | 'firstmid' | 'midlast' = 'middlename'
+        by: 'firstname' | 'lastname' | 'middlename' | 'firstmid' | 'midlast' = 'middlename',
+        warning: boolean = true
     ): string {
 
         if (this.getFullname().length <= limit) // no need to compress
@@ -390,10 +392,29 @@ export class Namefully {
             }
         }
 
-        if (cname.length > limit)
+        if (warning && cname.length > limit)
             console.warn(`The compressed name <${cname}> still surpasses the set limit ${limit}`);
 
         return cname;
+    }
+
+    /**
+     * Zips or compresses a name by using different forms of variants
+     * @param by a variant to use when compressing the long name. The last two
+     * variants represent respectively the combination of `firstname + middlename`
+     * and `middlename + lastname`.
+     */
+    zip(
+        by: 'fn' | 'ln'| 'mn' | 'fm' | 'ml' |
+        'firstname' |  'lastname' | 'middlename' | 'firstmid' | 'midlast' = 'mn'
+    ): string {
+        let v: 'firstname' | 'lastname' | 'middlename' | 'firstmid' | 'midlast';
+        if (by === 'fn' || by === 'firstname') v = 'firstname';
+        if (by === 'mn' || by === 'middlename') v = 'middlename';
+        if (by === 'ln' || by === 'lastname') v = 'lastname';
+        if (by === 'fm' || by === 'firstmid') v = 'firstmid';
+        if (by === 'ml' || by === 'midlast') v = 'midlast';
+        return this.compress(0, v , false);
     }
 
     /**
