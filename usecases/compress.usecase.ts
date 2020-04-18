@@ -28,10 +28,31 @@ function compressUseCase(): void {
     console.log(content);
 }
 
+function zipUseCase(): void {
+    const names = cases.map(c => new Namefully(c));
+    let content = '';
+    content += `+==============================================================================+\n`
+    content += `| USE CASE: zip the full name using different variants                    |\n`
+    content += `+==============================================================================+\n`
+    names.forEach(name => {
+        content += `full name    : ${name.getFullname()}\n`;
+        content += `by default   : ${name.zip()}\n`;
+        content += `by firstname : ${name.zip('fn')}\n`;
+        content += `by lastname  : ${name.zip('ln')}\n`;
+        content += `by middlename: ${name.zip('mn')}\n`;
+        content += `by firstmid  : ${name.zip('fm')}\n`;
+        content += `by midlast   : ${name.zip('ml')}\n`;
+        content += `----------------------------------------------------------------------------\n`
+    })
+    console.log(content);
+}
+
 export {
     compressUseCase,
+    zipUseCase,
 }
 
 export default {
     compressUseCase,
+    zipUseCase,
 }

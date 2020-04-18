@@ -274,7 +274,7 @@ or the string array input;
 
 See the [use cases](usecases) for further details.
 
-## APIs
+## API
 
 | Name | Arguments | Default | Returns | Description |
 |---|---|---|---|---|
@@ -285,7 +285,7 @@ See the [use cases](usecases) for further details.
 |*getSuffix*|none|none|`string`|Gets the suffix part of the full name, if any|
 |*getFullname*|`orderedBy`|`null`|`string`|Gets the full name|
 |*getInitials*|`orderedBy`, `withMid`|`null`, `false`|`string`|Gets the initials of the first and last name|
-|*describe*|`what`|`fullname`|`string`|Gives some descriptive statistics of the characters' distribution.|
+|*describe*|`what`|`fullname`|`object`|Gives some descriptive statistics of the characters' distribution.|
 |*shorten*|`orderedBy`|`null`|`string`|Returns a typical name (e.g. first and last name)|
 |*compress*|`limit`, `by`|`20`, `middlename`|`string`|Compresses a name by using different forms of variants|
 |*username*|none|none|`string[]`|Suggests possible (randomly) usernames closest to the name|
@@ -314,7 +314,7 @@ Developed by [Ralph Florent](https://github.com/ralflorent).
 
 ## License
 
-The underlying content of this project is licensed under [GPL-3.0](LICENSE).
+The underlying content of this utility is licensed under [GPL-3.0](LICENSE).
 
 <!-- References -->
 [version-img]: https://img.shields.io/npm/v/namefully

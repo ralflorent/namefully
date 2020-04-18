@@ -1,8 +1,22 @@
-# Change Log
+# Changelog
 
 This file contains the documentation on the notable changes and bug fixes, and
 is formatted following this [standard](https://keepachangelog.com/en/1.0.0/).
-This project also adheres to [Semantic Versioning](https://semver.org/)
+This project also adheres to [Semantic Versioning](https://semver.org/).
+
+## [1.0.8] - 2020-04-18
+
+**Added**:
+
+- Add short API equivalent for `compress` => `zip`
+- Add `lastnameFormat` option to config and surname subparts handling
+- Refactor return values for `describe` (object instead of string)
+- Add support for titling when compressing or zipping
+
+**Fixed**:
+
+- Fix missing bypass for fullname validator
+- Fix logic for name parts handling in `Firstname` class
 
 ## [1.0.7] - 2020-03-28
 
@@ -78,6 +92,7 @@ This project also adheres to [Semantic Versioning](https://semver.org/)
 
 Initial version
 
+[1.0.8]: https://github.com/ralflorent/namefully/compare/v1.0.7...v1.0.8
 [1.0.7]: https://github.com/ralflorent/namefully/compare/v1.0.6...v1.0.7
 [1.0.6]: https://github.com/ralflorent/namefully/compare/v1.0.5...v1.0.6
 [1.0.5]: https://github.com/ralflorent/namefully/compare/v1.0.4...v1.0.5
