@@ -11,6 +11,10 @@ Person name handler in the Latin alphabet.
 
 [Try it live](https://stackblitz.com/edit/namefully).
 
+## Documentation
+
+Check out the official documentation at [https://namefully.netlify.app/](https://namefully.netlify.app/).
+
 ## Motivation
 
 Have you ever had to format a user's name in a particular order (or shape)?
