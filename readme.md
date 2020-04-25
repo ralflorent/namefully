@@ -95,7 +95,7 @@ console.log(name.fn()) // => Thomas
 
 > NOTE: This option also affects all the other results of the API. In other words,
 > the results will prioritize the order of appearance set in the first place for
-> future operations. Keep in mind that in some cases it be altered. See the example below.
+> future operations. Keep in mind that in some cases it can be altered. See the example below.
 
 ```ts
 // 'Smith' is the surname in this raw string case
@@ -158,7 +158,7 @@ console.log(name.full()) // => Mr. John Smith, PhD
 
 `string: 'father' | 'mother' | 'hyphenated' | 'all'`, default: `father`
 
-Defines the distinct formats to output a compound surname (e.g., Hispanish
+Defines the distinct formats to output a compound surname (e.g., Hispanic
 surnames).
 
 ```ts
