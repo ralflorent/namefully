@@ -185,7 +185,7 @@ console.log(name.full()) // => 2Pac Shakur
 
 > NOTE: This option can help to trick the utility and allow us to use it for
 > unsupported languages or inner contents like prefixes or suffixes. For example,
-> the Cyrillic alphabet will not pass the validation rules. Or, the Spanish
+> the Hindi characters will not pass the validation rules. Or, the Spanish
 > equivalent for `Mr` => `Sr` will cause a failure of the utility. Do note though
 > you risk facing some validation errors for certain API.
 
@@ -283,7 +283,7 @@ See the [use cases](usecases) for further details.
 |*getPrefix*|none|none|`string`|Gets the prefix part of the full name, if any|
 |*getFirstname*|none|none|`string`|Gets the first name part of the full name|
 |*getMiddlenames*|none|none|`string[]`|Gets the middle name part of the full name|
-|*getLastname*|none|none|`string`|Gets the last name part of the full name|
+|*getLastname*|`format`|`null`|`string`|Gets the last name part of the full name|
 |*getSuffix*|none|none|`string`|Gets the suffix part of the full name, if any|
 |*getFullname*|`orderedBy`|`null`|`string`|Gets the full name|
 |*getInitials*|`orderedBy`, `withMid`|`null`, `false`|`string`|Gets the initials of the first and last name|
