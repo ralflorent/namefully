@@ -1,14 +1,14 @@
 /**
- * Utils for the core functionality of `Namefully`
+ * Utils for the core functionalities of `Namefully`
  *
  * Created on March 16, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
  */
-import { NameIndex, NameOrder } from '../../models/index';
-import { NAME_INDEX } from '../../core/index';
+import { NameIndex, NameOrder } from '../../models';
+import { NAME_INDEX } from '../../core';
 
 /**
- * Re-organizes the existing global indexes for array of name parts
+ * Reorganizes the existing global indexes for array of name parts
  * @param orderedBy by first or last name
  * @param argLength length of the provided array
  * @param nameIndex global preset of indexing

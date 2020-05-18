@@ -12,7 +12,7 @@ import { Fullname, Name, Nama, Namon, Separator, Summary, Config, NameOrder, Abb
 import { FullnameValidator } from './validators/index';
 
 /**
- * Person name handler in the Latin alphabet
+ * Person name handler
  * @class
  * @classdesc
  * `Namefully` does not magically guess which part of the name is what. It relies
@@ -230,6 +230,7 @@ export class Namefully {
     /**
      * Gives some descriptive statistics that summarize the central tendency,
      * dispersion and shape of the characters' distribution.
+     * @param what which variant to use when describe a name part
      * @returns {string} the stats behind the full name.
      *
      * Treated as a categorical dataset, the summary contains the following info:
@@ -272,6 +273,8 @@ export class Namefully {
     /**
      * Shortens a complex full name to a simple typical name, a combination of
      * first name and last name.
+     * @param {'firstname'|'lastname'} orderedBy force to order by first or last
+     * name by overriding the preset configuration
      * @returns {string} a typical name
      *
      * @example

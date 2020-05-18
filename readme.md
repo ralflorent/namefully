@@ -7,9 +7,7 @@
 
 ## Description
 
-Person name handler in the Latin alphabet.
-
-[Try it live](https://stackblitz.com/edit/namefully).
+Person name handler. [Try it live](https://stackblitz.com/edit/namefully).
 
 ## Documentation
 
@@ -28,8 +26,8 @@ probably guess, that has been my situation for a while.
 
 ## Key features
 
-1. Offer supports for the Latin alphabet, including other European languages
-(e.g., German, Icelandic names)
+1. Offer supports for Latin alphabet, including other European ones
+(e.g., German, Greek, Cyrillic, Icelandic characters)
 2. Accept different data shape as input
 3. Allow a developer to configure optional parameters
 4. Accept customized parsers (do it yourself)

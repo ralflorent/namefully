@@ -68,9 +68,9 @@ export interface Nama {
 }
 
 /**
- * @interface Index represents the JSON signature for indexing name parts
+ * @interface Indexing represents the JSON signature for indexing name parts
  */
-interface Index<T> {
+interface Indexing<T> {
     prefix: T;
     firstname: T;
     middlename: T;
@@ -83,4 +83,4 @@ interface Index<T> {
  * using numbered index
  * @extends Index<number>
  */
-export interface NameIndex extends Index<number> {}
+export interface NameIndex extends Indexing<number> {}
