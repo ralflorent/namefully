@@ -48,13 +48,25 @@ export class Name {
      * Capitalizes a name
      * @param {'initial' | 'all'} option how to capitalize it
      */
-    protected capitalize(option: 'initial' | 'all' = 'initial'): void {
+    capitalize(option: 'initial' | 'all' = 'initial'): void {
+        this.initial = this.initial.toUpperCase();
         if (option === 'initial') {
-            this.initial = this.initial.toUpperCase();
             this.namon = this.initial.concat(this.body);
         } else {
-            this.initial = this.initial.toUpperCase();
             this.namon = this.namon.toUpperCase();
+        }
+    }
+
+    /**
+     * De-capitalizes a name
+     * @param {'initial' | 'all'} option how to decapitalize it
+     */
+    decapitalize(option: 'initial' | 'all' = 'initial'): void {
+        this.initial = this.initial.toLowerCase();
+        if (option === 'initial') {
+            this.namon = this.initial.concat(this.body);
+        } else {
+            this.namon = this.initial.concat(this.body.toLowerCase());
         }
     }
 
@@ -71,4 +83,26 @@ export class Name {
     upper(): string {
         return this.namon.toUpperCase();
     }
+
+    /**
+     * Resets to the initial namon
+     */
+    reset(): void {
+        this.namon = this.initial.concat(this.body);
+    }
 }
+
+/**
+ * Aliases for `Name`
+ */
+export interface Name {
+    cap: typeof Name.prototype.capitalize;
+    decap: typeof Name.prototype.decapitalize;
+    stats: typeof Name.prototype.describe;
+    inits: typeof Name.prototype.getInitials;
+}
+
+Name.prototype.cap = Name.prototype.capitalize;
+Name.prototype.decap = Name.prototype.decapitalize;
+Name.prototype.stats = Name.prototype.describe;
+Name.prototype.inits = Name.prototype.getInitials;
