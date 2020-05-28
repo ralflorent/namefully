@@ -1,5 +1,6 @@
 /**
- * `Namefully` person name handler
+ * Welcome to namefully, a person name handler!
+ * Official docs: namefully.netlify.app
  *
  * Created on March 03, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
@@ -72,12 +73,12 @@ export class Namefully {
 
     /**
      * Constructs an instance of the utility and helps to benefit from many helpers
-     * @param {string | string[] | Array<Name> | Nama} raw element to parse or
+     * @param {string | string[] | Name[] | Nama} raw element to parse or
      * construct the pieces of the name
      * @param {Config} options to configure how to run the utility
      */
     constructor(
-        raw: string | Array<string> | Array<Name> | Nama,
+        raw: string | string[] | Name[] | Nama,
         options?: Partial<{
             orderedBy: NameOrder, // indicate order of appearance
             separator: Separator, // how to split string names
@@ -206,7 +207,7 @@ export class Namefully {
         const midInits = this.fullname.middlename ?
             this.fullname.middlename.map(n => n.getInitials()) : [];
 
-        if (withMid && !this.fullname.middlename) {
+        if (withMid && !this.hasMiddlename()) {
             console.warn('No initials for middle names since none was set.');
         }
 
@@ -265,8 +266,9 @@ export class Namefully {
             case 'lastname':
                 return this.fullname.lastname.describe();
             case 'middlename':
-                return !this.fullname.middlename ? null :
-                    new Summary(this.fullname.middlename.map(n => n.namon).join(Separator.SPACE))
+                return this.fullname.middlename
+                ? new Summary(this.fullname.middlename.map(n => n.namon).join(Separator.SPACE))
+                : null;
         }
     }
 
@@ -283,15 +285,9 @@ export class Namefully {
      */
     shorten(orderedBy?: 'firstname' | 'lastname'): string {
         orderedBy = orderedBy || this.config.orderedBy; // override config
-        return orderedBy === 'firstname' ?
-        [
-            this.fullname.firstname.namon,
-            this.fullname.lastname.namon,
-        ].join(Separator.SPACE) :
-        [
-            this.fullname.lastname.namon,
-            this.fullname.firstname.namon,
-        ].join(Separator.SPACE);
+        return orderedBy === 'firstname'
+            ? [this.fullname.firstname.namon, this.fullname.lastname.namon].join(Separator.SPACE)
+            : [ this.fullname.lastname.namon, this.fullname.firstname.namon].join(Separator.SPACE);
     }
 
     /**
@@ -475,7 +471,7 @@ export class Namefully {
         if (!how)
             return this.getFullname();
 
-        const formatted: Array<string> = [];
+        const formatted: string[] = [];
         const tokens = [
             '.', ',', ' ', '-', '_', 'f', 'F', 'l', 'L', 'm', 'M',
             'n', 'N', 'o', 'O', 'p', 'P', 's', 'S'
@@ -489,28 +485,62 @@ export class Namefully {
     }
 
     /**
-     * Configures how the setup will be working
-     * @param {Config} options for a customized setup
+     * Returns which writing system (or alphabet) a name belongs to
+     * @param {'firstname'|'lastname'|'middlename'} [what] which name part
      */
+    alph(what?: 'fn' | 'firstname' | 'ln' | 'lastname' | 'mn' | 'middlename'): string {
+        return null;
+    }
+
+    /**
+     * Returns a numerical representation of characters within a name
+     * @param {'firstname'|'lastname'|'middlename'} [what] which name part
+     */
+    ascii(what?: 'fn' | 'firstname' | 'ln' | 'lastname' | 'mn' | 'middlename'): number[] {
+        switch(what) {
+            case 'firstname': case 'fn':
+                return this.buildAscii(this.fullname.firstname.namon);
+            case 'lastname': case 'ln':
+                return this.buildAscii(this.fullname.lastname.namon);
+            case 'middlename': case 'mn':
+                if (!this.hasMiddlename())
+                    console.warn('No ASCII for middle names since none was set.');
+                return this.buildAscii(this.getMiddlenames().join(Separator.EMPTY));
+            default:
+                return this.buildAscii(this.getFullname());
+        }
+    }
+
+    /**
+     * Returns a passphrase (password-like) of a name
+     * @param {'firstname'|'lastname'|'middlename'} [what] which name part
+     */
+    passphrase(what?: 'firstname' |  'lastname' | 'middlename'): string {
+        return null;
+    }
+
+    private buildAscii(str: string, restrictions: string[] = [Separator.SPACE]): number[] {
+        const ascii: number[] = [];
+        for(const c of str)
+            if (restrictions.indexOf(c) === -1)
+                ascii.push(c.charCodeAt(0))
+        return ascii;
+    }
+
+    private hasMiddlename(): boolean {
+        return Array.isArray(this.fullname.middlename) && this.fullname.middlename.length > 0;
+    }
+
     private configure(options?: Partial<Config>): void {
         // consider using deepmerge if objects no longer stay shallow
         this.config = { ...CONFIG, ...options }; // if options, it overrides CONFIG
     }
 
-    /**
-     * Defines the full name by having the pieces (namon) of the names ready
-     * @param parser customized or user-defined parser to get the full name
-     */
     private initialize<T>(parser: Parser<T>): void {
         const { orderedBy, separator, bypass, lastnameFormat } = this.config;
         this.fullname = parser.parse({ orderedBy, separator, bypass, lastnameFormat });
     }
 
-    /**
-     * Maps a character to a specific piece of the name
-     * @param c character to be mapped
-     * @return {string} piece of name
-     */
     private map(c: string): string {
         switch(c) {
             case '.':
@@ -564,11 +594,6 @@ export class Namefully {
         }
     }
 
-    /**
-     * Builds a high qualitty of data using parsers and validators
-     * @param {string | string[] | Array<Name> | Nama} raw data to parse or
-     * construct the pieces of the name
-     */
     private build(raw: string | string[] | Array<Name> | Nama): void {
         if (this.config.parser) {
             this.initialize(this.config.parser);
@@ -576,25 +601,20 @@ export class Namefully {
             this.initialize(new StringParser(raw));
         } else if (Array.isArray(raw) && raw.length) { // check for Array<T>
             if (typeof raw[0] === 'string') { // check for Array<string>
-
                 for (const key of raw as Array<string>)
                     if (typeof key !== 'string')
                         throw new Error(`Cannot parse raw data as array of 'string'`);
                 this.initialize(new ArrayStringParser(raw as Array<string>))
-
             } else if (raw[0] instanceof Name) { // check for Array<Name>
-
                 for (const obj of raw as Array<string>)
                     if (!(obj as any instanceof Name))
                         throw new Error(`Cannot parse raw data as array of '${Name.name}'`);
                 this.initialize(new ArrayNameParser(raw as Array<Name>));
-
             } else {
                 // typescript should stop them, but let's be paranoid (for JS developers)
                 throw new Error(`Cannot parse raw data as arrays that are not of '${Name.name}' or string`);
             }
         } else if (raw instanceof Object) { // check for json object
-
             for (const entry of Object.entries(raw)) { // make sure keys are correct
                 const key = entry[0], value = entry[1];
                 if (['firstname', 'lastname', 'middlename', 'prefix', 'suffix'].indexOf(key) === -1)
