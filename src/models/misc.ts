@@ -23,7 +23,7 @@ export interface Fullname {
  * Defines the two ways that a full name can be ordered: first or last name
  * @typedef NameOrder
  */
-export type NameOrder = 'firstname' | 'lastname';
+export type NameOrder = 'firstname' | 'fn' | 'lastname' | 'ln';
 
 /**
  * Defines the distinct formats to output a surname
