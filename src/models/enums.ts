@@ -21,6 +21,20 @@ export enum Namon {
 }
 
 /**
+ * Enum `Alphabet` for the list of writing systems
+ * @readonly
+ * @enum {string}
+ */
+export enum Alphabet {
+    LATIN = 'Latin',
+    CYRILLIC = 'Cyrillic',
+    GREEK = 'Greek',
+	ARMENIAN = 'Armenian',
+	GEORGIAN = 'Georgian',
+	HANGUL = 'Hangul',
+}
+
+/**
  * Enum for the prefix values
  * @readonly
  * @enum {string}
