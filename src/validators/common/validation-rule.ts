@@ -20,9 +20,10 @@
  *  [\u00D8-\u00f6]: German/Icelandic chars from Ø (index 216) to ö (index 246)
  *  [\u00f8-\u00ff]: German/Icelandic chars from ø (index 248) to ÿ (index 255)
  *  [\u0400-\u04FF]: Cyrillic alphabet from Ѐ (index 1024) to ӿ (index 1279)
- *  [\u04FFΆ-ωΑ-ώ]: Greek alphabet from Ά (index 902) to ω (index 969)
+ *  [Ά-ωΑ-ώ]: Greek alphabet from Ά (index 902) to ω (index 969)
  */
 export class ValidationRule {
+    static base: RegExp = /[a-zA-Z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\u0400-\u04FFΆ-ωΑ-ώ]/
     /**
      * Matches one name part (namon) that is of nature:
      * - Latin (English, Spanish, French, etc.)
@@ -30,7 +31,7 @@ export class ValidationRule {
      * - hyphenated
      * - with apostrophe
      */
-    static namon: RegExp = /^[a-zA-Z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\u0400-\u04FFΆ-ωΑ-ώ]+((['-][a-zA-Z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\u0400-\u04FFΆ-ωΑ-ώ])?[a-zA-Z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\u0400-\u04FFΆ-ωΑ-ώ]*)*$/
+    static namon: RegExp = new RegExp(`^${ValidationRule.base.source}+((['-]${ValidationRule.base.source})?${ValidationRule.base.source}*)*$`);
 
     /**
      * Matches 1+ name parts (namon) that are of nature:
@@ -42,7 +43,7 @@ export class ValidationRule {
      * - with period
      * - with space
      */
-    static fullname: RegExp = /^[a-zA-Z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\u0400-\u04FFΆ-ωΑ-ώ]+(([',. -][a-zA-Z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\u0400-\u04FFΆ-ωΑ-ώ ])?[a-zA-Z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\u0400-\u04FFΆ-ωΑ-ώ]*)*$/
+    static fullname: RegExp = new RegExp(`^${ValidationRule.base.source}+(([',. -]${ValidationRule.base.source})?${ValidationRule.base.source}*)*$`);
 
     /**
      * Matches one name part (namon) that is of nature:
@@ -51,7 +52,7 @@ export class ValidationRule {
      * - hyphenated
      * - with apostrophe
      */
-    static firstname: RegExp = /^[a-zA-Z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\u0400-\u04FFΆ-ωΑ-ώ]+((['-][a-zA-Z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\u0400-\u04FFΆ-ωΑ-ώ])?[a-zA-Z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\u0400-\u04FFΆ-ωΑ-ώ]*)*$/
+    static firstname: RegExp = ValidationRule.namon;
 
     /**
      * Matches 1+ names part (namon) that are of nature:
@@ -61,7 +62,7 @@ export class ValidationRule {
      * - with apostrophe
      * - with space
      */
-    static middlename: RegExp = /^[a-zA-Z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\u0400-\u04FFΆ-ωΑ-ώ]+(([' -][a-zA-Z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\u0400-\u04FFΆ-ωΑ-ώ])?[a-zA-Z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\u0400-\u04FFΆ-ωΑ-ώ]*)*$/
+    static middlename: RegExp = new RegExp(`^${ValidationRule.base.source}+(([' -]${ValidationRule.base.source})?${ValidationRule.base.source}*)*$`);
 
     /**
      * Matches one name part (namon) that is of nature:
@@ -70,5 +71,5 @@ export class ValidationRule {
      * - hyphenated
      * - with apostrophe
      */
-    static lastname: RegExp = /^[a-zA-Z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\u0400-\u04FFΆ-ωΑ-ώ]+((['-][a-zA-Z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\u0400-\u04FFΆ-ωΑ-ώ])?[a-zA-Z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\u0400-\u04FFΆ-ωΑ-ώ]*)*$/
+    static lastname: RegExp = ValidationRule.namon;
 }
