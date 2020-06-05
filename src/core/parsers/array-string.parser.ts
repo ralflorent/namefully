@@ -37,7 +37,7 @@ export default class ArrayStringParser implements Parser<string[]> {
 
     /**
      * Create a parser ready to parse the raw data
-     * @param {Array<string>} raw data
+     * @param {string[]} raw data
      */
     constructor(public raw: string[]) { }
 

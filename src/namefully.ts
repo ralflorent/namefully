@@ -1,26 +1,27 @@
 /**
- * Welcome to namefully, a person name handler!
- * Official docs: namefully.netlify.app
+ * Welcome to namefully!
+ * namefully is a JS utility for person name handling
+ *
+ * Sources
+ * - repo:   https://github.com/ralflorent/namefully
+ * - docs:   https://namefully.netlify.app
+ * - npm:    https://npmjs.com/package/namefully
  *
  * Created on March 03, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
- *
  * @license GPL-3.0
- * @see {@link https://github.com/ralflorent/namefully|namefully} for more info.
  */
-import {
-    Parser, NamaParser, StringParser, ArrayNameParser, ArrayStringParser,
-    CONFIG, capitalize, decapitalize, buildAscii, buildPassphrase, whichAlph
-} from './core';
-import {
-    Fullname, Name, Nama, Namon, Separator, Summary, Config, NameOrder, AbbrTitle, LastnameFormat,
-} from './models';
+import { Parser, NamaParser, StringParser, ArrayNameParser, ArrayStringParser} from './core';
+import { capitalize, decapitalize, buildAscii, buildPassphrase, whichAlph } from './core';
+import { Fullname, Name, Nama, Namon, Separator, Summary, Config } from './models';
+import { NameOrder, AbbrTitle, LastnameFormat } from './models/misc';
 import { FullnameValidator } from './validators';
+import { CONFIG } from './core/constants';
 
 /**
  * Person name handler
  * @class
- * @classdesc
+ *
  * `Namefully` does not magically guess which part of the name is what. It relies
  * actually on how the developer indicates the roles of the name parts so that
  * it, internally, can perform certain operations and saves the developer some
@@ -183,7 +184,7 @@ export class Namefully {
 
     /**
      * Gets the middle names part of the full name
-     * @returns {Array<string>} the middle names
+     * @returns {string[]} the middle names
      */
     getMiddlenames(): string[] {
         return this.hasMiddlename() ? this.fullname.middlename.map(n => n.namon) : [];
@@ -213,7 +214,7 @@ export class Namefully {
      * @param {'firstname'|'lastname'} orderedBy force to order by first or last
      * name by overriding the preset configuration
      * @param {boolean} [withMid] whether to include middle names's
-     * @returns {Array<string>} the initials
+     * @returns {string[]} the initials
      *
      * @example
      * Given the names:
@@ -450,14 +451,14 @@ export class Namefully {
 
     /**
      * Suggests possible (randomly) usernames closest to the name
-     * @returns {Array<string>} a set of usernames
+     * @returns {string[]} a set of usernames
      *
      * **NOTE**
      * The validity of these usernames are not checked against any social media
      * or web app online.
      */
     username(): string[] {
-        const unames: Array<string> = [];
+        const unames: string[] = [];
         const { firstname: f, lastname: l } = this.fullname;
         const p = Separator.PERIOD;
 
@@ -681,22 +682,22 @@ export class Namefully {
         }
     }
 
-    private build(raw: string | string[] | Array<Name> | Nama): void {
+    private build(raw: string | string[] | Name[] | Nama): void {
         if (this.config.parser) {
             this.initialize(this.config.parser);
         } else if (typeof raw === 'string') { // check for string type
             this.initialize(new StringParser(raw));
-        } else if (Array.isArray(raw) && raw.length) { // check for Array<T>
-            if (typeof raw[0] === 'string') { // check for Array<string>
-                for (const key of raw as Array<string>)
+        } else if (Array.isArray(raw) && raw.length) { // check for T[]
+            if (typeof raw[0] === 'string') { // check for string[]
+                for (const key of raw as string[])
                     if (typeof key !== 'string')
                         throw new Error(`Cannot parse raw data as array of 'string'`);
-                this.initialize(new ArrayStringParser(raw as Array<string>))
-            } else if (raw[0] instanceof Name) { // check for Array<Name>
-                for (const obj of raw as Array<string>)
+                this.initialize(new ArrayStringParser(raw as string[]))
+            } else if (raw[0] instanceof Name) { // check for Name[]
+                for (const obj of raw as string[])
                     if (!(obj as any instanceof Name))
                         throw new Error(`Cannot parse raw data as array of '${Name.name}'`);
-                this.initialize(new ArrayNameParser(raw as Array<Name>));
+                this.initialize(new ArrayNameParser(raw as Name[]));
             } else {
                 // typescript should stop them, but let's be paranoid (for JS developers)
                 throw new Error(`Cannot parse raw data as arrays that are not of '${Name.name}' or string`);

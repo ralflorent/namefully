@@ -38,7 +38,7 @@ export class Name {
 
     /**
      * Gets the initials of the name
-     * @returns {Array<string>} the initials
+     * @returns {string[]} the initials
      */
     getInitials(): string[] {
         return [this.initial];
