@@ -58,7 +58,7 @@ export function organizeNameIndex(
 ): NameIndex {
     const out: NameIndex = { ...nameIndex };
 
-    if (orderedBy === 'firstname' || orderedBy === 'fn') {
+    if (orderedBy === 'firstname') {
         switch(argLength) {
             case 2: // first name + last name
                 out.firstname = 0;
@@ -153,6 +153,42 @@ export function convertToAscii(
         .split(Separator.EMPTY)
         .filter(c => restrictions.indexOf(c) === -1)
         .map(c => c.charCodeAt(0));
+}
+
+/**
+ * Maps the characters to the 0-25 scheme of numbers
+ * @param str string content
+ * @param restrictions unneeded content to skip
+ */
+export function convertToA0(
+    str: string,
+    restrictions: string[] = [...RESTRICTED_CHARS]
+): number[] {
+    throw new Error('Not implemented yet');
+}
+
+/**
+ * Maps the characters to the 1-26 scheme of numbers
+ * @param str string content
+ * @param restrictions unneeded content to skip
+ */
+export function convertToA1(
+    str: string,
+    restrictions: string[] = [...RESTRICTED_CHARS]
+): number[] {
+    throw new Error('Not implemented yet');
+}
+
+/**
+ * Maps the characters to the phone code scheme of numbers
+ * @param str string content
+ * @param restrictions unneeded content to skip
+ */
+export function convertToPhoneCode(
+    str: string,
+    restrictions: string[] = [...RESTRICTED_CHARS]
+): number[] {
+    throw new Error('Not implemented yet');
 }
 
 export function whichAlph(str: string, restrictions: string[] = [...RESTRICTED_CHARS]): string {

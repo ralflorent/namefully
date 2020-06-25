@@ -5,6 +5,7 @@
  * @author Ralph Florent <ralflornt@gmail.com>
  */
 import { Name, Namon, Summary, Separator } from './index';
+import { convertToA0, convertToA1, convertToPhoneCode, convertToAscii } from '../core';
 
 
 /**
@@ -92,6 +93,26 @@ export class Firstname extends Name {
         } else {
             this.namon = this.namon.toLowerCase();
             if (this.hasMore()) this.more.forEach(n => n = n.toLowerCase());
+        }
+    }
+
+    /**
+     * Returns a numerical representation of characters of a name as specified
+     * @param type which kind of conversion
+     * @param restrictions chars to skip
+     */
+    convert(type: 'a0' | 'a1' | 'phone' | 'ascii', restrictions?: string[]): number[] {
+        switch(type) {
+            case 'a0':
+                return convertToA0(this.tostring(), restrictions);
+            case 'a1':
+                return convertToA1(this.tostring(), restrictions);
+            case 'phone':
+                return convertToPhoneCode(this.tostring(), restrictions);
+            case 'ascii':
+                return convertToAscii(this.tostring(), restrictions);
+            default:
+                throw new Error('Unknown conversion type');
         }
     }
 }

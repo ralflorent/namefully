@@ -16,7 +16,7 @@ import { capitalize, decapitalize, convertToAscii, buildPassphrase, whichAlph, t
 import { Fullname, Name, Nama, Namon, Separator, Summary, Config } from './models';
 import { NameOrder, NameType, AbbrTitle, LastnameFormat } from './models/misc';
 import { FullnameValidator } from './validators';
-import { CONFIG } from './core/constants';
+import { CONFIG, RESTRICTED_CHARS } from './core/constants';
 
 /**
  * Person name handler
@@ -311,7 +311,7 @@ export class Namefully {
      */
     shorten(orderedBy?: NameOrder): string {
         orderedBy = orderedBy || this.config.orderedBy; // override config
-        return orderedBy === 'firstname' || orderedBy === 'fn'
+        return orderedBy === 'firstname'
             ? [this.fullname.firstname.namon, this.fullname.lastname.namon].join(Separator.SPACE)
             : [ this.fullname.lastname.namon, this.fullname.firstname.namon].join(Separator.SPACE);
     }
@@ -535,30 +535,30 @@ export class Namefully {
     }
 
     /**
-     * Returns a numerical representation of characters within a name
-     * @param {NameType} [what] which name part
+     * Returns a numerical representation of characters of a name as specified
+     * @param type which kind of conversion
+     * @param options use specifics to shape conversion
      */
-    ascii(what?: NameType): number[] {
-        what = useShortNameType(what);
-        switch(what) {
+    convert(
+        type: 'a0' | 'a1' | 'phone' | 'ascii',
+        options: Partial<{ nameType: NameType; restrictions: string[]; }> = {}
+    ): number[] {
+        const { nameType, restrictions } = options;
+
+        switch(nameType) {
             case 'firstname':
-                return convertToAscii(this.fullname.firstname.namon);
+                return this.fullname.firstname.convert(type, restrictions);
             case 'lastname':
-                return convertToAscii(this.fullname.lastname.namon);
+                return this.fullname.lastname.convert(type, restrictions);
             case 'middlename':
                 if (!this.hasMiddlename())
-                    console.warn('No ASCII for middle names since none was set.');
-                return convertToAscii(this.getMiddlenames().join(Separator.EMPTY));
+                    console.warn(`No ${type} conversion for middle names since none was set.`);
+                return this.fullname.middlename
+                    .map(n => n.convert(type, restrictions)) // convert
+                    .reduce((acc, value) => acc.concat(value), []); // then flatten
             default:
-                return convertToAscii(this.getBirthname());
+                throw new Error('Not implemented yet');
         }
-    }
-
-    convert(type: 'a0' | 'a1' | 'phone' | 'ascii', name?: NameOrder | 'mn' | 'middlename'): number[] {
-        if (type === 'ascii') {
-            return this.ascii(name);
-        }
-        throw new Error('Not implemented yet');
     }
 
     /**

@@ -5,6 +5,7 @@
  * @author Ralph Florent <ralflornt@gmail.com>
  */
 import { Name, Namon, Summary, Separator, LastnameFormat } from './index';
+import { convertToA0, convertToA1, convertToPhoneCode, convertToAscii } from '../core';
 
 /**
  * Represents a last name with some extra functionalities
@@ -59,8 +60,6 @@ export class Lastname extends Name {
                 return this.mother ? this.father.concat(Separator.HYPHEN, this.mother) : this.father;
             case 'all':
                 return this.mother ? this.father.concat(Separator.SPACE, this.mother) : this.father;
-            // default:
-            //     return this.father;
         }
     }
 
@@ -117,6 +116,26 @@ export class Lastname extends Name {
         } else {
             this.father = this.father.toLowerCase();
             if (this.hasMother()) this.mother = this.mother.toLowerCase();
+        }
+    }
+
+    /**
+     * Returns a numerical representation of characters of a name as specified
+     * @param type which kind of conversion
+     * @param restrictions chars to skip
+     */
+    convert(type: 'a0' | 'a1' | 'phone' | 'ascii', restrictions?: string[]): number[] {
+        switch(type) {
+            case 'a0':
+                return convertToA0(this.tostring(), restrictions);
+            case 'a1':
+                return convertToA1(this.tostring(), restrictions);
+            case 'phone':
+                return convertToPhoneCode(this.tostring(), restrictions);
+            case 'ascii':
+                return convertToAscii(this.tostring(), restrictions);
+            default:
+                throw new Error('Unknown conversion type');
         }
     }
 }

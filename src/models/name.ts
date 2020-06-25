@@ -5,6 +5,7 @@
  * @author Ralph Florent <ralflornt@gmail.com>
  */
 import { Summary, Namon } from './index';
+import { convertToA0, convertToA1, convertToPhoneCode, convertToAscii } from '../core';
 
 /**
  * Represents a namon with some extra functionalities
@@ -88,6 +89,26 @@ export class Name {
      */
     reset(): void {
         this.namon = this.initial.concat(this.body);
+    }
+
+    /**
+     * Returns a numerical representation of characters of a name as specified
+     * @param type which kind of conversion
+     * @param restrictions chars to skip
+     */
+    convert(type: 'a0' | 'a1' | 'phone' | 'ascii', restrictions?: string[]): number[] {
+        switch(type) {
+            case 'a0':
+                return convertToA0(this.namon, restrictions);
+            case 'a1':
+                return convertToA1(this.namon, restrictions);
+            case 'phone':
+                return convertToPhoneCode(this.namon, restrictions);
+            case 'ascii':
+                return convertToAscii(this.namon, restrictions);
+            default:
+                throw new Error('Unknown conversion type');
+        }
     }
 }
 
