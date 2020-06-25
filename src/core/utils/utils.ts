@@ -117,11 +117,24 @@ export function organizeNameIndex(
  * Makes it easy to manipulate shortcuts for this `NameType`
  * @param type name type
  */
-export function useShortType(type: NameType): NameType {
+export function useShortNameType(type: NameType): NameType {
     switch(type) {
         case 'firstname': case 'fn': return 'firstname';
         case 'lastname': case 'ln': return 'lastname';
         case 'middlename': case 'mn': return 'middlename';
+        default:
+            return type;
+    }
+}
+
+/**
+ * Makes it easy to manipulate shortcuts for this `NameOrder`
+ * @param type name type
+ */
+export function useShortNameOrder(type: NameOrder): NameOrder {
+    switch(type) {
+        case 'firstname': case 'fn': return 'firstname';
+        case 'lastname': case 'ln': return 'lastname';
         default:
             return type;
     }

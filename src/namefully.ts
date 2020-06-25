@@ -11,8 +11,8 @@
  * @author Ralph Florent <ralflornt@gmail.com>
  * @license GPL-3.0
  */
-import { Parser, NamaParser, StringParser, ArrayNameParser, ArrayStringParser, } from './core';
-import { capitalize, decapitalize, convertToAscii, buildPassphrase, whichAlph, toggleCase, useShortType } from './core';
+import { Parser, NamaParser, StringParser, ArrayNameParser, ArrayStringParser, useShortNameOrder, } from './core';
+import { capitalize, decapitalize, convertToAscii, buildPassphrase, whichAlph, toggleCase, useShortNameType } from './core';
 import { Fullname, Name, Nama, Namon, Separator, Summary, Config } from './models';
 import { NameOrder, NameType, AbbrTitle, LastnameFormat } from './models/misc';
 import { FullnameValidator } from './validators';
@@ -111,7 +111,8 @@ export class Namefully {
      * For example, ::format('l f m') outputs `lastname firstname middlename`.
      */
     getFullname(orderedBy?: NameOrder): string {
-        orderedBy = orderedBy || this.config.orderedBy; // override config
+        orderedBy = this.parseNameOrder(orderedBy);
+
         const { titling, ending } = this.config;
         const pxSep = titling === 'us' ? Separator.PERIOD : Separator.EMPTY; // Mr[.]
         const sxSep = ending !== Separator.SPACE ? ending : Separator.EMPTY; // [,] PhD
@@ -121,12 +122,12 @@ export class Namefully {
             nama.push(Separator.EMPTY.concat(this.fullname.prefix, pxSep))
 
         switch (orderedBy) {
-            case 'firstname': case 'fn':
+            case 'firstname':
                 nama.push(this.getFirstname());
                 nama.push(...this.getMiddlenames());
                 nama.push(Separator.EMPTY.concat(this.getLastname(), sxSep));
                 break;
-            case 'lastname': case 'ln':
+            case 'lastname':
                 nama.push(this.getLastname());
                 nama.push(this.getFirstname());
                 nama.push(this.getMiddlenames().join(Separator.SPACE).concat(sxSep));
@@ -145,16 +146,16 @@ export class Namefully {
      * name by overriding the preset configuration
      */
     getBirthname(orderedBy?: NameOrder): string {
-        orderedBy = orderedBy || this.config.orderedBy; // override config
+        orderedBy = this.parseNameOrder(orderedBy);
         const nama: string[] = [];
 
         switch (orderedBy) {
-            case 'firstname': case 'fn':
+            case 'firstname':
                 nama.push(this.getFirstname());
                 nama.push(...this.getMiddlenames());
                 nama.push(this.getLastname());
                 break;
-            case 'lastname': case 'ln':
+            case 'lastname':
                 nama.push(this.getLastname());
                 nama.push(this.getFirstname());
                 nama.push(this.getMiddlenames().join(Separator.SPACE));
@@ -227,7 +228,7 @@ export class Namefully {
         orderedBy?: NameOrder,
         withMid: boolean = false
     ): string[] {
-        orderedBy = orderedBy || this.config.orderedBy; // override config
+        orderedBy = this.parseNameOrder(orderedBy);
         const midInits = this.fullname.middlename ?
             this.fullname.middlename.map(n => n.getInitials()) : [];
 
@@ -237,12 +238,12 @@ export class Namefully {
 
         const initials = [];
         switch(orderedBy) {
-            case 'firstname': case 'fn':
+            case 'firstname':
                 initials.push(...this.fullname.firstname.getInitials());
                 if (withMid) midInits.forEach(m => initials.push(...m));
                 initials.push(...this.fullname.lastname.getInitials());
                 break;
-            case 'lastname': case 'ln':
+            case 'lastname':
                 initials.push(...this.fullname.lastname.getInitials());
                 initials.push(...this.fullname.firstname.getInitials());
                 if (withMid) midInits.forEach(m => initials.push(...m));
@@ -281,7 +282,7 @@ export class Namefully {
      * that the letter `a` has the top frequency, be it `3`.
      */
     describe(what?: NameType): Summary {
-        what = useShortType(what)
+        what = useShortNameType(what)
         switch(what) {
             case 'firstname':
                 return this.fullname.firstname.describe();
@@ -358,7 +359,7 @@ export class Namefully {
         const mids = hasmid ? middlename.map(n => n.getInitials()).join(sep).concat(sep) : Separator.EMPTY;
         let cname = '';
 
-        if (this.config.orderedBy === 'firstname' || this.config.orderedBy === 'fn') {
+        if (this.config.orderedBy === 'firstname') {
             switch (by) {
                 case 'firstname': case 'fn':
                     cname = hasmid ?
@@ -518,7 +519,7 @@ export class Namefully {
      * @param {'firstname'|'lastname'|'middlename'} [what] which name part
      */
     alph(what?: NameType): string {
-        what = useShortType(what);
+        what = useShortNameType(what);
         switch(what) {
             case 'firstname':
                 return whichAlph(this.fullname.firstname.namon);
@@ -538,7 +539,7 @@ export class Namefully {
      * @param {NameType} [what] which name part
      */
     ascii(what?: NameType): number[] {
-        what = useShortType(what);
+        what = useShortNameType(what);
         switch(what) {
             case 'firstname':
                 return convertToAscii(this.fullname.firstname.namon);
@@ -596,7 +597,7 @@ export class Namefully {
      * @param {NameType} [what] which name part
      */
     passwd(what?: NameType): string {
-        what = useShortType(what);
+        what = useShortNameType(what);
         switch(what) {
             case 'firstname':
                 return buildPassphrase(this.fullname.firstname.namon);
@@ -618,11 +619,17 @@ export class Namefully {
     private configure(options?: Partial<Config>): void {
         // consider using deepmerge if objects no longer stay shallow
         this.config = { ...CONFIG, ...options }; // if options, it overrides CONFIG
+        this.config.orderedBy = useShortNameOrder(this.config.orderedBy);
     }
 
     private initialize<T>(parser: Parser<T>): void {
         const { orderedBy, separator, bypass, lastnameFormat } = this.config;
         this.fullname = parser.parse({ orderedBy, separator, bypass, lastnameFormat });
+    }
+
+    private parseNameOrder(orderedBy?: NameOrder): NameOrder {
+        orderedBy = orderedBy || this.config.orderedBy; // override config
+        return useShortNameOrder(orderedBy);
     }
 
     private map(c: string): string {
