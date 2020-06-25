@@ -4,12 +4,13 @@
  * Created on March 16, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
  */
-import { NameIndex, NameOrder, Separator } from '../../models';
-import { NAME_INDEX } from '../../core';
+import { NameIndex, NameOrder, Separator, NameType } from '../../models';
+import { NAME_INDEX, RESTRICTED_CHARS } from '../../core';
 
 /**
  * Capitalizes a string
- * @param {'initial' | 'all'} option how to capitalize it
+ * @param str string value
+ * @param {'initial' | 'all'} [option] how to capitalize it
  */
 export function capitalize(str: string, option: 'initial' | 'all' = 'initial'): string {
     if (!str) return '';
@@ -19,12 +20,29 @@ export function capitalize(str: string, option: 'initial' | 'all' = 'initial'): 
 
 /**
  * De-capitalizes a string
- * @param {'initial' | 'all'} option how to decapitalize it
+ * @param str string value
+ * @param {'initial' | 'all'} [option] how to decapitalize it
  */
 export function decapitalize(str: string, option: 'initial' | 'all' = 'initial'): string {
     if (!str) return '';
     let initial = str[0].toLowerCase(), rest = str.slice(1);
     return option === 'initial' ? initial.concat(rest) : str.toLowerCase();
+}
+
+/**
+ * Toggles a string representation
+ * @param str string value to toggle
+ */
+export function toggleCase(str: string): string {
+    const chars = [];
+    for (const c of str) {
+        if (c === c.toUpperCase()) {
+            chars.push(c.toLowerCase())
+        } else {
+            chars.push(c.toUpperCase())
+        }
+    }
+    return chars.join(Separator.EMPTY);
 }
 
 /**
@@ -95,15 +113,36 @@ export function organizeNameIndex(
     return out;
 }
 
-export function buildAscii(str: string, restrictions: string[] = [Separator.SPACE]): number[] {
-    const ascii: number[] = [];
-    for(const c of str)
-        if (restrictions.indexOf(c) === -1)
-            ascii.push(c.charCodeAt(0));
-    return ascii;
+/**
+ * Makes it easy to manipulate shortcuts for this `NameType`
+ * @param type name type
+ */
+export function useShortType(type: NameType): NameType {
+    switch(type) {
+        case 'firstname': case 'fn': return 'firstname';
+        case 'lastname': case 'ln': return 'lastname';
+        case 'middlename': case 'mn': return 'middlename';
+        default:
+            return type;
+    }
 }
 
-export function whichAlph(str: string, restrictions: string[] = [' ', `'`, '-']): string {
+/**
+ * Converts to ascii characters (using UTF-16)
+ * @param str string content
+ * @param restrictions unneeded content to skip
+ */
+export function convertToAscii(
+    str: string,
+    restrictions: string[] = [...RESTRICTED_CHARS]
+): number[] {
+    return str
+        .split(Separator.EMPTY)
+        .filter(c => restrictions.indexOf(c) === -1)
+        .map(c => c.charCodeAt(0));
+}
+
+export function whichAlph(str: string, restrictions: string[] = [...RESTRICTED_CHARS]): string {
     throw new Error('Not implemented yet');
 }
 

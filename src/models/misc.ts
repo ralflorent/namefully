@@ -1,5 +1,5 @@
 /**
- * Miscellaneous contents
+ * Miscellaneous types
  *
  * Created on March 07, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
@@ -24,6 +24,12 @@ export interface Fullname {
  * @typedef NameOrder
  */
 export type NameOrder = 'firstname' | 'fn' | 'lastname' | 'ln';
+
+/**
+ * Defines the three parts that a birth name
+ * @typedef NameType
+ */
+export type NameType = 'firstname' | 'fn' | 'lastname' | 'ln' | 'middlename' | 'mn';
 
 /**
  * Defines the distinct formats to output a surname
