@@ -131,11 +131,11 @@ function createWithOptionalParamsUseCase(): void {
     class MyParser implements Parser<string> {
         constructor(public raw: string) {}
         parse(): Fullname {
-            const names = this.raw.split('#');
+            const [fn, ln] = this.raw.split('#');
             return {
                 prefix: 'Sr' as Prefix, // unknown prefix
-                firstname: new Firstname(names[0].trim()),
-                lastname: new Lastname(names[1].trim()),
+                firstname: new Firstname(fn),
+                lastname: new Lastname(ln),
                 suffix: 'Lic' as Suffix // unknown suffix
             };
         }
