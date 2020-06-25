@@ -5,7 +5,7 @@
  * @author Ralph Florent <ralflornt@gmail.com>
  */
 import { Name, Namon, Summary, Separator, LastnameFormat } from './index';
-import { convertToA0, convertToA1, convertToPhoneCode, convertToAscii } from '../core';
+import { convertToAscii } from '../core';
 
 /**
  * Represents a last name with some extra functionalities
@@ -94,9 +94,9 @@ export class Lastname extends Name {
     capitalize(option: 'initial' | 'all' = 'initial'): void {
         super.capitalize(option);
         if (option === 'initial') {
-            this.father = this.father[0].toUpperCase().concat(this.father.slice(1, this.father.length));
+            this.father = this.father[0].toUpperCase().concat(this.father.slice(1));
             if (this.hasMother())
-                this.mother = this.mother[0].toUpperCase().concat(this.mother.slice(1, this.mother.length));
+                this.mother = this.mother[0].toUpperCase().concat(this.mother.slice(1));
         } else {
             this.father = this.father.toUpperCase();
             if (this.hasMother()) this.mother = this.mother.toUpperCase();
@@ -110,9 +110,9 @@ export class Lastname extends Name {
     decapitalize(option: 'initial' | 'all' = 'initial'): void {
         super.capitalize(option);
         if (option === 'initial') {
-            this.father = this.father[0].toLowerCase().concat(this.father.slice(1, this.father.length));
+            this.father = this.father[0].toLowerCase().concat(this.father.slice(1));
             if (this.hasMother())
-                this.mother = this.mother[0].toLowerCase().concat(this.mother.slice(1, this.mother.length));
+                this.mother = this.mother[0].toLowerCase().concat(this.mother.slice(1));
         } else {
             this.father = this.father.toLowerCase();
             if (this.hasMother()) this.mother = this.mother.toLowerCase();
@@ -120,23 +120,11 @@ export class Lastname extends Name {
     }
 
     /**
-     * Returns a numerical representation of characters of a name as specified
-     * @param type which kind of conversion
+     * Returns an ascii representation of each characters of a last name
      * @param restrictions chars to skip
      */
-    convert(type: 'a0' | 'a1' | 'phone' | 'ascii', restrictions?: string[]): number[] {
-        switch(type) {
-            case 'a0':
-                return convertToA0(this.tostring(), restrictions);
-            case 'a1':
-                return convertToA1(this.tostring(), restrictions);
-            case 'phone':
-                return convertToPhoneCode(this.tostring(), restrictions);
-            case 'ascii':
-                return convertToAscii(this.tostring(), restrictions);
-            default:
-                throw new Error('Unknown conversion type');
-        }
+    ascii(restrictions?: string[]): number[] {
+        return convertToAscii(this.tostring(), restrictions);
     }
 }
 

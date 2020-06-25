@@ -11,8 +11,8 @@
  * @author Ralph Florent <ralflornt@gmail.com>
  * @license GPL-3.0
  */
-import { Parser, NamaParser, StringParser, ArrayNameParser, ArrayStringParser, useShortNameOrder, } from './core';
-import { capitalize, decapitalize, convertToAscii, buildPassphrase, whichAlph, toggleCase, useShortNameType } from './core';
+import { Parser, NamaParser, StringParser, ArrayNameParser, ArrayStringParser, allowShortNameOrder, } from './core';
+import { capitalize, decapitalize, convertToAscii, buildPassphrase, whichAlph, toggleCase, allowShortNameType } from './core';
 import { Fullname, Name, Nama, Namon, Separator, Summary, Config } from './models';
 import { NameOrder, NameType, AbbrTitle, LastnameFormat } from './models/misc';
 import { FullnameValidator } from './validators';
@@ -282,7 +282,7 @@ export class Namefully {
      * that the letter `a` has the top frequency, be it `3`.
      */
     describe(what?: NameType): Summary {
-        what = useShortNameType(what)
+        what = allowShortNameType(what)
         switch(what) {
             case 'firstname':
                 return this.fullname.firstname.describe();
@@ -519,7 +519,7 @@ export class Namefully {
      * @param {'firstname'|'lastname'|'middlename'} [what] which name part
      */
     alph(what?: NameType): string {
-        what = useShortNameType(what);
+        what = allowShortNameType(what);
         switch(what) {
             case 'firstname':
                 return whichAlph(this.fullname.firstname.namon);
@@ -535,29 +535,39 @@ export class Namefully {
     }
 
     /**
-     * Returns a numerical representation of characters of a name as specified
-     * @param type which kind of conversion
+     * Returns an ascii representation of each characters of a name as specified
      * @param options use specifics to shape conversion
      */
-    convert(
-        type: 'a0' | 'a1' | 'phone' | 'ascii',
-        options: Partial<{ nameType: NameType; restrictions: string[]; }> = {}
+    ascii(
+        options: Partial<{
+            nameType: NameType;
+            restrictions: string[];
+        }> = {}
     ): number[] {
-        const { nameType, restrictions } = options;
-
+        const { restrictions } = options;
+        let nameType = allowShortNameType(options.nameType);
+        const { firstname, lastname, middlename } = this.fullname;
         switch(nameType) {
             case 'firstname':
-                return this.fullname.firstname.convert(type, restrictions);
+                return firstname.ascii(restrictions);
             case 'lastname':
-                return this.fullname.lastname.convert(type, restrictions);
+                return lastname.ascii(restrictions);
             case 'middlename':
                 if (!this.hasMiddlename())
-                    console.warn(`No ${type} conversion for middle names since none was set.`);
-                return this.fullname.middlename
-                    .map(n => n.convert(type, restrictions)) // convert
+                    console.warn(`No ASCII conversion for middle names since none was set.`);
+                return middlename
+                    .map(n => n.ascii(restrictions)) // convert
                     .reduce((acc, value) => acc.concat(value), []); // then flatten
             default:
-                throw new Error('Not implemented yet');
+                const firsts = firstname.ascii(restrictions);
+                const mids = middlename
+                    .map(n => n.ascii(restrictions))
+                    .reduce((acc, value) => acc.concat(value), []);
+                const lasts = lastname.ascii(restrictions);
+                if (this.config.orderedBy === 'firstname') {
+                    return firsts.concat(mids, lasts);
+                }
+                return lasts.concat(firsts, mids);
         }
     }
 
@@ -597,7 +607,7 @@ export class Namefully {
      * @param {NameType} [what] which name part
      */
     passwd(what?: NameType): string {
-        what = useShortNameType(what);
+        what = allowShortNameType(what);
         switch(what) {
             case 'firstname':
                 return buildPassphrase(this.fullname.firstname.namon);
@@ -619,7 +629,7 @@ export class Namefully {
     private configure(options?: Partial<Config>): void {
         // consider using deepmerge if objects no longer stay shallow
         this.config = { ...CONFIG, ...options }; // if options, it overrides CONFIG
-        this.config.orderedBy = useShortNameOrder(this.config.orderedBy);
+        this.config.orderedBy = allowShortNameOrder(this.config.orderedBy);
     }
 
     private initialize<T>(parser: Parser<T>): void {
@@ -629,7 +639,7 @@ export class Namefully {
 
     private parseNameOrder(orderedBy?: NameOrder): NameOrder {
         orderedBy = orderedBy || this.config.orderedBy; // override config
-        return useShortNameOrder(orderedBy);
+        return allowShortNameOrder(orderedBy);
     }
 
     private map(c: string): string {

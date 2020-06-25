@@ -117,7 +117,7 @@ export function organizeNameIndex(
  * Makes it easy to manipulate shortcuts for this `NameType`
  * @param type name type
  */
-export function useShortNameType(type: NameType): NameType {
+export function allowShortNameType(type: NameType): NameType {
     switch(type) {
         case 'firstname': case 'fn': return 'firstname';
         case 'lastname': case 'ln': return 'lastname';
@@ -131,7 +131,7 @@ export function useShortNameType(type: NameType): NameType {
  * Makes it easy to manipulate shortcuts for this `NameOrder`
  * @param type name type
  */
-export function useShortNameOrder(type: NameOrder): NameOrder {
+export function allowShortNameOrder(type: NameOrder): NameOrder {
     switch(type) {
         case 'firstname': case 'fn': return 'firstname';
         case 'lastname': case 'ln': return 'lastname';
@@ -158,10 +158,12 @@ export function convertToAscii(
 /**
  * Maps the characters to the 0-25 scheme of numbers
  * @param str string content
+ * @param lang what language to consider during the mapping
  * @param restrictions unneeded content to skip
  */
 export function convertToA0(
     str: string,
+    lang: 'en' | 'fr' | 'es' | 'de',
     restrictions: string[] = [...RESTRICTED_CHARS]
 ): number[] {
     throw new Error('Not implemented yet');
@@ -170,10 +172,12 @@ export function convertToA0(
 /**
  * Maps the characters to the 1-26 scheme of numbers
  * @param str string content
+ * @param lang what language to consider during the mapping
  * @param restrictions unneeded content to skip
  */
 export function convertToA1(
     str: string,
+    lang: 'en' | 'fr' | 'es' | 'de',
     restrictions: string[] = [...RESTRICTED_CHARS]
 ): number[] {
     throw new Error('Not implemented yet');

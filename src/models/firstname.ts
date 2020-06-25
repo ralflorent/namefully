@@ -5,7 +5,7 @@
  * @author Ralph Florent <ralflornt@gmail.com>
  */
 import { Name, Namon, Summary, Separator } from './index';
-import { convertToA0, convertToA1, convertToPhoneCode, convertToAscii } from '../core';
+import { convertToAscii } from '../core';
 
 
 /**
@@ -48,9 +48,9 @@ export class Firstname extends Name {
      * name
      */
     tostring(includeAll: boolean = false): string {
-        return !includeAll ?
-            this.namon :
-            this.namon.concat(
+        return !includeAll
+            ? this.namon
+            : this.namon.concat(
                 Separator.SPACE,
                 this.more.join(Separator.SPACE)
             );
@@ -73,9 +73,9 @@ export class Firstname extends Name {
      */
     capitalize(option: 'initial' | 'all' = 'initial'): void {
         if (option === 'initial') {
-            this.namon = this.namon[0].toUpperCase().concat(this.namon.slice(1, this.namon.length));
+            this.namon = this.namon[0].toUpperCase().concat(this.namon.slice(1));
             if (this.hasMore())
-                this.more.forEach(n => n = n[0].toUpperCase().concat(n.slice(1, n.length)));
+                this.more.forEach(n => n = n[0].toUpperCase().concat(n.slice(1)));
         } else {
             this.namon = this.namon.toUpperCase();
             if (this.hasMore()) this.more.forEach(n => n = n.toUpperCase());
@@ -88,32 +88,20 @@ export class Firstname extends Name {
      */
     decapitalize(option: 'initial' | 'all' = 'initial'): void {
         if (option === 'initial') {
-            this.namon = this.namon[0].toLowerCase().concat(this.namon.slice(1, this.namon.length));
-            if (this.hasMore()) this.more.forEach(n => n = n[0].toLowerCase().concat(n.slice(1, n.length)));
+            this.namon = this.namon[0].toLowerCase().concat(this.namon.slice(1));
+            if (this.hasMore()) this.more.forEach(n => n = n[0].toLowerCase().concat(n.slice(1)));
         } else {
             this.namon = this.namon.toLowerCase();
             if (this.hasMore()) this.more.forEach(n => n = n.toLowerCase());
         }
     }
 
-    /**
-     * Returns a numerical representation of characters of a name as specified
-     * @param type which kind of conversion
+        /**
+     * Returns an ascii representation of each characters of a first name
      * @param restrictions chars to skip
      */
-    convert(type: 'a0' | 'a1' | 'phone' | 'ascii', restrictions?: string[]): number[] {
-        switch(type) {
-            case 'a0':
-                return convertToA0(this.tostring(), restrictions);
-            case 'a1':
-                return convertToA1(this.tostring(), restrictions);
-            case 'phone':
-                return convertToPhoneCode(this.tostring(), restrictions);
-            case 'ascii':
-                return convertToAscii(this.tostring(), restrictions);
-            default:
-                throw new Error('Unknown conversion type');
-        }
+    ascii(restrictions?: string[]): number[] {
+        return convertToAscii(this.tostring(true), restrictions);
     }
 }
 

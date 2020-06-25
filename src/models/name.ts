@@ -5,7 +5,7 @@
  * @author Ralph Florent <ralflornt@gmail.com>
  */
 import { Summary, Namon } from './index';
-import { convertToA0, convertToA1, convertToPhoneCode, convertToAscii } from '../core';
+import { convertToAscii } from '../core';
 
 /**
  * Represents a namon with some extra functionalities
@@ -21,11 +21,12 @@ export class Name {
      * Constructs a `Name`
      * @param namon a piece of string that will be defined as a namon
      * @param type which namon that is
+     * @param cap which kind of capitalizations
      */
-    constructor(public namon: string, public type: Namon, capitalized?: 'initial' | 'all') {
+    constructor(public namon: string, public type: Namon, cap?: 'initial' | 'all') {
         this.initial = namon[0];
         this.body = namon.slice(1, namon.length);
-        if (!!capitalized) this.capitalize(capitalized);
+        if (!!cap) this.capitalize(cap);
     }
 
     /**
@@ -92,23 +93,11 @@ export class Name {
     }
 
     /**
-     * Returns a numerical representation of characters of a name as specified
-     * @param type which kind of conversion
+     * Returns an ascii representation of each characters of a name
      * @param restrictions chars to skip
      */
-    convert(type: 'a0' | 'a1' | 'phone' | 'ascii', restrictions?: string[]): number[] {
-        switch(type) {
-            case 'a0':
-                return convertToA0(this.namon, restrictions);
-            case 'a1':
-                return convertToA1(this.namon, restrictions);
-            case 'phone':
-                return convertToPhoneCode(this.namon, restrictions);
-            case 'ascii':
-                return convertToAscii(this.namon, restrictions);
-            default:
-                throw new Error('Unknown conversion type');
-        }
+    ascii(restrictions?: string[]): number[] {
+        return convertToAscii(this.namon, restrictions);
     }
 }
 
