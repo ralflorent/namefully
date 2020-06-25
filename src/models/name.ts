@@ -5,7 +5,7 @@
  * @author Ralph Florent <ralflornt@gmail.com>
  */
 import { Summary, Namon } from './index';
-import { convertToAscii } from '../core';
+import { convertToAscii, generatePassword } from '../core';
 
 /**
  * Represents a namon with some extra functionalities
@@ -98,6 +98,13 @@ export class Name {
      */
     ascii(restrictions?: string[]): number[] {
         return convertToAscii(this.namon, restrictions);
+    }
+
+    /**
+     * Returns a password-like representation of a name
+     */
+    passwd(): string {
+        return generatePassword(this.namon);
     }
 }
 

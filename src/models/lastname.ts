@@ -5,7 +5,7 @@
  * @author Ralph Florent <ralflornt@gmail.com>
  */
 import { Name, Namon, Summary, Separator, LastnameFormat } from './index';
-import { convertToAscii } from '../core';
+import { convertToAscii, generatePassword } from '../core';
 
 /**
  * Represents a last name with some extra functionalities
@@ -125,6 +125,13 @@ export class Lastname extends Name {
      */
     ascii(restrictions?: string[]): number[] {
         return convertToAscii(this.tostring(), restrictions);
+    }
+
+    /**
+     * Returns a password-like representation of a last name
+     */
+    passwd(): string {
+        return generatePassword(this.tostring());
     }
 }
 

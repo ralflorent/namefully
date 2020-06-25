@@ -156,6 +156,14 @@ export function convertToAscii(
 }
 
 /**
+ * Generates a password-like
+ * @param str string content
+ */
+export function generatePassword(str: string): string {
+    return str;
+}
+
+/**
  * Maps the characters to the 0-25 scheme of numbers
  * @param str string content
  * @param lang what language to consider during the mapping
@@ -192,13 +200,5 @@ export function convertToPhoneCode(
     str: string,
     restrictions: string[] = [...RESTRICTED_CHARS]
 ): number[] {
-    throw new Error('Not implemented yet');
-}
-
-export function whichAlph(str: string, restrictions: string[] = [...RESTRICTED_CHARS]): string {
-    throw new Error('Not implemented yet');
-}
-
-export function buildPassphrase(str: string): string {
     throw new Error('Not implemented yet');
 }

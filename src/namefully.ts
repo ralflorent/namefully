@@ -12,11 +12,11 @@
  * @license GPL-3.0
  */
 import { Parser, NamaParser, StringParser, ArrayNameParser, ArrayStringParser, allowShortNameOrder, } from './core';
-import { capitalize, decapitalize, convertToAscii, buildPassphrase, whichAlph, toggleCase, allowShortNameType } from './core';
+import { capitalize, decapitalize, toggleCase, generatePassword, allowShortNameType } from './core';
 import { Fullname, Name, Nama, Namon, Separator, Summary, Config } from './models';
 import { NameOrder, NameType, AbbrTitle, LastnameFormat } from './models/misc';
 import { FullnameValidator } from './validators';
-import { CONFIG, RESTRICTED_CHARS } from './core/constants';
+import { CONFIG } from './core/constants';
 
 /**
  * Person name handler
@@ -515,26 +515,6 @@ export class Namefully {
     }
 
     /**
-     * Returns which writing system (or alphabet) a name belongs to
-     * @param {'firstname'|'lastname'|'middlename'} [what] which name part
-     */
-    alph(what?: NameType): string {
-        what = allowShortNameType(what);
-        switch(what) {
-            case 'firstname':
-                return whichAlph(this.fullname.firstname.namon);
-            case 'lastname':
-                return whichAlph(this.fullname.lastname.namon);
-            case 'middlename':
-                if (!this.hasMiddlename())
-                    console.warn('No alphabet for middle names since none was set.');
-                return whichAlph(this.getMiddlenames().join(Separator.EMPTY));
-            default:
-                return whichAlph(this.getBirthname());
-        }
-    }
-
-    /**
      * Returns an ascii representation of each characters of a name as specified
      * @param options use specifics to shape conversion
      */
@@ -610,15 +590,17 @@ export class Namefully {
         what = allowShortNameType(what);
         switch(what) {
             case 'firstname':
-                return buildPassphrase(this.fullname.firstname.namon);
+                return this.fullname.firstname.passwd();
             case 'lastname':
-                return buildPassphrase(this.fullname.lastname.namon);
+                return this.fullname.lastname.passwd();
             case 'middlename':
                 if (!this.hasMiddlename())
-                    console.warn('No passphrase for middle names since none was set.');
-                return buildPassphrase(this.getMiddlenames().join(Separator.EMPTY));
+                    console.warn('No password for middle names since none was set.');
+                return this.fullname.middlename
+                    .map(n => n.passwd())
+                    .join(Separator.EMPTY);
             default:
-                return buildPassphrase(this.getBirthname());
+                return generatePassword(this.getBirthname());
         }
     }
 

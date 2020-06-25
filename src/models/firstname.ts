@@ -5,7 +5,7 @@
  * @author Ralph Florent <ralflornt@gmail.com>
  */
 import { Name, Namon, Summary, Separator } from './index';
-import { convertToAscii } from '../core';
+import { convertToAscii, generatePassword } from '../core';
 
 
 /**
@@ -102,6 +102,13 @@ export class Firstname extends Name {
      */
     ascii(restrictions?: string[]): number[] {
         return convertToAscii(this.tostring(true), restrictions);
+    }
+
+    /**
+     * Returns a password-like representation of a first name
+     */
+    passwd(): string {
+        return generatePassword(this.tostring(true))
     }
 }
 
