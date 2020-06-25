@@ -57,7 +57,6 @@ export class Firstname extends Name {
 
     /**
      * Gets the initials of the first name
-     * @returns {string[]} the initials
      */
     getInitials(includeAll: boolean = false): string[] {
         const initials: string[] = [this.namon[0]];

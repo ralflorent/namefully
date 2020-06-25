@@ -21,7 +21,6 @@ export interface Parser<T> {
     /**
      * Parses the raw data into a full name
      * @param {Config} [options]
-     * @returns {Fullname}
      */
     parse(options?: Partial<{
         orderedBy: NameOrder,

@@ -13,7 +13,7 @@ import { Parser } from './parser';
  * Represents a `Name[]` parser
  * @class
  * @implements {Parser<Name[]>}
- * @classdesc
+ *
  * This parser parses an array of the class `Name` while checking that every part
  * plays the role they are supposed to play. The class `Name` is a ready-made
  * recipe that saves the how-to parsing for a raw data input.
@@ -36,7 +36,6 @@ export default class ArrayNameParser implements Parser<Name[]> {
 
     /**
      * Parses the raw data into a full name
-     * @returns {Fullname}
      */
     parse(options: { bypass: boolean, lastnameFormat: LastnameFormat }): Fullname {
         const { bypass, lastnameFormat } = options;

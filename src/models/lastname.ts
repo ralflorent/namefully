@@ -66,7 +66,6 @@ export class Lastname extends Name {
 
     /**
      * Gets the initials of the last name
-     * @returns {string[]} the initials
      */
     getInitials(format?: LastnameFormat): string[] {
         format = format || this.format;
