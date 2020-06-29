@@ -4,8 +4,8 @@
  * Created on March 16, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
  */
-import { NameIndex, NameOrder, Separator, NameType } from '../../models';
-import { NAME_INDEX, RESTRICTED_CHARS } from '../../core';
+import { NameIndex, NameOrder, Separator, NameType } from '../models';
+import { NAME_INDEX, RESTRICTED_CHARS, PASSWORD_MAPPER } from '../core';
 
 /**
  * Capitalizes a string
@@ -156,11 +156,21 @@ export function convertToAscii(
 }
 
 /**
- * Generates a password-like
+ * Generates a password
  * @param str string content
  */
 export function generatePassword(str: string): string {
-    return str;
+    const mapper = PASSWORD_MAPPER;
+
+    let password = str
+        .split(Separator.EMPTY)
+        .map(char => {
+            if (mapper.has(char.toLowerCase()))
+                return mapper.get(char.toLowerCase()).random();
+            return mapper.get('$').random();
+        })
+        .join(Separator.EMPTY);
+    return password;
 }
 
 /**
