@@ -15,13 +15,15 @@ import { convertToAscii, generatePassword } from '../core';
  */
 export class Firstname extends Name {
 
+    readonly more: string[] = [];
     /**
      * Constructs a `Firstname`
      * @param {string} namon a piece of string that will be defined as a namon
      * @param {string[]} [more] additional pieces considered as a given name
      */
-    constructor(public namon: string, public more?: string[]) {
+    constructor(public namon: string, ...more: string[]) {
         super(namon, Namon.FIRST_NAME);
+        this.more = more;
     }
 
     /**
