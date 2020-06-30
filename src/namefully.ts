@@ -158,7 +158,7 @@ export class Namefully {
             case 'lastname':
                 nama.push(this.getLastname());
                 nama.push(this.getFirstname());
-                nama.push(this.getMiddlenames().join(Separator.SPACE));
+                nama.push(...this.getMiddlenames());
                 break;
         }
 
@@ -193,9 +193,9 @@ export class Namefully {
      */
     getPrefix(): string {
         const pxSep = this.config.titling === 'us' ? Separator.PERIOD : Separator.EMPTY;
-        return this.fullname.prefix ?
-            Separator.EMPTY.concat(this.fullname.prefix, pxSep) :
-            Separator.EMPTY;
+        return this.fullname.prefix
+            ? Separator.EMPTY.concat(this.fullname.prefix, pxSep)
+            : Separator.EMPTY;
     }
 
     /**
@@ -262,7 +262,8 @@ export class Namefully {
      * `count` : the number of *unrestricted* characters of the name;
      * `frequency` : the highest frequency within the characters;
      * `top` : the character with the highest frequency;
-     * `unique` : the count of unique characters of the name.
+     * `unique` : the count of unique characters of the name;
+     * `distribution` : the characters' distribution.
      *
      * @example
      * Given the name "Thomas Alva Edison", the summary will output as follows:
@@ -272,6 +273,8 @@ export class Namefully {
      *  frequency: 3
      *  top      : A
      *  unique   : 12
+     *  distribution: { T: 1, H: 1, O: 2, M: 1, A: 2, S: 2, ' ': 2, L: 1, V: 1,
+     *  E: 1, D: 1, I: 1, N: 1 }
      *
      * **NOTE:**
      * During the setup, a set of restricted characters can be defined to be removed
@@ -313,7 +316,7 @@ export class Namefully {
         orderedBy = orderedBy || this.config.orderedBy; // override config
         return orderedBy === 'firstname'
             ? [this.fullname.firstname.namon, this.fullname.lastname.namon].join(Separator.SPACE)
-            : [ this.fullname.lastname.namon, this.fullname.firstname.namon].join(Separator.SPACE);
+            : [this.fullname.lastname.namon, this.fullname.firstname.namon].join(Separator.SPACE);
     }
 
     /**
@@ -475,6 +478,15 @@ export class Namefully {
      * @param {string} how to format the full name
      *
      * How to format it?
+     * string format
+     * -------------
+     * 'short': typical first + last name
+     * 'long': birth name (without prefix and suffix)
+     *
+     * char format
+     * -----------
+     * 'b': birth name
+     * 'B': capitalized birth name
      * 'f': first name
      * 'F': capitalized first name
      * 'l': last name (official)
@@ -488,22 +500,29 @@ export class Namefully {
      * 's': suffix
      * 'S': capitalized suffix
      *
+     * punctuations
+     * ------------
+     * '.': period
+     * ',': comma
+     * ' ': space
+     * '-': hyphen
+     * '_': underscore
+     *
      * @example
      * Given the name `Joe Jim Smith`, call the `format` with the how string.
      * - format('l f') => 'Smith Joe'
      * - format('L, f') => 'SMITH, Joe'
-     * - format('fml') => 'JoeJimSmith'
-     * - format('FML') => 'JOEJIMSMITH'
-     * - format('L, f m') => 'SMITH, Joe Jim'
-     * - format('O') => 'SMITH, Joe Jim'
+     * - format('short') => 'Joe Smith'
+     * - format() => 'SMITH, Joe Jim'
      */
-    format(how?: string): string {
-        if (!how)
-            return this.getFullname();
+    format(how: string = 'official'): string {
+        if (how === 'short') return this.shorten();
+        if (how === 'long') return this.getBirthname();
+        if (how === 'official') how = 'o';
 
         const formatted: string[] = [];
         const tokens = [
-            '.', ',', ' ', '-', '_', 'f', 'F', 'l', 'L', 'm', 'M',
+            '.', ',', ' ', '-', '_', 'b', 'B', 'f', 'F', 'l', 'L', 'm', 'M',
             'n', 'N', 'o', 'O', 'p', 'P', 's', 'S'
         ];
         for (const c of how) {
@@ -512,6 +531,13 @@ export class Namefully {
             formatted.push(this.map(c));
         }
         return formatted.join(Separator.EMPTY).trim();
+    }
+
+    /**
+     * Returns the count of characters of the full name, excluding special chars
+     */
+    size(): number {
+        return this.summary.count;
     }
 
     /**
@@ -563,9 +589,9 @@ export class Namefully {
 
         switch(case_) {
             case 'upper':
-                return nama.map(n => n.toUpperCase()).join(Separator.EMPTY);
+                return birthname.toUpperCase();
             case 'lower':
-                return nama.map(n => n.toLowerCase()).join(Separator.EMPTY);
+                return birthname.toLowerCase();
             case 'camel': case 'pascal':
                 const pascalCase = nama.map(n => capitalize(n)).join(Separator.EMPTY);
                 return case_ === 'camel' ? decapitalize(pascalCase) : pascalCase;
@@ -636,6 +662,10 @@ export class Namefully {
                 return Separator.HYPHEN;
             case '_':
                 return Separator.UNDERSCORE;
+            case 'b':
+                return this.getBirthname();
+            case 'B':
+                return this.getBirthname().toUpperCase();
             case 'f':
                 return this.fullname.firstname.namon;
             case 'F':
