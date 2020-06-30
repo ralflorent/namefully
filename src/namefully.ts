@@ -9,14 +9,14 @@
  *
  * Created on March 03, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
- * @license GPL-3.0
+ * @license MIT
  */
 import { Parser, NamaParser, StringParser, ArrayNameParser, ArrayStringParser, allowShortNameOrder, } from './core';
 import { capitalize, decapitalize, toggleCase, generatePassword, allowShortNameType } from './core';
 import { Fullname, Name, Nama, Namon, Separator, Summary, Config } from './models';
 import { NameOrder, NameType, AbbrTitle, LastnameFormat } from './models/misc';
 import { FullnameValidator } from './validators';
-import { CONFIG } from './core/constants';
+import { CONFIG, RESTRICTED_CHARS } from './core/constants';
 
 /**
  * Person name handler
@@ -534,10 +534,10 @@ export class Namefully {
     }
 
     /**
-     * Returns the count of characters of the full name, excluding special chars
+     * Returns the count of characters of the birth name, excluding punctuations
      */
     size(): number {
-        return this.summary.count;
+        return new Summary(this.getBirthname(), [...RESTRICTED_CHARS]).count;
     }
 
     /**

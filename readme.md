@@ -3,7 +3,7 @@
 [![npm version][version-img]][version-url]
 [![CircleCI][circleci-img]][circleci-url]
 [![Coverage Status][codecov-img]][codecov-url]
-[![GPL-3.0 License][license-img]][license-url]
+[![MIT License][license-img]][license-url]
 
 ## Description
 
@@ -316,7 +316,7 @@ Developed by [Ralph Florent](https://github.com/ralflorent).
 
 ## License
 
-The underlying content of this utility is licensed under [GPL-3.0](LICENSE).
+The underlying content of this utility is licensed under [MIT](LICENSE).
 
 <!-- References -->
 [version-img]: https://img.shields.io/npm/v/namefully
@@ -326,4 +326,4 @@ The underlying content of this utility is licensed under [GPL-3.0](LICENSE).
 [codecov-img]: https://codecov.io/gh/ralflorent/namefully/branch/master/graph/badge.svg
 [codecov-url]: https://codecov.io/gh/ralflorent/namefully
 [license-img]: https://img.shields.io/npm/l/namefully
-[license-url]: http://www.gnu.org/licenses/gpl-3.0.en.html
+[license-url]: https://opensource.org/licenses/MIT
