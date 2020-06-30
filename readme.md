@@ -7,9 +7,11 @@
 
 ## Description
 
-Person name handler in the Latin alphabet.
+Person name handler. [Try it live](https://stackblitz.com/edit/namefully).
 
-[Try it live](https://stackblitz.com/edit/namefully).
+## Documentation
+
+Check out the official documentation at [https://namefully.netlify.app/](https://namefully.netlify.app/).
 
 ## Motivation
 
@@ -24,8 +26,8 @@ probably guess, that has been my situation for a while.
 
 ## Key features
 
-1. Offer supports for the Latin alphabet, including other European languages
-(e.g., German, Icelandic names)
+1. Offer supports for Latin alphabet, including other European ones
+(e.g., German, Greek, Cyrillic, Icelandic characters)
 2. Accept different data shape as input
 3. Allow a developer to configure optional parameters
 4. Accept customized parsers (do it yourself)
@@ -95,7 +97,7 @@ console.log(name.fn()) // => Thomas
 
 > NOTE: This option also affects all the other results of the API. In other words,
 > the results will prioritize the order of appearance set in the first place for
-> future operations. Keep in mind that in some cases it be altered. See the example below.
+> future operations. Keep in mind that in some cases it can be altered. See the example below.
 
 ```ts
 // 'Smith' is the surname in this raw string case
@@ -158,7 +160,7 @@ console.log(name.full()) // => Mr. John Smith, PhD
 
 `string: 'father' | 'mother' | 'hyphenated' | 'all'`, default: `father`
 
-Defines the distinct formats to output a compound surname (e.g., Hispanish
+Defines the distinct formats to output a compound surname (e.g., Hispanic
 surnames).
 
 ```ts
@@ -183,7 +185,7 @@ console.log(name.full()) // => 2Pac Shakur
 
 > NOTE: This option can help to trick the utility and allow us to use it for
 > unsupported languages or inner contents like prefixes or suffixes. For example,
-> the Cyrillic alphabet will not pass the validation rules. Or, the Spanish
+> the Hindi characters will not pass the validation rules. Or, the Spanish
 > equivalent for `Mr` => `Sr` will cause a failure of the utility. Do note though
 > you risk facing some validation errors for certain API.
 
@@ -281,7 +283,7 @@ See the [use cases](usecases) for further details.
 |*getPrefix*|none|none|`string`|Gets the prefix part of the full name, if any|
 |*getFirstname*|none|none|`string`|Gets the first name part of the full name|
 |*getMiddlenames*|none|none|`string[]`|Gets the middle name part of the full name|
-|*getLastname*|none|none|`string`|Gets the last name part of the full name|
+|*getLastname*|`format`|`null`|`string`|Gets the last name part of the full name|
 |*getSuffix*|none|none|`string`|Gets the suffix part of the full name, if any|
 |*getFullname*|`orderedBy`|`null`|`string`|Gets the full name|
 |*getInitials*|`orderedBy`, `withMid`|`null`, `false`|`string`|Gets the initials of the first and last name|

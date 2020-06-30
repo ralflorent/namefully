@@ -11,6 +11,7 @@ import { Separator } from './index';
  * @class
  */
 export class Summary {
+    distribution: { [key: string]: number};
     count: number;
     frequency: number;
     top: string;
@@ -34,7 +35,8 @@ export class Summary {
             `count    : ${this.count} \n`,
             `frequency: ${this.frequency} \n`,
             `top      : ${this.top} \n`,
-            `unique   : ${this.unique} \n`
+            `unique   : ${this.unique} \n`,
+            `distrib  : ${this.distribution} \n`,
         );
     }
 
@@ -54,6 +56,7 @@ export class Summary {
             }
         }
 
+        this.distribution = freqs;
         this.count = count;
         this.frequency = maxfreq;
         this.top = top;

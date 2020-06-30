@@ -4,6 +4,16 @@ This file contains the documentation on the notable changes and bug fixes, and
 is formatted following this [standard](https://keepachangelog.com/en/1.0.0/).
 This project also adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.0.9] - 2020-05-18
+
+**Added**:
+
+- Add support for Cyrillic and Greek alphabet
+
+**Fixed**:
+
+- Fix validation rules (regex) for specific fields
+
 ## [1.0.8] - 2020-04-18
 
 **Added**:
@@ -92,6 +102,7 @@ This project also adheres to [Semantic Versioning](https://semver.org/).
 
 Initial version
 
+[1.0.9]: https://github.com/ralflorent/namefully/compare/v1.0.8...v1.0.9
 [1.0.8]: https://github.com/ralflorent/namefully/compare/v1.0.7...v1.0.8
 [1.0.7]: https://github.com/ralflorent/namefully/compare/v1.0.6...v1.0.7
 [1.0.6]: https://github.com/ralflorent/namefully/compare/v1.0.5...v1.0.6

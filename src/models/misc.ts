@@ -1,5 +1,5 @@
 /**
- * Miscellaneous contents
+ * Miscellaneous types
  *
  * Created on March 07, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
@@ -23,7 +23,13 @@ export interface Fullname {
  * Defines the two ways that a full name can be ordered: first or last name
  * @typedef NameOrder
  */
-export type NameOrder = 'firstname' | 'lastname';
+export type NameOrder = 'firstname' | 'fn' | 'lastname' | 'ln';
+
+/**
+ * Defines the three parts that a birth name
+ * @typedef NameType
+ */
+export type NameType = 'firstname' | 'fn' | 'lastname' | 'ln' | 'middlename' | 'mn';
 
 /**
  * Defines the distinct formats to output a surname
@@ -68,9 +74,9 @@ export interface Nama {
 }
 
 /**
- * @interface Index represents the JSON signature for indexing name parts
+ * @interface Indexing represents the JSON signature for indexing name parts
  */
-interface Index<T> {
+interface Indexing<T> {
     prefix: T;
     firstname: T;
     middlename: T;
@@ -83,4 +89,4 @@ interface Index<T> {
  * using numbered index
  * @extends Index<number>
  */
-export interface NameIndex extends Index<number> {}
+export interface NameIndex extends Indexing<number> {}

@@ -5,6 +5,7 @@
  * @author Ralph Florent <ralflornt@gmail.com>
  */
 import { Summary, Namon } from './index';
+import { convertToAscii, generatePassword } from '../core';
 
 /**
  * Represents a namon with some extra functionalities
@@ -20,11 +21,12 @@ export class Name {
      * Constructs a `Name`
      * @param namon a piece of string that will be defined as a namon
      * @param type which namon that is
+     * @param cap which kind of capitalizations
      */
-    constructor(public namon: string, public type: Namon, capitalized?: 'initial' | 'all') {
+    constructor(public namon: string, public type: Namon, cap?: 'initial' | 'all') {
         this.initial = namon[0];
         this.body = namon.slice(1, namon.length);
-        if (!!capitalized) this.capitalize(capitalized);
+        if (!!cap) this.capitalize(cap);
     }
 
     /**
@@ -38,7 +40,6 @@ export class Name {
 
     /**
      * Gets the initials of the name
-     * @returns {Array<string>} the initials
      */
     getInitials(): string[] {
         return [this.initial];
@@ -48,13 +49,25 @@ export class Name {
      * Capitalizes a name
      * @param {'initial' | 'all'} option how to capitalize it
      */
-    protected capitalize(option: 'initial' | 'all' = 'initial'): void {
+    capitalize(option: 'initial' | 'all' = 'initial'): void {
+        this.initial = this.initial.toUpperCase();
         if (option === 'initial') {
-            this.initial = this.initial.toUpperCase();
             this.namon = this.initial.concat(this.body);
         } else {
-            this.initial = this.initial.toUpperCase();
             this.namon = this.namon.toUpperCase();
+        }
+    }
+
+    /**
+     * De-capitalizes a name
+     * @param {'initial' | 'all'} option how to decapitalize it
+     */
+    decapitalize(option: 'initial' | 'all' = 'initial'): void {
+        this.initial = this.initial.toLowerCase();
+        if (option === 'initial') {
+            this.namon = this.initial.concat(this.body);
+        } else {
+            this.namon = this.initial.concat(this.body.toLowerCase());
         }
     }
 
@@ -71,4 +84,41 @@ export class Name {
     upper(): string {
         return this.namon.toUpperCase();
     }
+
+    /**
+     * Resets to the initial namon
+     */
+    reset(): void {
+        this.namon = this.initial.concat(this.body);
+    }
+
+    /**
+     * Returns an ascii representation of each characters of a name
+     * @param restrictions chars to skip
+     */
+    ascii(restrictions?: string[]): number[] {
+        return convertToAscii(this.namon, restrictions);
+    }
+
+    /**
+     * Returns a password-like representation of a name
+     */
+    passwd(): string {
+        return generatePassword(this.namon);
+    }
 }
+
+/**
+ * Aliases for `Name`
+ */
+export interface Name {
+    cap: typeof Name.prototype.capitalize;
+    decap: typeof Name.prototype.decapitalize;
+    stats: typeof Name.prototype.describe;
+    inits: typeof Name.prototype.getInitials;
+}
+
+Name.prototype.cap = Name.prototype.capitalize;
+Name.prototype.decap = Name.prototype.decapitalize;
+Name.prototype.stats = Name.prototype.describe;
+Name.prototype.inits = Name.prototype.getInitials;

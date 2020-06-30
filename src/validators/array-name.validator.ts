@@ -23,9 +23,9 @@ export default class ArrayNameValidator implements Validator<Name[]> {
     readonly type: ValidatorType = ValidatorType.ARR_NAMES;
     /**
      * Validates the content of a set of custom `Name`s
-     * @param {Array<Name>} value data to validate
+     * @param {Name[]} value data to validate
      */
-    validate(values: Array<Name>): void {
+    validate(values: Name[]): void {
         if (values.length <= 1 || values.length > 5) {
             throw new ValidationError(`must be an array of 2 - 5 'Name's`, 'Array of Names');
         }

@@ -5,6 +5,7 @@
  * @author Ralph Florent <ralflornt@gmail.com>
  */
 import { Name, Namon, Summary, Separator, LastnameFormat } from './index';
+import { convertToAscii, generatePassword } from '../core';
 
 /**
  * Represents a last name with some extra functionalities
@@ -22,6 +23,13 @@ export class Lastname extends Name {
      */
     constructor(public father: string, public mother?: string, private format: LastnameFormat = 'father') {
         super(father, Namon.LAST_NAME);
+    }
+
+    /**
+     * Determines whether a 'mother' subpart was set
+     */
+    hasMother(): boolean {
+        return !!this.mother && this.mother.length > 0;
     }
 
     /**
@@ -52,14 +60,11 @@ export class Lastname extends Name {
                 return this.mother ? this.father.concat(Separator.HYPHEN, this.mother) : this.father;
             case 'all':
                 return this.mother ? this.father.concat(Separator.SPACE, this.mother) : this.father;
-            // default:
-            //     return this.father;
         }
     }
 
     /**
      * Gets the initials of the last name
-     * @returns {Array<string>} the initials
      */
     getInitials(format?: LastnameFormat): string[] {
         format = format || this.format;
@@ -70,15 +75,77 @@ export class Lastname extends Name {
                 initials.push(this.father[0]);
                 break;
             case 'mother':
-                if (!!this.mother && this.mother.length)
+                if (this.hasMother())
                     initials.push(this.mother[0]);
                 break;
             case 'hyphenated': case 'all':
                 initials.push(this.father[0]);
-                if (!!this.mother && this.mother.length)
+                if (this.hasMother())
                     initials.push(this.mother[0]);
                 break;
         }
         return initials;
     }
+
+    /**
+     * Capitalizes a last name
+     * @param {'initial' | 'all'} option how to capitalize its subparts
+     */
+    capitalize(option: 'initial' | 'all' = 'initial'): void {
+        super.capitalize(option);
+        if (option === 'initial') {
+            this.father = this.father[0].toUpperCase().concat(this.father.slice(1));
+            if (this.hasMother())
+                this.mother = this.mother[0].toUpperCase().concat(this.mother.slice(1));
+        } else {
+            this.father = this.father.toUpperCase();
+            if (this.hasMother()) this.mother = this.mother.toUpperCase();
+        }
+    }
+
+    /**
+     * De-capitalizes a last name
+     * @param {'initial' | 'all'} option how to decapitalize its subparts
+     */
+    decapitalize(option: 'initial' | 'all' = 'initial'): void {
+        super.capitalize(option);
+        if (option === 'initial') {
+            this.father = this.father[0].toLowerCase().concat(this.father.slice(1));
+            if (this.hasMother())
+                this.mother = this.mother[0].toLowerCase().concat(this.mother.slice(1));
+        } else {
+            this.father = this.father.toLowerCase();
+            if (this.hasMother()) this.mother = this.mother.toLowerCase();
+        }
+    }
+
+    /**
+     * Returns an ascii representation of each characters of a last name
+     * @param restrictions chars to skip
+     */
+    ascii(restrictions?: string[]): number[] {
+        return convertToAscii(this.tostring(), restrictions);
+    }
+
+    /**
+     * Returns a password-like representation of a last name
+     */
+    passwd(): string {
+        return generatePassword(this.tostring());
+    }
 }
+
+/**
+ * Aliases for `Lastname`
+ */
+export interface Lastname {
+    cap: typeof Lastname.prototype.capitalize;
+    decap: typeof Lastname.prototype.decapitalize;
+    stats: typeof Lastname.prototype.describe;
+    inits: typeof Lastname.prototype.getInitials;
+}
+
+Lastname.prototype.cap = Lastname.prototype.capitalize;
+Lastname.prototype.decap = Lastname.prototype.decapitalize;
+Lastname.prototype.stats = Lastname.prototype.describe;
+Lastname.prototype.inits = Lastname.prototype.getInitials;

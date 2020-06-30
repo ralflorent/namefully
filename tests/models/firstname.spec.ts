@@ -17,26 +17,26 @@ describe('Firstname', () => {
     })
 
     test(`should create firstname with more name parts`, () => {
-        const firstname = new Firstname('John', ['Joseph'])
+        const firstname = new Firstname('John', 'Joseph')
         expect(firstname).toBeInstanceOf(Firstname)
         expect(firstname.more).toBeDefined()
         expect(firstname.more).toEqual(['Joseph'])
     })
 
     test('should output the string names', () => {
-        const firstname = new Firstname('Bryan', ['Brendan'])
+        const firstname = new Firstname('Bryan', 'Brendan')
         expect(firstname.tostring()).toEqual('Bryan')
         expect(firstname.tostring(true)).toEqual('Bryan Brendan')
     })
 
     test('should describe only the specified name parts', () => {
-        const firstname = new Firstname('John', ['Joe', 'Jack'])
+        const firstname = new Firstname('John', 'Joe', 'Jack')
         expect(firstname.describe().tostring()).toContain('count    : 4')
         expect(firstname.describe(true).tostring()).toContain('count    : 11')
     })
 
     test('should return only the initials of the specified name parts', () => {
-        const firstname = new Firstname('Simon', ['Pete'])
+        const firstname = new Firstname('Simon', 'Pete')
         expect(firstname.getInitials()).toStrictEqual(['S'])
         expect(firstname.getInitials(true)).toStrictEqual(['S', 'P'])
     })

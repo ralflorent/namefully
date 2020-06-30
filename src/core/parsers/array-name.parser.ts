@@ -13,16 +13,16 @@ import { Parser } from './parser';
  * Represents a `Name[]` parser
  * @class
  * @implements {Parser<Name[]>}
- * @classdesc
+ *
  * This parser parses an array of the class `Name` while checking that every part
  * plays the role they are supposed to play. The class `Name` is a ready-made
- * recipe that saves the how-to parsing for a raw data.
+ * recipe that saves the how-to parsing for a raw data input.
  *
  * **NOTE**:
  * In this specific case, the user is expected to carefully set each name part
- * and submits a high quality of data. Why is this parser if the data is already
+ * and submit a high-quality data. Why is this parser if the data is already
  * shaped as wanted? Well, it is better to be safe than sorry, so we implement a
- * double-check of these values and re-confirm a cleaner data. Remember, namefully
+ * double-check of these values and reconfirm a cleaner data. Remember, namefully
  * works like a trapdoor, once the data is set and confirmed safe, no editing is
  * possible.
  */
@@ -36,7 +36,6 @@ export default class ArrayNameParser implements Parser<Name[]> {
 
     /**
      * Parses the raw data into a full name
-     * @returns {Fullname}
      */
     parse(options: { bypass: boolean, lastnameFormat: LastnameFormat }): Fullname {
         const { bypass, lastnameFormat } = options;
