@@ -121,7 +121,7 @@ describe('Namefully', () => {
         })
 
         test('should throw error for wrong key params when formatting', () => {
-            ['[', '{', '^', '!', '@', '#', 'a', 'b', 'c', 'd'].forEach(
+            ['[', '{', '^', '!', '@', '#', 'a', 'c', 'd'].forEach(
                 k => expect(() => name.format(k)).toThrow(Error)
             )
         })
@@ -144,7 +144,7 @@ describe('Namefully', () => {
             expect(name.format('l')).toEqual(lastname)
             expect(name.format('m')).toEqual(middlename)
             expect(name.format('o')).toEqual('Mr SMITH, John Joe PhD')
-            expect(name.format()).toEqual(fullname)
+            expect(name.format()).toEqual('Mr SMITH, John Joe PhD')
         })
     })
 
@@ -211,7 +211,7 @@ describe('Namefully', () => {
         })
 
         test('should throw error for wrong key params when formatting', () => {
-            ['[', '{', '^', '!', '@', '#', 'a', 'b', 'c', 'd'].forEach(
+            ['[', '{', '^', '!', '@', '#', 'a', 'c', 'd'].forEach(
                 k => expect(() => name.format(k)).toThrow(Error)
             )
         })
@@ -230,7 +230,7 @@ describe('Namefully', () => {
         })
 
         test('should output just a name part', () => {
-            expect(name.format()).toEqual(fullname)
+            expect(name.format()).toEqual('Mr SMITH, John Joe PhD')
             expect(name.format('f')).toEqual(firstname)
             expect(name.format('l')).toEqual(lastname)
             expect(name.format('m')).toEqual(middlename)

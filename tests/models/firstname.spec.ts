@@ -12,14 +12,13 @@ describe('Firstname', () => {
         const firstname = new Firstname('John')
         expect(firstname).toBeInstanceOf(Firstname)
         expect(firstname.namon).toBeDefined()
-        expect(firstname.more).toBeUndefined()
+        expect(firstname.more).toEqual([])
         expect(firstname.type).toEqual(Namon.FIRST_NAME)
     })
 
     test(`should create firstname with more name parts`, () => {
         const firstname = new Firstname('John', 'Joseph')
         expect(firstname).toBeInstanceOf(Firstname)
-        expect(firstname.more).toBeDefined()
         expect(firstname.more).toEqual(['Joseph'])
     })
 

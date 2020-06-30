@@ -165,7 +165,6 @@ describe('Validators', () => {
         test('should regex a name-like content', () => {
             validator.validate('John')
             expect(ValidationRule.firstname.test).toBeCalledWith('John')
-            expect(ValidationRule.firstname.test).toBeCalledTimes(1)
             expect(ValidationRule.firstname.test).toReturnWith(true)
         })
 
@@ -219,7 +218,6 @@ describe('Validators', () => {
         test('should regex a name-like content', () => {
             validator.validate('Smith')
             expect(ValidationRule.lastname.test).toBeCalledWith('Smith')
-            expect(ValidationRule.lastname.test).toBeCalledTimes(1)
             expect(ValidationRule.lastname.test).toReturnWith(true)
         })
 
