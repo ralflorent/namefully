@@ -14,7 +14,8 @@ import { NAME_INDEX, RESTRICTED_CHARS, PASSWORD_MAPPER } from '../core';
  */
 export function capitalize(str: string, option: 'initial' | 'all' = 'initial'): string {
     if (!str) return '';
-    let initial = str[0].toUpperCase(), rest = str.slice(1).toLowerCase();
+    const initial = str[0].toUpperCase();
+    const rest = str.slice(1).toLowerCase();
     return option === 'initial' ? initial.concat(rest) : str.toUpperCase();
 }
 
@@ -25,7 +26,8 @@ export function capitalize(str: string, option: 'initial' | 'all' = 'initial'): 
  */
 export function decapitalize(str: string, option: 'initial' | 'all' = 'initial'): string {
     if (!str) return '';
-    let initial = str[0].toLowerCase(), rest = str.slice(1);
+    const initial = str[0].toLowerCase();
+    const rest = str.slice(1);
     return option === 'initial' ? initial.concat(rest) : str.toLowerCase();
 }
 
@@ -162,7 +164,7 @@ export function convertToAscii(
 export function generatePassword(str: string): string {
     const mapper = PASSWORD_MAPPER;
 
-    let password = str
+    const password = str
         .split(Separator.EMPTY)
         .map(char => {
             if (mapper.has(char.toLowerCase()))

@@ -98,7 +98,7 @@ export class Firstname extends Name {
         }
     }
 
-        /**
+    /**
      * Returns an ascii representation of each characters of a first name
      * @param restrictions chars to skip
      */

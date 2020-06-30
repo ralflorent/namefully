@@ -551,7 +551,7 @@ export class Namefully {
         }> = {}
     ): number[] {
         const { restrictions } = options;
-        let nameType = allowShortNameType(options.nameType);
+        const nameType = allowShortNameType(options.nameType);
         const { firstname, lastname, middlename } = this.fullname;
         switch(nameType) {
             case 'firstname':
@@ -581,20 +581,20 @@ export class Namefully {
      * Transforms a birth name to a specific case
      * @param case which case to convert a birth name to
      */
-    to(case_: 'upper' | 'lower' | 'camel' | 'pascal' | 'snake' | 'hyphen' | 'dot' | 'toggle'): string {
+    to(_case: 'upper' | 'lower' | 'camel' | 'pascal' | 'snake' | 'hyphen' | 'dot' | 'toggle'): string {
         const birthname = this.getBirthname();
         const nama = birthname
             .replace(/[' -]/g, Separator.SPACE)
             .split(Separator.SPACE);
 
-        switch(case_) {
+        switch(_case) {
             case 'upper':
                 return birthname.toUpperCase();
             case 'lower':
                 return birthname.toLowerCase();
             case 'camel': case 'pascal':
                 const pascalCase = nama.map(n => capitalize(n)).join(Separator.EMPTY);
-                return case_ === 'camel' ? decapitalize(pascalCase) : pascalCase;
+                return _case === 'camel' ? decapitalize(pascalCase) : pascalCase;
             case 'snake':
                 return nama.map(n => n.toLowerCase()).join(Separator.UNDERSCORE);
             case 'hyphen':
