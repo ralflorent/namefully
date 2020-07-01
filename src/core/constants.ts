@@ -11,7 +11,7 @@ import { CharSet } from './core';
  * The current version of `Namefully`.
  * @constant
  */
-export const version = '1.0.9';
+export const version = '1.1.0';
 
 /**
  * CONFIG

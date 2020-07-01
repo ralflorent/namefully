@@ -1,6 +1,7 @@
 /**
  * Welcome to namefully!
- * namefully is a JS utility for person name handling
+ *
+ * namefully is a JS utility for handing person names.
  *
  * Sources
  * - repo: https://github.com/ralflorent/namefully
@@ -11,12 +12,36 @@
  * @author Ralph Florent <ralflornt@gmail.com>
  * @license MIT
  */
-import { Parser, NamaParser, StringParser, ArrayNameParser, ArrayStringParser, allowShortNameOrder, } from './core';
-import { capitalize, decapitalize, toggleCase, generatePassword, allowShortNameType } from './core';
-import { Fullname, Name, Nama, Namon, Separator, Summary, Config } from './models';
-import { NameOrder, NameType, AbbrTitle, LastnameFormat } from './models/misc';
+import {
+    Parser,
+    NamaParser,
+    StringParser,
+    ArrayNameParser,
+    ArrayStringParser,
+} from './core/parsers';
+import {
+    capitalize,
+    decapitalize,
+    toggleCase,
+    generatePassword,
+    allowShortNameType,
+    allowShortNameOrder,
+} from './core/utils';
+import {
+    Fullname,
+    Name,
+    Nama,
+    Namon,
+    Separator,
+    Summary,
+    Config,
+    NameOrder,
+    NameType,
+    LastnameFormat
+} from './models';
 import { FullnameValidator } from './validators';
 import { CONFIG, RESTRICTED_CHARS } from './core/constants';
+
 
 /**
  * Person name handler
@@ -55,10 +80,10 @@ import { CONFIG, RESTRICTED_CHARS } from './core/constants';
  * `Namefully` and the rest will follow.
  *
  * Some terminologies used across the library are:
- * - namon: piece of a name (e.g., firstname)
- * - nama: pieces of a name (e.g., firstname + lastname)
+ * - namon: 1 piece of a name (e.g., firstname)
+ * - nama: 2+ pieces of a name (e.g., firstname + lastname)
  *
- * Happy naming!
+ * Happy handling!
  */
 export class Namefully {
     /**
@@ -85,15 +110,7 @@ export class Namefully {
      */
     constructor(
         raw: string | string[] | Name[] | Nama,
-        options?: Partial<{
-            orderedBy: NameOrder, // indicate order of appearance
-            separator: Separator, // how to split string names
-            titling: AbbrTitle, // whether to add a period to a prefix
-            ending: boolean, // for ending suffix
-            bypass: boolean, // a bypass for validators
-            parser: Parser<any> // (user-defined) custom parser
-            lastnameFormat: LastnameFormat // how to format a surname
-        }>
+        options?: Partial<Config>
     ) {
         // well, first thing first
         this.configure(options);
@@ -121,17 +138,14 @@ export class Namefully {
         if (this.fullname.prefix)
             nama.push(Separator.EMPTY.concat(this.fullname.prefix, pxSep))
 
-        switch (orderedBy) {
-            case 'firstname':
-                nama.push(this.getFirstname());
-                nama.push(...this.getMiddlenames());
-                nama.push(Separator.EMPTY.concat(this.getLastname(), sxSep));
-                break;
-            case 'lastname':
-                nama.push(this.getLastname());
-                nama.push(this.getFirstname());
-                nama.push(this.getMiddlenames().join(Separator.SPACE).concat(sxSep));
-                break;
+        if (orderedBy === 'firstname') {
+            nama.push(this.getFirstname());
+            nama.push(...this.getMiddlenames());
+            nama.push(Separator.EMPTY.concat(this.getLastname(), sxSep));
+        } else {
+            nama.push(this.getLastname());
+            nama.push(this.getFirstname());
+            nama.push(this.getMiddlenames().join(Separator.SPACE).concat(sxSep));
         }
 
         if (this.fullname.suffix)
@@ -149,17 +163,14 @@ export class Namefully {
         orderedBy = this.parseNameOrder(orderedBy);
         const nama: string[] = [];
 
-        switch (orderedBy) {
-            case 'firstname':
-                nama.push(this.getFirstname());
-                nama.push(...this.getMiddlenames());
-                nama.push(this.getLastname());
-                break;
-            case 'lastname':
-                nama.push(this.getLastname());
-                nama.push(this.getFirstname());
-                nama.push(...this.getMiddlenames());
-                break;
+        if (orderedBy === 'firstname') {
+            nama.push(this.getFirstname());
+            nama.push(...this.getMiddlenames());
+            nama.push(this.getLastname());
+        } else {
+            nama.push(this.getLastname());
+            nama.push(this.getFirstname());
+            nama.push(...this.getMiddlenames());
         }
 
         return nama.join(Separator.SPACE);
@@ -293,7 +304,11 @@ export class Namefully {
                     console.warn('No Summary for middle names since none was set.');
                     return null;
                 }
-                return new Summary(this.fullname.middlename.map(n => n.namon).join(Separator.SPACE));
+                return new Summary(
+                    this.fullname.middlename
+                        .map(n => n.namon)
+                        .join(Separator.SPACE)
+                );
             default:
                 return this.summary;
         }
@@ -311,9 +326,10 @@ export class Namefully {
      */
     shorten(orderedBy?: NameOrder): string {
         orderedBy = orderedBy || this.config.orderedBy; // override config
+        const { firstname, lastname } = this.fullname;
         return orderedBy === 'firstname'
-            ? [this.fullname.firstname.namon, this.fullname.lastname.namon].join(Separator.SPACE)
-            : [this.fullname.lastname.namon, this.fullname.firstname.namon].join(Separator.SPACE);
+            ? [firstname.namon, lastname.namon].join(Separator.SPACE)
+            : [lastname.namon, firstname.namon].join(Separator.SPACE);
     }
 
     /**
@@ -356,7 +372,9 @@ export class Namefully {
 
         const firsts = fn.getInitials().join(sep).concat(sep);
         const lasts = ln.getInitials().join(sep).concat(sep);
-        const mids = hasmid ? middlename.map(n => n.getInitials()).join(sep).concat(sep) : Separator.EMPTY;
+        const mids = hasmid
+            ? middlename.map(n => n.getInitials()).join(sep).concat(sep)
+            : Separator.EMPTY;
         let cname = '';
 
         if (this.config.orderedBy === 'firstname') {
@@ -440,7 +458,7 @@ export class Namefully {
         if (by === 'ln' || by === 'lastname') v = 'lastname';
         if (by === 'fm' || by === 'firstmid') v = 'firstmid';
         if (by === 'ml' || by === 'midlast') v = 'midlast';
-        return this.compress(0, v , false);
+        return this.compress(0, v, false);
     }
 
     /**
@@ -578,20 +596,22 @@ export class Namefully {
      * Transforms a birth name to a specific case
      * @param case which case to convert a birth name to
      */
-    to(case_: 'upper' | 'lower' | 'camel' | 'pascal' | 'snake' | 'hyphen' | 'dot' | 'toggle'): string {
+    to(
+        _case: 'upper' | 'lower' | 'camel' | 'pascal' | 'snake' | 'hyphen' | 'dot' | 'toggle'
+    ): string {
         const birthname = this.getBirthname();
         const nama = birthname
             .replace(/[' -]/g, Separator.SPACE)
             .split(Separator.SPACE);
 
-        switch(case_) {
+        switch(_case) {
             case 'upper':
                 return birthname.toUpperCase();
             case 'lower':
                 return birthname.toLowerCase();
             case 'camel': case 'pascal':
                 const pascalCase = nama.map(n => capitalize(n)).join(Separator.EMPTY);
-                return case_ === 'camel' ? decapitalize(pascalCase) : pascalCase;
+                return _case === 'camel' ? decapitalize(pascalCase) : pascalCase;
             case 'snake':
                 return nama.map(n => n.toLowerCase()).join(Separator.UNDERSCORE);
             case 'hyphen':
@@ -689,7 +709,9 @@ export class Namefully {
                 const sxSep = ending ? ',' : Separator.EMPTY;
 
                 const official = [
-                    this.fullname.prefix ? Separator.EMPTY.concat(this.fullname.prefix, pxSep) : Separator.EMPTY,
+                    this.fullname.prefix
+                        ? Separator.EMPTY.concat(this.fullname.prefix, pxSep)
+                        : Separator.EMPTY,
                     this.fullname.lastname.upper().concat(Separator.COMMA),
                     this.fullname.firstname.tostring(),
                     this.fullname.middlename.map(n => n.namon).join(Separator.SPACE).concat(sxSep),
@@ -728,16 +750,23 @@ export class Namefully {
                 this.initialize(new ArrayNameParser(raw as Name[]));
             } else {
                 // typescript should stop them, but let's be paranoid (for JS developers)
-                throw new Error(`Cannot parse raw data as arrays that are not of '${Name.name}' or string`);
+                throw new Error(
+                    `Cannot parse raw data as arrays that are not of '${Name.name}' or string`
+                );
             }
         } else if (raw instanceof Object) { // check for json object
             for (const entry of Object.entries(raw)) { // make sure keys are correct
                 const key = entry[0], value = entry[1];
                 if (['firstname', 'lastname', 'middlename', 'prefix', 'suffix'].indexOf(key) === -1)
-                    throw new Error(`Cannot parse raw data as json object that does not contains keys of '${Namon}'`);
+                    throw new Error(
+                        `Cannot parse raw data as json object that does not contains keys of` +
+                        `'${Namon}'`
+                    );
 
                 if (typeof value !== 'string') // make sure the values are proper string
-                    throw new Error(`Cannot parse raw data. The key <${key}> should be a 'string' type`);
+                    throw new Error(
+                        `Cannot parse raw data. The key <${key}> should be a 'string' type`
+                    );
             }
             this.initialize(new NamaParser(raw as Nama));
         } else {
