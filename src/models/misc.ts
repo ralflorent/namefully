@@ -56,7 +56,7 @@ export interface Config {
     orderedBy: NameOrder;
     separator: Separator; // how to split names
     titling: AbbrTitle, // whether to add period to a prefix
-    ending: Separator; // ending suffix
+    ending: boolean; // ending suffix
     bypass: boolean; // bypass the validation rules
     parser?: Parser<any>; // (user-defined) custom parser
     lastnameFormat?: LastnameFormat; // how to format a surname

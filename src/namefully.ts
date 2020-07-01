@@ -89,7 +89,7 @@ export class Namefully {
             orderedBy: NameOrder, // indicate order of appearance
             separator: Separator, // how to split string names
             titling: AbbrTitle, // whether to add a period to a prefix
-            ending: Separator, // for ending suffix
+            ending: boolean, // for ending suffix
             bypass: boolean, // a bypass for validators
             parser: Parser<any> // (user-defined) custom parser
             lastnameFormat: LastnameFormat // how to format a surname
@@ -115,7 +115,7 @@ export class Namefully {
 
         const { titling, ending } = this.config;
         const pxSep = titling === 'us' ? Separator.PERIOD : Separator.EMPTY; // Mr[.]
-        const sxSep = ending !== Separator.SPACE ? ending : Separator.EMPTY; // [,] PhD
+        const sxSep = ending ? ',' : Separator.EMPTY; // [,] PhD
         const nama: string[] = [];
 
         if (this.fullname.prefix)
@@ -686,7 +686,7 @@ export class Namefully {
             case 'o': case 'O':
                 const { titling, ending } = this.config;
                 const pxSep = titling === 'us' ? Separator.PERIOD : Separator.EMPTY;
-                const sxSep = ending !== Separator.SPACE ? ending : Separator.EMPTY;
+                const sxSep = ending ? ',' : Separator.EMPTY;
 
                 const official = [
                     this.fullname.prefix ? Separator.EMPTY.concat(this.fullname.prefix, pxSep) : Separator.EMPTY,

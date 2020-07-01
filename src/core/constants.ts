@@ -23,7 +23,7 @@ export const CONFIG: Config = {
     orderedBy: 'firstname',
     separator: Separator.SPACE,
     titling: 'uk', // no period
-    ending: Separator.SPACE,
+    ending: false,
     bypass: false,
     lastnameFormat: 'father',
 } as const
