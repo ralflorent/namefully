@@ -5,7 +5,7 @@
  * @author Ralph Florent <ralflornt@gmail.com>
  */
 
-import { Namefully, Firstname, Lastname, Parser, Fullname } from '../src/index';
+import { Namefully, Firstname, Lastname, Parser, Fullname, Separator } from '../src/index';
 
 describe('Namefully', () => {
 
@@ -413,6 +413,7 @@ describe('Namefully', () => {
         test('should throw error when wrong raw string', () => {
             [
                 () => { new Namefully('Maria De La Cruz') },
+                () => { new Namefully('Maria') },
             ].forEach(fn => expect(fn).toThrow(Error))
         })
 
@@ -461,6 +462,46 @@ describe('Namefully', () => {
             )
         })
 
+    })
+
+    describe('Build Namefully with options', () => {
+
+        test('should create an instance with orderedBy', () => {
+            const fn = new Namefully('Tony Stark', { orderedBy: 'firstname' })
+            expect(fn).toBeTruthy()
+            expect(fn.getLastname()).toEqual('Stark')
+            const ln = new Namefully('Romanov Natasha', { orderedBy: 'lastname' })
+            expect(ln).toBeTruthy()
+            expect(ln.getLastname()).toEqual('Romanov')
+        })
+
+        test('should create an instance with separator', () => {
+            const space = new Namefully('Jack Sparrow', { separator: Separator.SPACE })
+            expect(space).toBeTruthy()
+            expect(space.getLastname()).toEqual('Sparrow')
+            const comma = new Namefully('Maria,De La Cruz', { separator: Separator.COMMA })
+            expect(comma).toBeTruthy()
+            expect(comma.getLastname()).toEqual('De La Cruz')
+        })
+
+        test('should create an instance with titling', () => {
+            const uk = new Namefully('Ms Katherine Marie Heigl', { titling: 'uk' })
+            expect(uk).toBeTruthy()
+            expect(uk.getPrefix()).toEqual('Ms')
+            const us = new Namefully('Ms Katherine Marie Heigl', { titling: 'us' })
+            expect(us).toBeTruthy()
+            expect(us.getPrefix()).toEqual('Ms.')
+        })
+
+        test('should create an instance with titling', () => {
+            const ending = new Namefully({
+                firstname: 'Fabrice',
+                lastname: 'Piazza',
+                suffix: 'PhD'
+            }, { ending: true })
+            expect(ending).toBeTruthy()
+            expect(ending.getFullname()).toEqual('Fabrice Piazza, PhD')
+        })
     })
 
 })
