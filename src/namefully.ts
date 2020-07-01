@@ -237,17 +237,14 @@ export class Namefully {
         }
 
         const initials = [];
-        switch(orderedBy) {
-            case 'firstname':
-                initials.push(...this.fullname.firstname.getInitials());
-                if (withMid) midInits.forEach(m => initials.push(...m));
-                initials.push(...this.fullname.lastname.getInitials());
-                break;
-            case 'lastname':
-                initials.push(...this.fullname.lastname.getInitials());
-                initials.push(...this.fullname.firstname.getInitials());
-                if (withMid) midInits.forEach(m => initials.push(...m));
-                break;
+        if (orderedBy === 'firstname') {
+            initials.push(...this.fullname.firstname.getInitials());
+            if (withMid) midInits.forEach(m => initials.push(...m));
+            initials.push(...this.fullname.lastname.getInitials());
+        } else {
+            initials.push(...this.fullname.lastname.getInitials());
+            initials.push(...this.fullname.firstname.getInitials());
+            if (withMid) midInits.forEach(m => initials.push(...m));
         }
 
         return initials;
@@ -547,11 +544,11 @@ export class Namefully {
     ascii(
         options: Partial<{
             nameType: NameType;
-            restrictions: string[];
+            exceptions: string[];
         }> = {}
     ): number[] {
-        const { restrictions } = options;
-        let nameType = allowShortNameType(options.nameType);
+        const { exceptions: restrictions } = options;
+        const nameType = allowShortNameType(options.nameType);
         const { firstname, lastname, middlename } = this.fullname;
         switch(nameType) {
             case 'firstname':
