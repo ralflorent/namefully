@@ -5,6 +5,7 @@
  * @author Ralph Florent <ralflornt@gmail.com>
  */
 import { Separator, Config, NameIndex } from '../models/index';
+import { CharSet } from './core';
 
 /**
  * The current version of `Namefully`.
@@ -22,7 +23,7 @@ export const CONFIG: Config = {
     orderedBy: 'firstname',
     separator: Separator.SPACE,
     titling: 'uk', // no period
-    ending: Separator.SPACE,
+    ending: false,
     bypass: false,
     lastnameFormat: 'father',
 } as const
@@ -49,15 +50,12 @@ export const NAME_INDEX: NameIndex = {
 export const RESTRICTED_CHARS = [
     Separator.SPACE,
     Separator.SINGLE_QUOTE,
-    Separator.HYPHEN
+    Separator.HYPHEN,
+    Separator.PERIOD,
+    Separator.COMMA,
 ] as const
 
 
-class CharSet<T> extends Set<T> {
-    random(): T {
-        return Array.from(this)[Math.floor(Math.random() * this.size)];
-    }
-}
 
 /**
  * PASSWORD_MAPPER
@@ -68,25 +66,25 @@ export const PASSWORD_MAPPER = new Map([
     [ 'b', new CharSet(['b', 'B', '6', '|)', '|3', '|>']) ],
     [ 'c', new CharSet(['c', 'C', '(', '<']) ],
     [ 'd', new CharSet(['d', 'D', '(|', '<|']) ],
-    [ 'e', new CharSet(['e', 'E', '3']) ],
-    [ 'f', new CharSet(['f', 'F', '7']) ],
+    [ 'e', new CharSet(['e', 'E', '3', '*']) ],
+    [ 'f', new CharSet(['f', 'F', '7', '(-']) ],
     [ 'g', new CharSet(['g', 'G', '8', '&', '**']) ],
     [ 'h', new CharSet(['h', 'H', '#', '|-|']) ],
     [ 'i', new CharSet(['i', 'I', '!', '1', '|', '--']) ],
-    [ 'j', new CharSet(['j', 'J', '|-']) ],
-    [ 'k', new CharSet(['k', 'K', '%', '*|*']) ],
+    [ 'j', new CharSet(['j', 'J', ')', '1']) ],
+    [ 'k', new CharSet(['k', 'K', '%', '|<']) ],
     [ 'l', new CharSet(['l', 'L', '1', '!', '|_']) ],
-    [ 'm', new CharSet(['m', 'M', '[|]']) ],
-    [ 'n', new CharSet(['n', 'N', '|-|', '!=', '++']) ],
-    [ 'o', new CharSet(['o', 'O', '0', '*']) ],
-    [ 'p', new CharSet(['p', 'P', '|3', '|)']) ],
-    [ 'q', new CharSet(['q', 'Q', '&']) ],
-    [ 'r', new CharSet(['r', 'R', '7', '[']) ],
+    [ 'm', new CharSet(['m', 'M', '^^', '>>']) ],
+    [ 'n', new CharSet(['n', 'N', '!=', '++']) ],
+    [ 'o', new CharSet(['o', 'O', '0', '.', '*']) ],
+    [ 'p', new CharSet(['p', 'P', '|3', '|)', '|>']) ],
+    [ 'q', new CharSet(['q', 'Q', '&', '9', '<|']) ],
+    [ 'r', new CharSet(['r', 'R', '7', '&']) ],
     [ 's', new CharSet(['s', 'S', '5', '$']) ],
-    [ 't', new CharSet(['t', 'T', '7']) ],
-    [ 'u', new CharSet(['u', 'U', '|_|']) ],
-    [ 'v', new CharSet(['v', 'V', '>', '<']) ],
-    [ 'w', new CharSet(['w', 'W', '[|]']) ],
+    [ 't', new CharSet(['t', 'T', '7', '[']) ],
+    [ 'u', new CharSet(['u', 'U', '|_|', 'v']) ],
+    [ 'v', new CharSet(['v', 'V', '>', '<', '^']) ],
+    [ 'w', new CharSet(['w', 'W', '[|]', 'vv']) ],
     [ 'x', new CharSet(['x', 'X', '%', '#']) ],
     [ 'z', new CharSet(['z', 'Z', '2', '!=']) ],
     [ '$', new CharSet([

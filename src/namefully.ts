@@ -9,14 +9,14 @@
  *
  * Created on March 03, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
- * @license GPL-3.0
+ * @license MIT
  */
 import { Parser, NamaParser, StringParser, ArrayNameParser, ArrayStringParser, allowShortNameOrder, } from './core';
 import { capitalize, decapitalize, toggleCase, generatePassword, allowShortNameType } from './core';
 import { Fullname, Name, Nama, Namon, Separator, Summary, Config } from './models';
 import { NameOrder, NameType, AbbrTitle, LastnameFormat } from './models/misc';
 import { FullnameValidator } from './validators';
-import { CONFIG } from './core/constants';
+import { CONFIG, RESTRICTED_CHARS } from './core/constants';
 
 /**
  * Person name handler
@@ -89,7 +89,7 @@ export class Namefully {
             orderedBy: NameOrder, // indicate order of appearance
             separator: Separator, // how to split string names
             titling: AbbrTitle, // whether to add a period to a prefix
-            ending: Separator, // for ending suffix
+            ending: boolean, // for ending suffix
             bypass: boolean, // a bypass for validators
             parser: Parser<any> // (user-defined) custom parser
             lastnameFormat: LastnameFormat // how to format a surname
@@ -115,7 +115,7 @@ export class Namefully {
 
         const { titling, ending } = this.config;
         const pxSep = titling === 'us' ? Separator.PERIOD : Separator.EMPTY; // Mr[.]
-        const sxSep = ending !== Separator.SPACE ? ending : Separator.EMPTY; // [,] PhD
+        const sxSep = ending ? ',' : Separator.EMPTY; // [,] PhD
         const nama: string[] = [];
 
         if (this.fullname.prefix)
@@ -237,17 +237,14 @@ export class Namefully {
         }
 
         const initials = [];
-        switch(orderedBy) {
-            case 'firstname':
-                initials.push(...this.fullname.firstname.getInitials());
-                if (withMid) midInits.forEach(m => initials.push(...m));
-                initials.push(...this.fullname.lastname.getInitials());
-                break;
-            case 'lastname':
-                initials.push(...this.fullname.lastname.getInitials());
-                initials.push(...this.fullname.firstname.getInitials());
-                if (withMid) midInits.forEach(m => initials.push(...m));
-                break;
+        if (orderedBy === 'firstname') {
+            initials.push(...this.fullname.firstname.getInitials());
+            if (withMid) midInits.forEach(m => initials.push(...m));
+            initials.push(...this.fullname.lastname.getInitials());
+        } else {
+            initials.push(...this.fullname.lastname.getInitials());
+            initials.push(...this.fullname.firstname.getInitials());
+            if (withMid) midInits.forEach(m => initials.push(...m));
         }
 
         return initials;
@@ -534,10 +531,10 @@ export class Namefully {
     }
 
     /**
-     * Returns the count of characters of the full name, excluding special chars
+     * Returns the count of characters of the birth name, excluding punctuations
      */
     size(): number {
-        return this.summary.count;
+        return new Summary(this.getBirthname(), [...RESTRICTED_CHARS]).count;
     }
 
     /**
@@ -547,10 +544,10 @@ export class Namefully {
     ascii(
         options: Partial<{
             nameType: NameType;
-            restrictions: string[];
+            exceptions: string[];
         }> = {}
     ): number[] {
-        const { restrictions } = options;
+        const { exceptions: restrictions } = options;
         const nameType = allowShortNameType(options.nameType);
         const { firstname, lastname, middlename } = this.fullname;
         switch(nameType) {
@@ -689,7 +686,7 @@ export class Namefully {
             case 'o': case 'O':
                 const { titling, ending } = this.config;
                 const pxSep = titling === 'us' ? Separator.PERIOD : Separator.EMPTY;
-                const sxSep = ending !== Separator.SPACE ? ending : Separator.EMPTY;
+                const sxSep = ending ? ',' : Separator.EMPTY;
 
                 const official = [
                     this.fullname.prefix ? Separator.EMPTY.concat(this.fullname.prefix, pxSep) : Separator.EMPTY,
