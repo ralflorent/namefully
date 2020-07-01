@@ -121,7 +121,9 @@ describe('Namefully', () => {
         })
 
         test('should zip a name by compressing specific name parts', () => {
+            expect(name.zip()).toBe('John J Smith')
             expect(name.zip('firstname')).toBe('J Joe Smith')
+            expect(name.zip('middlename')).toBe('John J Smith')
             expect(name.zip('lastname')).toBe('John Joe S')
             expect(name.zip('firstmid')).toBe('J J Smith')
             expect(name.zip('midlast')).toBe('John J S')
@@ -162,9 +164,9 @@ describe('Namefully', () => {
             expect(name.format('F')).toEqual('JOHN')
             expect(name.format('L')).toEqual('SMITH')
             expect(name.format('M')).toEqual('JOE')
+            expect(name.format('O')).toEqual('MR SMITH, JOHN JOE PHD')
             expect(name.format('P')).toEqual('MR')
             expect(name.format('S')).toEqual('PHD')
-            expect(name.format('O')).toEqual('MR SMITH, JOHN JOE PHD')
         })
 
         test('should output just a name part', () => {
@@ -183,15 +185,15 @@ describe('Namefully', () => {
 
         test('should return the ascii representation', () => {
             expect(name.ascii())
-                .toBe([74, 111, 104, 110, 74, 111, 101, 83, 109, 105, 116, 104])
+                .toEqual([74, 111, 104, 110, 74, 111, 101, 83, 109, 105, 116, 104])
             expect(name.ascii({ nameType: 'firstname'}))
-                .toBe([74, 111, 104, 110])
+                .toEqual([74, 111, 104, 110])
             expect(name.ascii({ nameType: 'lastname'}))
-                .toBe([83, 109, 105, 116, 104])
+                .toEqual([83, 109, 105, 116, 104])
             expect(name.ascii({ nameType: 'middlename'}))
-                .toBe([74, 111, 101])
+                .toEqual([74, 111, 101])
             expect(name.ascii({ nameType: 'middlename', exceptions: [ 'o' ]}))
-                .toBe([74, 101])
+                .toEqual([74, 101])
         })
 
         test('should titlecase the birth name', () => {
@@ -215,7 +217,6 @@ describe('Namefully', () => {
 
 
     describe('Ordered by lastname', () => {
-
         const name = new Namefully('Mr Smith John Joe PhD', { orderedBy: 'lastname' })
 
         beforeEach(() => {
@@ -250,24 +251,51 @@ describe('Namefully', () => {
             expect(name.shorten('firstname')).toEqual('John Smith')
         })
 
-        test('should limit name to 10 chars', () => {
-            const compressed = name.compress(10)
-            expect(compressed).toBe('Smith John J')
+        test('should compress using middlename by default', () => {
+            expect(name.compress()).toEqual('Smith John J')
+        })
+
+        test('should not evoke the logger for short names when compressing', () => {
+            name.compress(25)
+            expect(console.warn).not.toBeCalled()
+        })
+
+        test('should limit name to 10 chars and alert it', () => {
+            name.compress(10)
             expect(console.warn).toBeCalledTimes(1)
         })
 
+        test('should not evoke the logger when told so explicitly', () => {
+            name.compress(10, 'middlename', false)
+            expect(console.warn).not.toBeCalled()
+        })
+
         test('should limit name to 10 chars while compressing', () => {
-            expect(name.compress(10, 'firstname')).toBe('Smith J Joe')
-            expect(name.compress(10, 'lastname')).toBe('S John Joe')
-            expect(name.compress(10, 'firstmid')).toBe('Smith J J')
-            expect(name.compress(10, 'midlast')).toBe('S John J')
+            expect(name.compress(10, 'firstname', false)).toBe('Smith J Joe')
+            expect(name.compress(10, 'lastname', false)).toBe('S John Joe')
+            expect(name.compress(10, 'firstmid', false)).toBe('Smith J J')
+            expect(name.compress(10, 'midlast', false)).toBe('S John J')
+        })
+
+        test('should limit name to 10 chars while compressing', () => {
+            expect(name.zip()).toBe('Smith John J')
+            expect(name.zip('firstname')).toBe('Smith J Joe')
+            expect(name.zip('middlename')).toBe('Smith John J')
+            expect(name.zip('lastname')).toBe('S John Joe')
+            expect(name.zip('firstmid')).toBe('Smith J J')
+            expect(name.zip('midlast')).toBe('S John J')
         })
 
         test('should output possible usernames', () => {
             const usernames = name.username()
-            expect(usernames).toEqual(expect.arrayContaining([
-                'j.smith', 'jsmith', 'johnsmith', 'josmith'
-            ]))
+            expect(usernames).toEqual(
+                expect.arrayContaining([
+                    'j.smith',
+                    'jsmith',
+                    'johnsmith',
+                    'josmith'
+                ])
+            )
         })
 
         test('should throw error for wrong key params when formatting', () => {
@@ -282,19 +310,66 @@ describe('Namefully', () => {
             )
         })
 
+        test('should format a name using string format', () => {
+            expect(name.format('short')).toEqual('Smith John')
+            expect(name.format('long')).toEqual('Smith John Joe')
+            expect(name.format('official')).toEqual('Mr SMITH, John Joe PhD')
+            expect(name.format()).toEqual('Mr SMITH, John Joe PhD')
+        })
+
         test('should output a capitalized names', () => {
+            expect(name.format('B')).toEqual('SMITH JOHN JOE')
             expect(name.format('F')).toEqual('JOHN')
             expect(name.format('L')).toEqual('SMITH')
             expect(name.format('M')).toEqual('JOE')
             expect(name.format('O')).toEqual(`MR SMITH, JOHN JOE PHD`)
+            expect(name.format('P')).toEqual('MR')
+            expect(name.format('S')).toEqual('PHD')
         })
 
         test('should output just a name part', () => {
-            expect(name.format()).toEqual('Mr SMITH, John Joe PhD')
+            expect(name.format('b')).toEqual('Smith John Joe')
             expect(name.format('f')).toEqual('John')
             expect(name.format('l')).toEqual('Smith')
             expect(name.format('m')).toEqual('Joe')
             expect(name.format('o')).toEqual('Mr SMITH, John Joe PhD')
+            expect(name.format('p')).toEqual('Mr')
+            expect(name.format('s')).toEqual('PhD')
+        })
+
+        test('should return the count of chars of the birth name', () => {
+            expect(name.size()).toEqual(12)
+        })
+
+        test('should return the ascii representation', () => {
+            expect(name.ascii())
+                .toEqual([83, 109, 105, 116, 104, 74, 111, 104, 110, 74, 111, 101])
+            expect(name.ascii({ nameType: 'firstname'}))
+                .toEqual([74, 111, 104, 110])
+            expect(name.ascii({ nameType: 'lastname'}))
+                .toEqual([83, 109, 105, 116, 104])
+            expect(name.ascii({ nameType: 'middlename'}))
+                .toEqual([74, 111, 101])
+            expect(name.ascii({ nameType: 'middlename', exceptions: [ 'o' ]}))
+                .toEqual([74, 101])
+        })
+
+        test('should titlecase the birth name', () => {
+            expect(name.to('lower')).toEqual('smith john joe')
+            expect(name.to('upper')).toEqual('SMITH JOHN JOE')
+            expect(name.to('camel')).toEqual('smithJohnJoe')
+            expect(name.to('pascal')).toEqual('SmithJohnJoe')
+            expect(name.to('snake')).toEqual('smith_john_joe')
+            expect(name.to('hyphen')).toEqual('smith-john-joe')
+            expect(name.to('dot')).toEqual('smith.john.joe')
+            expect(name.to('toggle')).toEqual('sMITH jOHN jOE')
+        })
+
+        test('should return a password (hash-like content)', () => {
+            expect(name.passwd()).toBeDefined()
+            expect(name.passwd('firstname')).toBeDefined()
+            expect(name.passwd('middlename')).toBeDefined()
+            expect(name.passwd('lastname')).toBeDefined()
         })
     })
 
