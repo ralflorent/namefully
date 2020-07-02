@@ -38,6 +38,11 @@ describe('Namefully', () => {
             expect(name.getInitials('firstname', true)).toEqual(['J', 'J', 'S'])
         })
 
+        test('should evoke logger when no middle name was set for initials', () => {
+            new Namefully('John Smith').getInitials('firstname', true)
+            expect(console.warn).toBeCalledTimes(1)
+        })
+
         test('should describe statistically the full name', () => {
             const summary = name.describe()
             expect(summary.count).toEqual(17)
@@ -86,6 +91,11 @@ describe('Namefully', () => {
             expect(summary.top).toEqual('E')
             expect(summary.unique).toEqual(3)
             expect(summary.distribution).toEqual({ J: 1, O: 1, E: 1 })
+        })
+
+        test('should evoke logger when no middle name was set for summary', () => {
+            new Namefully('John Smith').describe('middlename')
+            expect(console.warn).toBeCalledTimes(1)
         })
 
         test('should shorten name to first and last names', () => {
@@ -179,6 +189,11 @@ describe('Namefully', () => {
             expect(name.format('s')).toEqual('PhD')
         })
 
+        test('should evoke logger when no middle name was set for formatting', () => {
+            new Namefully('John Smith').format('f m M l')
+            expect(console.warn).toBeCalledTimes(2)
+        })
+
         test('should return the count of chars of the birth name', () => {
             expect(name.size()).toEqual(12)
         })
@@ -196,6 +211,11 @@ describe('Namefully', () => {
                 .toEqual([74, 101])
         })
 
+        test('should evoke logger when no middle name was set for ascii', () => {
+            new Namefully('John Smith').ascii({ nameType: 'middlename' })
+            expect(console.warn).toBeCalledTimes(1)
+        })
+
         test('should titlecase the birth name', () => {
             expect(name.to('lower')).toEqual('john joe smith')
             expect(name.to('upper')).toEqual('JOHN JOE SMITH')
@@ -205,6 +225,7 @@ describe('Namefully', () => {
             expect(name.to('hyphen')).toEqual('john-joe-smith')
             expect(name.to('dot')).toEqual('john.joe.smith')
             expect(name.to('toggle')).toEqual('jOHN jOE sMITH')
+            expect(name.to(null)).toEqual('')
         })
 
         test('should return a password (hash-like content)', () => {
@@ -212,6 +233,11 @@ describe('Namefully', () => {
             expect(name.passwd('firstname')).toBeDefined()
             expect(name.passwd('middlename')).toBeDefined()
             expect(name.passwd('lastname')).toBeDefined()
+        })
+
+        test('should evoke logger when no middle name was set for password', () => {
+            new Namefully('John Smith').passwd('middlename')
+            expect(console.warn).toBeCalledTimes(1)
         })
     })
 
@@ -448,7 +474,7 @@ describe('Namefully', () => {
 
         test('should throw error when wrong object values', () => {
             const func = () => {
-                const json = {'firstname': 'John', 'lastname': 'Smith' }
+                const json = { 'firstname': 'John', 'lastname': 'Smith' }
                 json['firstname'] = null
                 json['lastname'] = undefined
                 new Namefully(json)
@@ -501,6 +527,61 @@ describe('Namefully', () => {
             }, { ending: true })
             expect(ending).toBeTruthy()
             expect(ending.getFullname()).toEqual('Fabrice Piazza, PhD')
+        })
+
+        test('should create an instance with lastnameFormat', () => {
+            const fn = new Firstname('Catherine')
+            const ln = new Lastname('Zeta', 'Jones')
+
+            const father = new Namefully([fn, ln], { lastnameFormat: 'father' })
+            expect(father).toBeTruthy()
+            expect(father.getFullname()).toEqual('Catherine Zeta')
+
+            const mother = new Namefully([fn, ln], { lastnameFormat: 'mother' })
+            expect(mother).toBeTruthy()
+            expect(mother.getFullname()).toEqual('Catherine Jones')
+
+            const hyphenated = new Namefully([fn, ln], { lastnameFormat: 'hyphenated' })
+            expect(hyphenated).toBeTruthy()
+            expect(hyphenated.getFullname()).toEqual('Catherine Zeta-Jones')
+
+            const all = new Namefully([fn, ln], { lastnameFormat: 'all'})
+            expect(all).toBeTruthy()
+            expect(all.getFullname()).toEqual('Catherine Zeta Jones')
+        })
+
+        test('should create an instance with bypass', () => {
+            const bypass = new Namefully('2Pac Shakur', { bypass: true })
+            expect(bypass).toBeTruthy()
+            expect(bypass.getFirstname()).toEqual('2Pac')
+        })
+
+        test('should create an instance with parser', () => {
+            class CustomParser implements Parser<string> {
+                constructor(public raw: string) {}
+                parse(): Fullname {
+                    const [fn, ln] = this.raw.split(';')
+                    return {
+                        firstname: new Firstname(fn),
+                        lastname: new Lastname(ln)
+                    }
+                }
+            }
+            const name = new Namefully(null, { parser: new CustomParser('Bernard;Pivot') })
+            expect(name).toBeTruthy()
+            expect(name.getFirstname()).toEqual('Bernard')
+            expect(name.getLastname()).toEqual('Pivot')
+        })
+
+        test('should create an instance with multiple options', () => {
+            const name = new Namefully('Mr,Gooding,Cuba,Mark,Jr', {
+                orderedBy: 'lastname',
+                titling: 'us',
+                separator: Separator.COMMA,
+                ending: true
+            })
+            expect(name).toBeTruthy()
+            expect(name.getFullname()).toEqual('Mr. Gooding Cuba Mark, Jr')
         })
     })
 

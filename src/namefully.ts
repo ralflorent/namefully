@@ -18,15 +18,14 @@ import {
     StringParser,
     ArrayNameParser,
     ArrayStringParser,
-} from './core/parsers';
-import {
     capitalize,
     decapitalize,
     toggleCase,
     generatePassword,
     allowShortNameType,
     allowShortNameOrder,
-} from './core/utils';
+    CONFIG, RESTRICTED_CHARS
+} from './core';
 import {
     Fullname,
     Name,
@@ -40,7 +39,6 @@ import {
     LastnameFormat
 } from './models';
 import { FullnameValidator } from './validators';
-import { CONFIG, RESTRICTED_CHARS } from './core/constants';
 
 
 /**
@@ -727,8 +725,6 @@ export class Namefully {
                 return this.fullname.suffix || Separator.EMPTY;
             case 'S':
                 return this.fullname.suffix ? this.fullname.suffix.toUpperCase() : Separator.EMPTY;
-            default:
-                return Separator.EMPTY;
         }
     }
 
