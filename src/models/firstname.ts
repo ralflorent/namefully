@@ -15,7 +15,7 @@ import { convertToAscii, generatePassword } from '../core';
  */
 export class Firstname extends Name {
 
-    readonly more: string[] = [];
+    more: string[] = [];
     /**
      * Constructs a `Firstname`
      * @param {string} namon a piece of string that will be defined as a namon
@@ -77,10 +77,10 @@ export class Firstname extends Name {
         if (option === 'initial') {
             this.namon = this.namon[0].toUpperCase().concat(this.namon.slice(1));
             if (this.hasMore())
-                this.more.forEach(n => n = n[0].toUpperCase().concat(n.slice(1)));
+                this.more = this.more.map(n => n[0].toUpperCase().concat(n.slice(1)));
         } else {
             this.namon = this.namon.toUpperCase();
-            if (this.hasMore()) this.more.forEach(n => n = n.toUpperCase());
+            if (this.hasMore()) this.more = this.more.map(n => n.toUpperCase());
         }
     }
 
@@ -91,10 +91,10 @@ export class Firstname extends Name {
     decapitalize(option: 'initial' | 'all' = 'initial'): void {
         if (option === 'initial') {
             this.namon = this.namon[0].toLowerCase().concat(this.namon.slice(1));
-            if (this.hasMore()) this.more.forEach(n => n = n[0].toLowerCase().concat(n.slice(1)));
+            if (this.hasMore()) this.more = this.more.map(n => n[0].toLowerCase().concat(n.slice(1)));
         } else {
             this.namon = this.namon.toLowerCase();
-            if (this.hasMore()) this.more.forEach(n => n = n.toLowerCase());
+            if (this.hasMore()) this.more = this.more.map(n => n.toLowerCase());
         }
     }
 

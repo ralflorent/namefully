@@ -39,4 +39,30 @@ describe('Firstname', () => {
         expect(firstname.getInitials()).toStrictEqual(['S'])
         expect(firstname.getInitials(true)).toStrictEqual(['S', 'P'])
     })
+
+    test('should capitalize the names afterward', () => {
+        const firstname = new Firstname('John', 'Joe')
+        firstname.capitalize('initial')
+        expect(firstname.tostring(true)).toEqual('John Joe')
+        firstname.capitalize('all')
+        expect(firstname.tostring(true)).toEqual('JOHN JOE')
+    })
+
+    test('should decapitalize the names afterward', () => {
+        const firstname = new Firstname('JOHN', 'JOE')
+        firstname.decapitalize('initial')
+        expect(firstname.tostring(true)).toEqual('jOHN jOE')
+        firstname.decapitalize('all')
+        expect(firstname.tostring(true)).toEqual('john joe')
+    })
+
+    test('should return an ascii representation', () => {
+        const firstname = new Firstname('John', 'Joe')
+        expect(firstname.ascii()).toEqual([74, 111, 104, 110, 74, 111, 101])
+        expect(firstname.ascii(['o', ' '])).toEqual([74, 104, 110, 74, 101])
+    })
+
+    test('should return a password (hash-like content)', () => {
+        expect(new Firstname('John', 'Joe').passwd()).toBeDefined()
+    })
 })

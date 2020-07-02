@@ -20,7 +20,7 @@ describe('name', () => {
         expect(name.type).toBeDefined()
     })
 
-    test('should return a lowercased string name', () => {
+    test('should return a lowercase string name', () => {
         expect(name.lower()).toEqual('john')
         expect(name.upper()).toEqual('JOHN')
     })
@@ -45,5 +45,36 @@ describe('name', () => {
         const n = new Name('rick', Namon.FIRST_NAME, 'all')
         expect(n.getInitials()).toStrictEqual(['R'])
         expect(n.namon).toEqual('RICK')
+    })
+
+    test('should capitalize the name afterward', () => {
+        name.capitalize('initial')
+        expect(name.namon).toEqual('John')
+        name.capitalize('all')
+        expect(name.namon).toEqual('JOHN')
+    })
+
+    test('should decapitalize the name afterward', () => {
+        const n = new Name('MORTY', Namon.FIRST_NAME)
+        n.decapitalize('initial')
+        expect(n.namon).toEqual('mORTY')
+        n.decapitalize('all')
+        expect(n.namon).toEqual('morty')
+    })
+
+    test('should reset the name afterward', () => {
+        const n = new Name('morty', Namon.FIRST_NAME, 'initial')
+        expect(n.namon).toEqual('Morty')
+        n.reset()
+        expect(n.namon).toEqual('morty')
+    })
+
+    test('should return an ascii representation', () => {
+        expect(name.ascii()).toEqual([74, 111, 104, 110])
+        expect(name.ascii(['o'])).toEqual([74, 104, 110])
+    })
+
+    test('should return a password (hash-like content)', () => {
+        expect(name.passwd()).toBeDefined()
     })
 })
