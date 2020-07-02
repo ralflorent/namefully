@@ -38,6 +38,11 @@ describe('Namefully', () => {
             expect(name.getInitials('firstname', true)).toEqual(['J', 'J', 'S'])
         })
 
+        test('should evoke logger when no middle name was set for initials', () => {
+            new Namefully('John Smith').getInitials('firstname', true)
+            expect(console.warn).toBeCalledTimes(1)
+        })
+
         test('should describe statistically the full name', () => {
             const summary = name.describe()
             expect(summary.count).toEqual(17)
@@ -86,6 +91,11 @@ describe('Namefully', () => {
             expect(summary.top).toEqual('E')
             expect(summary.unique).toEqual(3)
             expect(summary.distribution).toEqual({ J: 1, O: 1, E: 1 })
+        })
+
+        test('should evoke logger when no middle name was set for summary', () => {
+            new Namefully('John Smith').describe('middlename')
+            expect(console.warn).toBeCalledTimes(1)
         })
 
         test('should shorten name to first and last names', () => {
@@ -179,6 +189,11 @@ describe('Namefully', () => {
             expect(name.format('s')).toEqual('PhD')
         })
 
+        test('should evoke logger when no middle name was set for formatting', () => {
+            new Namefully('John Smith').format('f m M l')
+            expect(console.warn).toBeCalledTimes(2)
+        })
+
         test('should return the count of chars of the birth name', () => {
             expect(name.size()).toEqual(12)
         })
@@ -196,6 +211,11 @@ describe('Namefully', () => {
                 .toEqual([74, 101])
         })
 
+        test('should evoke logger when no middle name was set for ascii', () => {
+            new Namefully('John Smith').ascii({ nameType: 'middlename' })
+            expect(console.warn).toBeCalledTimes(1)
+        })
+
         test('should titlecase the birth name', () => {
             expect(name.to('lower')).toEqual('john joe smith')
             expect(name.to('upper')).toEqual('JOHN JOE SMITH')
@@ -205,6 +225,7 @@ describe('Namefully', () => {
             expect(name.to('hyphen')).toEqual('john-joe-smith')
             expect(name.to('dot')).toEqual('john.joe.smith')
             expect(name.to('toggle')).toEqual('jOHN jOE sMITH')
+            expect(name.to(null)).toEqual('')
         })
 
         test('should return a password (hash-like content)', () => {
@@ -212,6 +233,11 @@ describe('Namefully', () => {
             expect(name.passwd('firstname')).toBeDefined()
             expect(name.passwd('middlename')).toBeDefined()
             expect(name.passwd('lastname')).toBeDefined()
+        })
+
+        test('should evoke logger when no middle name was set for password', () => {
+            new Namefully('John Smith').passwd('middlename')
+            expect(console.warn).toBeCalledTimes(1)
         })
     })
 
