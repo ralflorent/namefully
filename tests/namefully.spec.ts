@@ -448,7 +448,7 @@ describe('Namefully', () => {
 
         test('should throw error when wrong object values', () => {
             const func = () => {
-                const json = {'firstname': 'John', 'lastname': 'Smith' }
+                const json = { 'firstname': 'John', 'lastname': 'Smith' }
                 json['firstname'] = null
                 json['lastname'] = undefined
                 new Namefully(json)
@@ -501,6 +501,61 @@ describe('Namefully', () => {
             }, { ending: true })
             expect(ending).toBeTruthy()
             expect(ending.getFullname()).toEqual('Fabrice Piazza, PhD')
+        })
+
+        test('should create an instance with lastnameFormat', () => {
+            const fn = new Firstname('Catherine')
+            const ln = new Lastname('Zeta', 'Jones')
+
+            const father = new Namefully([fn, ln], { lastnameFormat: 'father' })
+            expect(father).toBeTruthy()
+            expect(father.getFullname()).toEqual('Catherine Zeta')
+
+            const mother = new Namefully([fn, ln], { lastnameFormat: 'mother' })
+            expect(mother).toBeTruthy()
+            expect(mother.getFullname()).toEqual('Catherine Jones')
+
+            const hyphenated = new Namefully([fn, ln], { lastnameFormat: 'hyphenated' })
+            expect(hyphenated).toBeTruthy()
+            expect(hyphenated.getFullname()).toEqual('Catherine Zeta-Jones')
+
+            const all = new Namefully([fn, ln], { lastnameFormat: 'all'})
+            expect(all).toBeTruthy()
+            expect(all.getFullname()).toEqual('Catherine Zeta Jones')
+        })
+
+        test('should create an instance with bypass', () => {
+            const bypass = new Namefully('2Pac Shakur', { bypass: true })
+            expect(bypass).toBeTruthy()
+            expect(bypass.getFirstname()).toEqual('2Pac')
+        })
+
+        test('should create an instance with parser', () => {
+            class CustomParser implements Parser<string> {
+                constructor(public raw: string) {}
+                parse(): Fullname {
+                    const [fn, ln] = this.raw.split(';')
+                    return {
+                        firstname: new Firstname(fn),
+                        lastname: new Lastname(ln)
+                    }
+                }
+            }
+            const name = new Namefully(null, { parser: new CustomParser('Bernard;Pivot') })
+            expect(name).toBeTruthy()
+            expect(name.getFirstname()).toEqual('Bernard')
+            expect(name.getLastname()).toEqual('Pivot')
+        })
+
+        test('should create an instance with multiple options', () => {
+            const name = new Namefully('Mr,Gooding,Cuba,Mark,Jr', {
+                orderedBy: 'lastname',
+                titling: 'us',
+                separator: Separator.COMMA,
+                ending: true
+            })
+            expect(name).toBeTruthy()
+            expect(name.getFullname()).toEqual('Mr. Gooding Cuba Mark, Jr')
         })
     })
 
