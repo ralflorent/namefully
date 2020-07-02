@@ -84,20 +84,6 @@ export class Name {
     }
 
     /**
-     * Converts all the alphabetic characters in a string to lowercase
-     */
-    lower(): string {
-        return this.namon.toLowerCase();
-    }
-
-    /**
-     * Converts all the alphabetic characters in a string to uppercase
-     */
-    upper(): string {
-        return this.namon.toUpperCase();
-    }
-
-    /**
      * Resets to the initial namon
      */
     reset(): Name {
@@ -127,11 +113,13 @@ export class Name {
 export interface Name {
     cap: typeof Name.prototype.capitalize;
     decap: typeof Name.prototype.decapitalize;
+    norm: typeof Name.prototype.normalize
     stats: typeof Name.prototype.describe;
     inits: typeof Name.prototype.getInitials;
 }
 
 Name.prototype.cap = Name.prototype.capitalize;
 Name.prototype.decap = Name.prototype.decapitalize;
+Name.prototype.norm = Name.prototype.normalize;
 Name.prototype.stats = Name.prototype.describe;
 Name.prototype.inits = Name.prototype.getInitials;

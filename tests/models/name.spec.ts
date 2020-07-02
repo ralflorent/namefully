@@ -20,11 +20,6 @@ describe('name', () => {
         expect(name.type).toBeDefined()
     })
 
-    test('should return a lowercase string name', () => {
-        expect(name.lower()).toEqual('john')
-        expect(name.upper()).toEqual('JOHN')
-    })
-
     test('should describe only the name', () => {
         const summary = name.describe()
         expect(summary.count).toEqual(4)

@@ -140,11 +140,13 @@ export class Firstname extends Name {
 export interface Firstname {
     cap: typeof Firstname.prototype.capitalize;
     decap: typeof Firstname.prototype.decapitalize;
+    norm: typeof Firstname.prototype.normalize;
     stats: typeof Firstname.prototype.describe;
     inits: typeof Firstname.prototype.getInitials;
 }
 
 Firstname.prototype.cap = Firstname.prototype.capitalize;
 Firstname.prototype.decap = Firstname.prototype.decapitalize;
+Firstname.prototype.norm = Firstname.prototype.normalize;
 Firstname.prototype.stats = Firstname.prototype.describe;
 Firstname.prototype.inits = Firstname.prototype.getInitials;

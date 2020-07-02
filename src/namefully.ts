@@ -468,20 +468,22 @@ export class Namefully {
      */
     username(): string[] {
         const unames: string[] = [];
-        const { firstname: f, lastname: l } = this.fullname;
+        const { firstname, lastname } = this.fullname;
         const p = Separator.PERIOD;
+        const fn = firstname.decap('all').tostring()
+        const ln = lastname.decap('all').tostring('father')
 
         // Given `John Smith`
-        unames.push(f.lower() + l.lower()); // johnsmith
-        unames.push(l.lower() + f.lower()); // smithjohn
-        unames.push(f.lower()[0] + l.lower()); // jsmith
-        unames.push(l.lower()[0] + f.lower()); // sjohn
-        unames.push(f.lower()[0] + p + l.lower()); // j.smith
-        unames.push(l.lower()[0] + p + f.lower()); // s.john
-        unames.push(f.lower().slice(0, 2) + l.lower()); // josmith
-        unames.push(l.lower().slice(0, 2) + f.lower()); // smjohn
-        unames.push(f.lower().slice(0, 2) + p + l.lower()); // jo.smith
-        unames.push(l.lower().slice(0, 2) + p + f.lower()); // sm.john
+        unames.push(fn + ln); // johnsmith
+        unames.push(ln + fn); // smithjohn
+        unames.push(fn[0] + ln); // jsmith
+        unames.push(ln[0] + fn); // sjohn
+        unames.push(fn[0] + p + ln); // j.smith
+        unames.push(ln[0] + p + fn); // s.john
+        unames.push(fn.slice(0, 2) + ln); // josmith
+        unames.push(ln.slice(0, 2) + fn); // smjohn
+        unames.push(fn.slice(0, 2) + p + ln); // jo.smith
+        unames.push(ln.slice(0, 2) + p + fn); // sm.john
 
         return unames;
     }
@@ -682,13 +684,13 @@ export class Namefully {
             case 'B':
                 return this.getBirthname().toUpperCase();
             case 'f':
-                return this.fullname.firstname.namon;
+                return this.fullname.firstname.tostring(true);
             case 'F':
-                return this.fullname.firstname.upper();
+                return this.fullname.firstname.cap('all').tostring(true);
             case 'l':
-                return this.fullname.lastname.namon;
+                return this.fullname.lastname.tostring();
             case 'L':
-                return this.fullname.lastname.upper();
+                return this.fullname.lastname.cap('all').tostring();
             case 'm':
                 if (!this.hasMiddlename()) {
                     console.warn('No formatting for middle names since none was set.');
@@ -700,7 +702,7 @@ export class Namefully {
                     console.warn('No formatting for middle names since none was set.');
                     return Separator.EMPTY;
                 }
-                return this.fullname.middlename.map(n => n.upper()).join(Separator.SPACE);
+                return this.fullname.middlename.map(n => n.cap('all').namon).join(Separator.SPACE);
             case 'o': case 'O':
                 const { titling, ending } = this.config;
                 const pxSep = titling === 'us' ? Separator.PERIOD : Separator.EMPTY;
@@ -710,7 +712,7 @@ export class Namefully {
                     this.fullname.prefix
                         ? Separator.EMPTY.concat(this.fullname.prefix, pxSep)
                         : Separator.EMPTY,
-                    this.fullname.lastname.upper().concat(Separator.COMMA),
+                    this.fullname.lastname.cap('all').tostring().concat(Separator.COMMA),
                     this.fullname.firstname.tostring(),
                     this.fullname.middlename.map(n => n.namon).join(Separator.SPACE).concat(sxSep),
                     this.fullname.suffix || Separator.EMPTY,

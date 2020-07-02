@@ -10,9 +10,10 @@ import { Namefully, Firstname, Lastname, Parser, Fullname, Separator } from '../
 describe('Namefully', () => {
 
     describe('Ordered by firstname', () => {
-        const name = new Namefully('Mr John Joe Smith PhD')
+        let name: Namefully;
 
         beforeEach(() => {
+            name = new Namefully('Mr John Joe Smith PhD')
             const mock = jest.spyOn(console, 'warn')
             mock.mockClear()
         })
@@ -243,9 +244,10 @@ describe('Namefully', () => {
 
 
     describe('Ordered by lastname', () => {
-        const name = new Namefully('Mr Smith John Joe PhD', { orderedBy: 'lastname' })
+        let name: Namefully;
 
         beforeEach(() => {
+            name = new Namefully('Mr Smith John Joe PhD', { orderedBy: 'lastname' });
             const mock = jest.spyOn(console, 'warn')
             mock.mockClear()
         })
