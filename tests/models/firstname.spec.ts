@@ -30,8 +30,8 @@ describe('Firstname', () => {
 
     test('should describe only the specified name parts', () => {
         const firstname = new Firstname('John', 'Joe', 'Jack')
-        expect(firstname.describe().tostring()).toContain('count    : 4')
-        expect(firstname.describe(true).tostring()).toContain('count    : 11')
+        expect(firstname.describe().count).toEqual(4)
+        expect(firstname.describe(true).count).toEqual(11)
     })
 
     test('should return only the initials of the specified name parts', () => {
@@ -40,20 +40,44 @@ describe('Firstname', () => {
         expect(firstname.getInitials(true)).toStrictEqual(['S', 'P'])
     })
 
-    test('should capitalize the names afterward', () => {
-        const firstname = new Firstname('John', 'Joe')
-        firstname.capitalize('initial')
-        expect(firstname.tostring(true)).toEqual('John Joe')
-        firstname.capitalize('all')
-        expect(firstname.tostring(true)).toEqual('JOHN JOE')
+    test('should capitalize one name afterward', () => {
+        const firstname = new Firstname('John')
+        expect(firstname.capitalize().tostring(true)).toEqual('John')
+        expect(firstname.capitalize('all').tostring(true)).toEqual('JOHN')
     })
 
-    test('should decapitalize the names afterward', () => {
+    test('should capitalize many names afterward', () => {
+        const firstname = new Firstname('John', 'Joe')
+        expect(firstname.capitalize().tostring(true)).toEqual('John Joe')
+        expect(firstname.capitalize('all').tostring(true)).toEqual('JOHN JOE')
+    })
+
+    test('should decapitalize one name afterward', () => {
+        const firstname = new Firstname('JOHN')
+        expect(firstname.decapitalize().tostring(true)).toEqual('jOHN')
+        expect(firstname.decapitalize('all').tostring(true)).toEqual('john')
+    })
+
+    test('should decapitalize many names afterward', () => {
         const firstname = new Firstname('JOHN', 'JOE')
-        firstname.decapitalize('initial')
-        expect(firstname.tostring(true)).toEqual('jOHN jOE')
-        firstname.decapitalize('all')
-        expect(firstname.tostring(true)).toEqual('john joe')
+        expect(firstname.decapitalize().tostring(true)).toEqual('jOHN jOE')
+        expect(firstname.decapitalize('all').tostring(true)).toEqual('john joe')
+    })
+
+    test('should normalize one name afterward', () => {
+        expect(
+            new Firstname('JOHN')
+                .normalize()
+                .tostring(true)
+        ).toEqual('John')
+    })
+
+    test('should normalize many names afterward', () => {
+        expect(
+            new Firstname('JOHN', 'JOE')
+                .normalize()
+                .tostring(true)
+        ).toEqual('John Joe')
     })
 
     test('should return an ascii representation', () => {

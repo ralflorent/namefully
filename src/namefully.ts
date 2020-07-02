@@ -725,8 +725,6 @@ export class Namefully {
                 return this.fullname.suffix || Separator.EMPTY;
             case 'S':
                 return this.fullname.suffix ? this.fullname.suffix.toUpperCase() : Separator.EMPTY;
-            default:
-                return Separator.EMPTY;
         }
     }
 

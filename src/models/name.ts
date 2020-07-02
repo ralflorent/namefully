@@ -49,26 +49,38 @@ export class Name {
      * Capitalizes a name
      * @param {'initial' | 'all'} option how to capitalize it
      */
-    capitalize(option: 'initial' | 'all' = 'initial'): void {
+    capitalize(option: 'initial' | 'all' = 'initial'): Name {
         const initial = this.initial.toUpperCase();
         if (option === 'initial') {
             this.namon = initial.concat(this.body);
         } else {
             this.namon = this.namon.toUpperCase();
         }
+        return this;
     }
 
     /**
      * De-capitalizes a name
      * @param {'initial' | 'all'} option how to decapitalize it
      */
-    decapitalize(option: 'initial' | 'all' = 'initial'): void {
+    decapitalize(option: 'initial' | 'all' = 'initial'): Name {
         const initial = this.initial.toLowerCase();
         if (option === 'initial') {
             this.namon = initial.concat(this.body);
         } else {
             this.namon = initial.concat(this.body.toLowerCase());
         }
+        return this;
+    }
+
+    /**
+     * Normalizes the name as it should be
+     */
+    normalize(): Name {
+        this.namon = this.namon[0]
+            .toUpperCase()
+            .concat(this.namon.slice(1).toLowerCase());
+        return this;
     }
 
     /**
@@ -88,8 +100,9 @@ export class Name {
     /**
      * Resets to the initial namon
      */
-    reset(): void {
+    reset(): Name {
         this.namon = this.initial.concat(this.body);
+        return this;
     }
 
     /**

@@ -48,25 +48,26 @@ describe('name', () => {
     })
 
     test('should capitalize the name afterward', () => {
-        name.capitalize('initial')
-        expect(name.namon).toEqual('John')
-        name.capitalize('all')
-        expect(name.namon).toEqual('JOHN')
+        expect(name.capitalize().namon).toEqual('John')
+        expect(name.capitalize('all').namon).toEqual('JOHN')
     })
 
     test('should decapitalize the name afterward', () => {
         const n = new Name('MORTY', Namon.FIRST_NAME)
-        n.decapitalize('initial')
-        expect(n.namon).toEqual('mORTY')
-        n.decapitalize('all')
-        expect(n.namon).toEqual('morty')
+        expect(n.decapitalize().namon).toEqual('mORTY')
+        expect(n.decapitalize('all').namon).toEqual('morty')
     })
 
     test('should reset the name afterward', () => {
         const n = new Name('morty', Namon.FIRST_NAME, 'initial')
         expect(n.namon).toEqual('Morty')
-        n.reset()
-        expect(n.namon).toEqual('morty')
+        expect(n.reset().namon).toEqual('morty')
+    })
+
+    test('should normalize the name afterward', () => {
+        expect(
+            new Name('ESTRELLA', Namon.LAST_NAME).normalize().namon
+        ).toEqual('Estrella')
     })
 
     test('should return an ascii representation', () => {
