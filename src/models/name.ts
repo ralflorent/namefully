@@ -39,6 +39,13 @@ export class Name {
     }
 
     /**
+     * Returns a string representation of the namon
+     */
+    tostring(): string {
+        return this.namon;
+    }
+
+    /**
      * Gets the initials of the name
      */
     getInitials(): string[] {

@@ -4,16 +4,10 @@
  * Created on March 11, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
  */
-import { Config, Nama, Name, Firstname, Lastname, Separator } from '../src/index'
+import { Config, Nama, Name, Firstname, Lastname, Separator, Namon } from '../src/index'
 
 export const nameCases = [
     ['Daniel', 'Michael Blake', 'Day-Lewis'],
-    // ['Emilia', 'Isobel Euphemia Rose', 'Clarke'],
-    // ['Kiefer', 'William Frederick Dempsey George Rufus', 'Sutherland'],
-    // ['Benicio', 'Monserrate Rafael del Toro', 'Sanchez'],
-    // [`Ella`, 'Marija Lani', `Yelich-O'Connor`], // Lorde
-    // ['Johannes', 'Chrysostomus Wolfgangus Theophilus', 'Mozart'],
-    // ['Gari', 'Jose Ciodaro', 'Guerra'],
 ]
 
 export interface UseCase {
@@ -27,12 +21,37 @@ export const USECASES: UseCase[] = [
         options: {},
     },
     {
-        raw: 'George Walker Bush',
+        raw: ['George', 'Walker', 'Bush'],
         options: {},
+    },
+    {
+        raw: [
+            new Firstname('Emilia'),
+            new Name('Isobel', Namon.MIDDLE_NAME),
+            new Name('Euphemia', Namon.MIDDLE_NAME),
+            new Name('Rose', Namon.MIDDLE_NAME),
+            new Lastname('Clarke')
+        ],
+        options: {}
+    },
+    {
+        raw: [
+            new Firstname('Daniel', 'Michael', 'Blake'),
+            new Lastname('Day-Lewis')
+        ],
+        options: {}
+    },
+    {
+        raw: 'Obama Barack',
+        options: {  orderedBy: 'lastname' }
     },
     {
         raw: { prefix: 'Dr', firstname: 'Albert', lastname: 'Einstein' },
         options: { titling: 'us' }
+    },
+    {
+        raw: { firstname: 'Fabrice', lastname: 'Piazza', suffix: 'PhD' },
+        options: { ending: true }
     },
     {
         raw: 'Thiago, Da Silva',
@@ -41,5 +60,9 @@ export const USECASES: UseCase[] = [
     {
         raw: [ new Firstname('Shakira', 'Isabel'), new Lastname('Mebarak', 'Ripoll') ],
         options: { lastnameFormat: 'mother' }
+    },
+    {
+        raw: { firstname: 'Ralph', lastname: 'Florent', suffix: 'M.Sc.' },
+        options: { bypass: true, ending: true }
     },
 ]
