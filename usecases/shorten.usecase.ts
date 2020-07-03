@@ -5,17 +5,21 @@
  * @author Ralph Florent <ralflornt@gmail.com>
  */
 import { Namefully } from '../src/index';
-import { nameCases as cases } from './constants';
+import { USECASES } from './constants';
 
 function shortenUseCase(): void {
-    const names = cases.map(c => new Namefully(c));
+
+    const names = USECASES.map(c => new Namefully(c.raw, c.options));
+
     let content = '';
     content += `+==============================================================================+\n`
     content += `| USE CASE: shorten the full name                                              |\n`
     content += `+==============================================================================+\n`
     names.forEach(name => {
         content += `full name \t: ${name.getFullname()}\n`;
-        content += `typical name \t: ${name.shorten()}\n`;
+        content += `first name \t: ${name.getFirstname()}\n`;
+        content += `last name \t: ${name.getLastname()}\n`;
+        content += `short name \t: ${name.shorten()}\n`;
         content += `----------------------------------------------------------------------------\n`
     })
     console.log(content);

@@ -65,7 +65,10 @@ export default class ArrayNameParser implements Parser<Name[]> {
                     fullname.prefix = name.namon as Prefix;
                     break;
                 case Namon.FIRST_NAME:
-                    fullname.firstname = new Firstname(name.namon);
+                    if (name instanceof Firstname)
+                        fullname.firstname = new Firstname(name.namon, ...name.more);
+                    else
+                        fullname.firstname = new Firstname(name.namon);
                     break;
                 case Namon.LAST_NAME:
                     if (name instanceof Lastname)

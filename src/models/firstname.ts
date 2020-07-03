@@ -49,7 +49,7 @@ export class Firstname extends Name {
      * @param {boolean} includeAll whether to include other pieces of the first
      * name
      */
-    tostring(includeAll: boolean = false): string {
+    tostring(includeAll: boolean = true): string {
         return !includeAll
             ? this.namon
             : this.namon.concat(
