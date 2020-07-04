@@ -203,10 +203,12 @@ export class Namefully {
      * Gets the prefix part of the full name
      */
     getPrefix(): string {
-        const pxSep = this.config.titling === 'us' ? Separator.PERIOD : Separator.EMPTY;
         return this.fullname.prefix
-            ? Separator.EMPTY.concat(this.fullname.prefix, pxSep)
-            : Separator.EMPTY;
+            ? this.fullname.prefix.concat(
+                this.config.titling === 'us'
+                ? Separator.PERIOD
+                : Separator.EMPTY
+            ): Separator.EMPTY;
     }
 
     /**
@@ -370,7 +372,6 @@ export class Namefully {
         'firstname' |  'lastname' | 'middlename' | 'firstmid' | 'midlast' = 'mn',
         warning: boolean = true
     ): string {
-
         if (this.getFullname().length <= limit) // no need to compress
             return this.getFullname();
 
