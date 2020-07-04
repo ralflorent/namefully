@@ -4,7 +4,19 @@
  * Created on March 09, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
  */
-import { Namefully, Name, Namon, Firstname, Lastname, Config, Separator, Parser, Fullname, Prefix, Suffix } from '../src/index';
+import {
+    Namefully,
+    Name,
+    Namon,
+    Firstname,
+    Lastname,
+    Config,
+    Separator,
+    Parser,
+    Fullname,
+    Prefix,
+    Suffix
+} from '../src/index';
 
 function createFromLiteralStringUseCase() {
     const cases = [

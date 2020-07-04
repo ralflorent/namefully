@@ -5,11 +5,11 @@
  * @author Ralph Florent <ralflornt@gmail.com>
  */
 import { Namefully } from '../src/index';
-import { USECASES } from './constants';
+import { NAMECASES } from './constants';
 
 function compressUseCase(): void {
     const limitBy = 20;
-    const names = USECASES.map(c => new Namefully(c.raw, c.options));
+    const names = NAMECASES.map(c => new Namefully(c.raw, c.options));
 
     let content = '';
     content += `+==============================================================================+\n`
@@ -30,11 +30,11 @@ function compressUseCase(): void {
 }
 
 function zipUseCase(): void {
-    const names = USECASES.map(c => new Namefully(c.raw, c.options));
+    const names = NAMECASES.map(c => new Namefully(c.raw, c.options));
 
     let content = '';
     content += `+==============================================================================+\n`
-    content += `| USE CASE: zip the full name using different variants                    |\n`
+    content += `| USE CASE: zip the full name using different variants                         |\n`
     content += `+==============================================================================+\n`
     names.forEach(name => {
         content += `full name    : ${name.getFullname()}\n`;
@@ -50,11 +50,11 @@ function zipUseCase(): void {
 }
 
 export {
-    compressUseCase,
+    // compressUseCase,
     zipUseCase,
 }
 
 export default {
-    compressUseCase,
+    // compressUseCase,
     zipUseCase,
 }

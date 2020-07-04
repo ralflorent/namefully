@@ -5,11 +5,11 @@
  * @author Ralph Florent <ralflornt@gmail.com>
  */
 import { Namefully } from '../src/index';
-import { USECASES } from './constants';
+import { NAMECASES } from './constants';
 
 function describeFullnameUseCase(): void {
 
-    const names = USECASES.map(c => new Namefully(c.raw, c.options));
+    const names = NAMECASES.map(c => new Namefully(c.raw, c.options));
 
     let content = '';
     content += `+==============================================================================+\n`
@@ -23,7 +23,7 @@ function describeFullnameUseCase(): void {
 }
 
 function describeFirstnameUseCase(): void {
-    const names = USECASES.map(c => new Namefully(c.raw, c.options));
+    const names = NAMECASES.map(c => new Namefully(c.raw, c.options));
 
     let content = '';
     content += `+==============================================================================+\n`
@@ -38,7 +38,7 @@ function describeFirstnameUseCase(): void {
 
 function describeMiddlenameUseCase(): void {
 
-    const names = USECASES.map(c => new Namefully(c.raw, c.options));
+    const names = NAMECASES.map(c => new Namefully(c.raw, c.options));
 
     let content = '';
     content += `+==============================================================================+\n`
@@ -54,7 +54,7 @@ function describeMiddlenameUseCase(): void {
 
 function describeLastnameUseCase(): void {
 
-    const names = USECASES.map(c => new Namefully(c.raw, c.options));
+    const names = NAMECASES.map(c => new Namefully(c.raw, c.options));
 
     let content = '';
     content += `+==============================================================================+\n`

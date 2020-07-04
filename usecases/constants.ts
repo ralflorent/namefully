@@ -6,12 +6,12 @@
  */
 import { Config, Nama, Name, Firstname, Lastname, Separator, Namon } from '../src/index';
 
-export interface UseCase {
+export interface NameCase {
     raw: string | string[] | Name[] | Nama
     options: Partial<Config>
 }
 
-export const USECASES: UseCase[] = [
+export const NAMECASES: NameCase[] = [
     {
         raw: 'Keira Knightley',
         options: {},
