@@ -50,11 +50,11 @@ function zipUseCase(): void {
 }
 
 export {
-    // compressUseCase,
+    compressUseCase,
     zipUseCase,
 }
 
 export default {
-    // compressUseCase,
+    compressUseCase,
     zipUseCase,
 }

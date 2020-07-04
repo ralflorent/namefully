@@ -7,22 +7,18 @@
 
 ## Description
 
-Person name handler. [Try it live](https://stackblitz.com/edit/namefully).
+A JavaScript utility for handling person names.
+[Try it live](https://stackblitz.com/edit/namefully).
 
 ## Documentation
 
-Check out the official documentation at [https://namefully.netlify.app/](https://namefully.netlify.app/).
+Check out the official documentation at
+[https://namefully.netlify.app](https://namefully.netlify.app/).
 
 ## Motivation
 
-Have you ever had to format a user's name in a particular order (or shape)?
-Probably yes. If not, it will come at some point. Be patient. Anyway, that is
-simple and easy to implement. Then, a new requirement for a different project
-comes up and demands that you reuse and/or readjust that old implementation for some
-reason. And trust me, more requirements will keep coming, and you'll have to do
-it over and over. When you face this sort of situation on many occasions, it
-surely becomes annoying and forces you to proceed by copy-paste. Well, as you
-probably guess, that has been my situation for a while.
+Have you ever had to format a user's name in a particular order, way, or shape?
+Probably yes. If not, it will come at some point. Be patient.
 
 ## Key features
 
@@ -142,9 +138,9 @@ console.log(name.zip('fn')) // => Mr. J. Smith
 
 ### ending
 
-`string: ':' | ',' | '-', | ',' | ' ' | '_'`, default: `(space)`
+`boolean`, default: `false`
 
-Set an ending character after the full name (before the suffix actually).
+Set an ending character after the full name (a comma before the suffix actually).
 
 ```ts
 const name = new Namefully({
@@ -152,7 +148,7 @@ const name = new Namefully({
     firstname: 'John',
     lastname: 'Smith',
     suffix: 'PhD'
-}, { ending: ',' })
+}, { ending: true })
 console.log(name.full()) // => Mr. John Smith, PhD
 ```
 
@@ -221,14 +217,14 @@ To sum up, the default values are:
     "orderedBy": "firstname",
     "separator": " ",
     "titling": "uk",
-    "ending": " ",
+    "ending": false,
     "lastnameFormat": "father",
     "bypass": false,
     "parser": null
 }
 ```
 
-## Concepts and Examples
+## Concepts and examples
 
 The name standards used for the current version of this library are as
 follows:
@@ -281,18 +277,23 @@ See the [use cases](usecases) for further details.
 | Name | Arguments | Default | Returns | Description |
 |---|---|---|---|---|
 |*getPrefix*|none|none|`string`|Gets the prefix part of the full name, if any|
-|*getFirstname*|none|none|`string`|Gets the first name part of the full name|
+|*getFirstname*|`includeAll`|`true`|`string`|Gets the first name part of the full name|
 |*getMiddlenames*|none|none|`string[]`|Gets the middle name part of the full name|
 |*getLastname*|`format`|`null`|`string`|Gets the last name part of the full name|
 |*getSuffix*|none|none|`string`|Gets the suffix part of the full name, if any|
 |*getFullname*|`orderedBy`|`null`|`string`|Gets the full name|
+|*getBirthname*|`orderedBy`|`null`|`string`|Gets the birth name, no prefix or suffix|
 |*getInitials*|`orderedBy`, `withMid`|`null`, `false`|`string`|Gets the initials of the first and last name|
-|*describe*|`what`|`fullname`|`object`|Gives some descriptive statistics of the characters' distribution.|
+|*describe*|`nameType`|`fullname`|`object`|Gives some descriptive statistics of the characters' distribution.|
 |*shorten*|`orderedBy`|`null`|`string`|Returns a typical name (e.g. first and last name)|
 |*compress*|`limit`, `by`|`20`, `middlename`|`string`|Compresses a name by using different forms of variants|
 |*username*|none|none|`string[]`|Suggests possible (randomly) usernames closest to the name|
 |*format*|`how`|`null`|`string`|Formats the name as desired|
-|*zip*|`by`|`null`|`string`|Shortens a full name|
+|*zip*|`nameType`|`null`|`string`|Shortens a full name|
+|*size*|none|none|`number`|Returns the count of characters of the birth name, excluding punctuations|
+|*ascii*|`options`|`{}`|`number[]`|Returns an ascii representation of each characters|
+|*to*|`case`|none|`string`|Transforms a birth name to a specific title case|
+|*passwd*|`nameType`|`null`|`string`|Returns a password-like representation of a name|
 
 ## Aliases
 
@@ -307,6 +308,7 @@ your life easier as a coder.
 |*getLastname*|*ln*|
 |*getMiddlenames*|*mn*|
 |*getFullname*|*full*|
+|*getBirthname*|*birth*|
 |*getInitials*|*inits*|
 |*describe*|*stats*|
 

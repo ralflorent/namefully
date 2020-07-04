@@ -5,8 +5,8 @@ expect the output to be.
 
 ## Name cases
 
-Considering the distinct ways of instantiating `Namefully`, we evaluate the
-following name cases to evaluate many use cases:
+Considering the diverse ways of instantiating `Namefully`, we use the following
+name cases to evaluate many use cases:
 
 ```ts
 import { Config, Nama, Name, Firstname, Lastname, Separator, Namon } from 'namefully'
@@ -294,6 +294,148 @@ by lastname  : Marine L.
 by middlename: Marine Le Pen
 by firstmid  : M. Le Pen
 by midlast   : Marine L.
+----------------------------------------------------------------------------
+```
+
+### Miscellaneous use cases
+
+```text
++==============================================================================+
+| USE CASE: use of title cases                                                 |
++==============================================================================+
+full name   : Keira Knightley
+lower case  : keira knightley
+upper case  : KEIRA KNIGHTLEY
+camel case  : keiraKnightley
+pascal case : KeiraKnightley
+snake case  : keira_knightley
+hyphen case : keira-knightley
+dot case    : keira.knightley
+toggle case : kEIRA kNIGHTLEY
+----------------------------------------------------------------------------
+full name   : George Walker Bush
+lower case  : george walker bush
+upper case  : GEORGE WALKER BUSH
+camel case  : georgeWalkerBush
+pascal case : GeorgeWalkerBush
+snake case  : george_walker_bush
+hyphen case : george-walker-bush
+dot case    : george.walker.bush
+toggle case : gEORGE wALKER bUSH
+----------------------------------------------------------------------------
+full name   : Emilia Isobel Euphemia Rose Clarke
+lower case  : emilia isobel euphemia rose clarke
+upper case  : EMILIA ISOBEL EUPHEMIA ROSE CLARKE
+camel case  : emiliaIsobelEuphemiaRoseClarke
+pascal case : EmiliaIsobelEuphemiaRoseClarke
+snake case  : emilia_isobel_euphemia_rose_clarke
+hyphen case : emilia-isobel-euphemia-rose-clarke
+dot case    : emilia.isobel.euphemia.rose.clarke
+toggle case : eMILIA iSOBEL eUPHEMIA rOSE cLARKE
+----------------------------------------------------------------------------
+full name   : Daniel Michael Blake Day-Lewis
+lower case  : daniel michael blake day-lewis
+upper case  : DANIEL MICHAEL BLAKE DAY-LEWIS
+camel case  : danielMichaelBlakeDayLewis
+pascal case : DanielMichaelBlakeDayLewis
+snake case  : daniel_michael_blake_day_lewis
+hyphen case : daniel-michael-blake-day-lewis
+dot case    : daniel.michael.blake.day.lewis
+toggle case : dANIEL mICHAEL bLAKE dAY-lEWIS
+----------------------------------------------------------------------------
+full name   : Obama Barack
+lower case  : obama barack
+upper case  : OBAMA BARACK
+camel case  : obamaBarack
+pascal case : ObamaBarack
+snake case  : obama_barack
+hyphen case : obama-barack
+dot case    : obama.barack
+toggle case : oBAMA bARACK
+----------------------------------------------------------------------------
+full name   : Dr. Albert Einstein
+lower case  : albert einstein
+upper case  : ALBERT EINSTEIN
+camel case  : albertEinstein
+pascal case : AlbertEinstein
+snake case  : albert_einstein
+hyphen case : albert-einstein
+dot case    : albert.einstein
+toggle case : aLBERT eINSTEIN
+----------------------------------------------------------------------------
+full name   : Fabrice Piazza, PhD
+lower case  : fabrice piazza
+upper case  : FABRICE PIAZZA
+camel case  : fabricePiazza
+pascal case : FabricePiazza
+snake case  : fabrice_piazza
+hyphen case : fabrice-piazza
+dot case    : fabrice.piazza
+toggle case : fABRICE pIAZZA
+----------------------------------------------------------------------------
+full name   : Thiago Da Silva
+lower case  : thiago da silva
+upper case  : THIAGO DA SILVA
+camel case  : thiagoDaSilva
+pascal case : ThiagoDaSilva
+snake case  : thiago_da_silva
+hyphen case : thiago-da-silva
+dot case    : thiago.da.silva
+toggle case : tHIAGO dA sILVA
+----------------------------------------------------------------------------
+full name   : Shakira Isabel Ripoll
+lower case  : shakira isabel ripoll
+upper case  : SHAKIRA ISABEL RIPOLL
+camel case  : shakiraIsabelRipoll
+pascal case : ShakiraIsabelRipoll
+snake case  : shakira_isabel_ripoll
+hyphen case : shakira-isabel-ripoll
+dot case    : shakira.isabel.ripoll
+toggle case : sHAKIRA iSABEL rIPOLL
+----------------------------------------------------------------------------
+full name   : Mme. Marine Le Pen, M.Sc.
+lower case  : marine le pen
+upper case  : MARINE LE PEN
+camel case  : marineLePen
+pascal case : MarineLePen
+snake case  : marine_le_pen
+hyphen case : marine-le-pen
+dot case    : marine.le.pen
+toggle case : mARINE lE pEN
+----------------------------------------------------------------------------
+
++==============================================================================+
+| USE CASE: generate a password representation                                 |
++==============================================================================+
+full name  : Keira Knightley
+password   : %E|r@2KNiGH7lE|
+----------------------------------------------------------------------------
+full name  : George Walker Bush
+password   : &Eo78e![|]4|_%37[BUsH
+----------------------------------------------------------------------------
+full name  : Emilia Isobel Euphemia Rose Clarke
+password   : e^^1|_--@.--s.b31*E|_||)hE>>iA7r0s3}<|_4rKE
+----------------------------------------------------------------------------
+full name  : Daniel Michael Blake Day-Lewis
+password   : d4!=!e1:^^!(#4E!*B1ak38(|a82|_*[|]!5
+----------------------------------------------------------------------------
+full name  : Obama Barack
+password   : .BA^^a@6a&ac|<
+----------------------------------------------------------------------------
+full name  : Dr. Albert Einstein
+password   : A1bER[73!n$7E!++
+----------------------------------------------------------------------------
+full name  : Fabrice Piazza, PhD
+password   : FaBrI(39P--@z!=a
+----------------------------------------------------------------------------
+full name  : Thiago Da Silva
+password   : Th|a8*}d@}$Il^@
+----------------------------------------------------------------------------
+full name  : Shakira Isabel Ripoll
+password   : S#a%17@}|5@B*l@R!P.l1
+----------------------------------------------------------------------------
+full name  : Mme. Marine Le Pen, M.Sc.
+password   : ^^A&|++**LE%|>3n
 ----------------------------------------------------------------------------
 ```
 
