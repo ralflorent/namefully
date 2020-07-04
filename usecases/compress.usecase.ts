@@ -5,11 +5,12 @@
  * @author Ralph Florent <ralflornt@gmail.com>
  */
 import { Namefully } from '../src/index';
-import { nameCases as cases } from './constants';
+import { USECASES } from './constants';
 
 function compressUseCase(): void {
     const limitBy = 20;
-    const names = cases.map(c => new Namefully(c));
+    const names = USECASES.map(c => new Namefully(c.raw, c.options));
+
     let content = '';
     content += `+==============================================================================+\n`
     content += `| USE CASE: compress the full name using different variants                    |\n`
@@ -29,7 +30,8 @@ function compressUseCase(): void {
 }
 
 function zipUseCase(): void {
-    const names = cases.map(c => new Namefully(c));
+    const names = USECASES.map(c => new Namefully(c.raw, c.options));
+
     let content = '';
     content += `+==============================================================================+\n`
     content += `| USE CASE: zip the full name using different variants                    |\n`
@@ -37,11 +39,11 @@ function zipUseCase(): void {
     names.forEach(name => {
         content += `full name    : ${name.getFullname()}\n`;
         content += `by default   : ${name.zip()}\n`;
-        content += `by firstname : ${name.zip('fn')}\n`;
-        content += `by lastname  : ${name.zip('ln')}\n`;
-        content += `by middlename: ${name.zip('mn')}\n`;
-        content += `by firstmid  : ${name.zip('fm')}\n`;
-        content += `by midlast   : ${name.zip('ml')}\n`;
+        content += `by firstname : ${name.zip('firstname')}\n`;
+        content += `by lastname  : ${name.zip('lastname')}\n`;
+        content += `by middlename: ${name.zip('middlename')}\n`;
+        content += `by firstmid  : ${name.zip('firstmid')}\n`;
+        content += `by midlast   : ${name.zip('midlast')}\n`;
         content += `----------------------------------------------------------------------------\n`
     })
     console.log(content);

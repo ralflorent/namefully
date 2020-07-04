@@ -4,11 +4,7 @@
  * Created on March 11, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
  */
-import { Config, Nama, Name, Firstname, Lastname, Separator, Namon } from '../src/index'
-
-export const nameCases = [
-    ['Daniel', 'Michael Blake', 'Day-Lewis'],
-]
+import { Config, Nama, Name, Firstname, Lastname, Separator, Namon } from '../src/index';
 
 export interface UseCase {
     raw: string | string[] | Name[] | Nama
@@ -62,7 +58,7 @@ export const USECASES: UseCase[] = [
         options: { lastnameFormat: 'mother' }
     },
     {
-        raw: { firstname: 'Ralph', lastname: 'Florent', suffix: 'M.Sc.' },
-        options: { bypass: true, ending: true }
+        raw: { prefix: 'Mme', firstname: 'Marine', lastname: 'Le Pen', suffix: 'M.Sc.' },
+        options: { bypass: true, ending: true, titling: 'us' }
     },
 ]

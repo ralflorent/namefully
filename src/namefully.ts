@@ -377,7 +377,7 @@ export class Namefully {
         const { firstname: fn, lastname: ln, middlename } = this.fullname;
         const mn = this.getMiddlenames().join(Separator.SPACE);
         const hasmid: boolean = Array.isArray(middlename) && middlename.length > 0;
-        const sep = this.config.titling === 'us' ? Separator.PERIOD : Separator.EMPTY;
+        const sep = Separator.PERIOD;
 
         const firsts = fn.getInitials().join(sep).concat(sep);
         const lasts = ln.getInitials().join(sep).concat(sep);
@@ -679,6 +679,8 @@ export class Namefully {
     }
 
     private map(c: string): string {
+        const { firstname, lastname, middlename, prefix, suffix } = this.fullname;
+
         switch(c) {
             case '.':
                 return Separator.PERIOD;
@@ -695,13 +697,13 @@ export class Namefully {
             case 'B':
                 return this.getBirthname().toUpperCase();
             case 'f':
-                return this.fullname.firstname.tostring();
+                return firstname.tostring();
             case 'F':
-                return this.fullname.firstname.tostring().toUpperCase();
+                return firstname.tostring().toUpperCase();
             case 'l':
-                return this.fullname.lastname.tostring();
+                return lastname.tostring();
             case 'L':
-                return this.fullname.lastname.tostring().toUpperCase();
+                return lastname.tostring().toUpperCase();
             case 'm':
                 if (!this.hasMiddlename()) {
                     console.warn('No formatting for middle names since none was set.');
@@ -713,31 +715,34 @@ export class Namefully {
                     console.warn('No formatting for middle names since none was set.');
                     return Separator.EMPTY;
                 }
-                return this.fullname.middlename.map(n => n.namon.toUpperCase()).join(Separator.SPACE);
+                return middlename.map(n => n.namon.toUpperCase()).join(Separator.SPACE);
             case 'o': case 'O':
                 const { titling, ending } = this.config;
                 const pxSep = titling === 'us' ? Separator.PERIOD : Separator.EMPTY;
                 const sxSep = ending ? ',' : Separator.EMPTY;
 
-                const official = [
-                    this.fullname.prefix
-                        ? Separator.EMPTY.concat(this.fullname.prefix, pxSep)
-                        : Separator.EMPTY,
-                    this.fullname.lastname.tostring().toUpperCase().concat(Separator.COMMA),
-                    this.fullname.firstname.tostring(),
-                    this.fullname.middlename.map(n => n.namon).join(Separator.SPACE).concat(sxSep),
-                    this.fullname.suffix || Separator.EMPTY,
-                ].join(Separator.SPACE).trim();
+                const nama: string[] = [];
+                if (prefix)
+                    nama.push(prefix.concat(pxSep));
+                nama.push(lastname.tostring().concat(Separator.COMMA).toUpperCase());
+                if (this.hasMiddlename()) {
+                    nama.push(firstname.tostring());
+                    nama.push(middlename.map(n => n.namon).join(Separator.SPACE).concat(sxSep));
+                } else {
+                    nama.push(firstname.tostring().concat(sxSep));
+                }
+                nama.push(suffix || Separator.EMPTY);
 
+                const official = nama.join(Separator.SPACE).trim();
                 return c === 'o' ? official : official.toUpperCase();
             case 'p':
-                return this.fullname.prefix || Separator.EMPTY;
+                return prefix || Separator.EMPTY;
             case 'P':
-                return this.fullname.prefix ? this.fullname.prefix.toUpperCase() : Separator.EMPTY;
+                return prefix ? prefix.toUpperCase() : Separator.EMPTY;
             case 's':
-                return this.fullname.suffix || Separator.EMPTY;
+                return suffix || Separator.EMPTY;
             case 'S':
-                return this.fullname.suffix ? this.fullname.suffix.toUpperCase() : Separator.EMPTY;
+                return suffix ? suffix.toUpperCase() : Separator.EMPTY;
         }
     }
 
