@@ -105,7 +105,7 @@ export enum Separator {
     HYPHEN = '-',
     PERIOD = '.',
     SPACE = ' ',
-    SINGLE_QUOTE = "'",
+    SINGLE_QUOTE = `'`,
     DOUBLE_QUOTE = '"',
     UNDERSCORE = '_',
 }

@@ -4,20 +4,8 @@
  * Created on March 07, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
  */
-import { Parser } from '../core/index';
-import { Name, Firstname, Lastname, Prefix, Suffix, Separator } from './index';
-
-/**
- * Interface for JSON signature that represents the full name
- * @interface
- */
-export interface Fullname {
-    firstname: Firstname;
-    lastname: Lastname;
-    middlename?: Name[];
-    prefix?: Prefix;
-    suffix?: Suffix;
-}
+import { Parser } from '../core/parsers';
+import { Separator } from './enums';
 
 /**
  * Defines the two ways that a full name can be ordered: first or last name

@@ -107,7 +107,7 @@ export class Namefully {
      * @param {Config} options to configure how to run the utility
      */
     constructor(
-        raw: string | string[] | Name[] | Nama,
+        raw: string | string[] | Name[] | Nama | Fullname,
         options?: Partial<Config>
     ) {
         // well, first thing first
@@ -747,7 +747,7 @@ export class Namefully {
         }
     }
 
-    private build(raw: string | string[] | Name[] | Nama): void {
+    private build(raw: string | string[] | Name[] | Nama | Fullname): void {
         if (this.config.parser) {
             this.initialize(this.config.parser);
         } else if (typeof raw === 'string') { // check for string type
@@ -774,15 +774,19 @@ export class Namefully {
                 if (['firstname', 'lastname', 'middlename', 'prefix', 'suffix'].indexOf(key) === -1)
                     throw new Error(
                         `Cannot parse raw data as json object that does not contains keys of` +
-                        `'${Namon}'`
+                        `'${Object.keys(Namon)}'`
                     );
 
-                if (typeof value !== 'string') // make sure the values are proper string
+                // make sure the values are proper string or object
+                if (typeof value !== 'string' && typeof value !== 'object')
                     throw new Error(
-                        `Cannot parse raw data. The key <${key}> should be a 'string' type`
+                        `Cannot parse raw data. The key <${key}> should be a 'string|object' type`
                     );
             }
-            this.initialize(new NamaParser(raw as Nama));
+            if (typeof (<Nama>raw)['firstname'] === 'string') // this key must always exist
+                this.initialize(new NamaParser(raw as Nama));
+            else
+                this.fullname = raw as Fullname;
         } else {
             // typescript should stop them, but let's be paranoid again (for JS developers)
             throw new Error(`Cannot parse raw data. Review the data type expected.`);
