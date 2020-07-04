@@ -24,8 +24,8 @@ describe('Firstname', () => {
 
     test('should output the string names', () => {
         const firstname = new Firstname('Bryan', 'Brendan')
-        expect(firstname.tostring()).toEqual('Bryan')
-        expect(firstname.tostring(true)).toEqual('Bryan Brendan')
+        expect(firstname.tostring(false)).toEqual('Bryan')
+        expect(firstname.tostring()).toEqual('Bryan Brendan')
     })
 
     test('should describe only the specified name parts', () => {

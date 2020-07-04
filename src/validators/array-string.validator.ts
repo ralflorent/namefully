@@ -4,11 +4,25 @@
  * Created on March 15, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
  */
+import { NameIndex } from '../models';
 import {
-    Validator, ValidatorType, ValidationError , PrefixValidator, FirstnameValidator,
-    LastnameValidator, MiddlenameValidator, SuffixValidator
+    MIN_NUMBER_NAME_PART,
+    MAX_NUMBER_NAME_PART,
+    FIRST_LAST_NAME_INDEX,
+    FIRST_MIDDLE_LAST_NAME_INDEX,
+    PREFIX_FIRST_MIDDLE_LAST_NAME_INDEX,
+    PREFIX_FIRST_MIDDLE_LAST_SUFFIX_NAME_INDEX,
+} from '../core/constants';
+import {
+    Validator,
+    ValidatorType,
+    ValidationError ,
+    PrefixValidator,
+    FirstnameValidator,
+    LastnameValidator,
+    MiddlenameValidator,
+    SuffixValidator
 } from './index';
-import { NameIndex } from '../models/index';
 
 /**
  * Represents a validator to help the array string parser
@@ -46,8 +60,12 @@ export default class ArrayStringValidator implements Validator<string[]> {
      */
     validate(values: string[]): void {
 
-        if (values.length <= 1 || values.length > 5)
-            throw new ValidationError('must be an array of 2 - 5 elements', 'Array of names')
+        if (values.length < MIN_NUMBER_NAME_PART || values.length > MAX_NUMBER_NAME_PART)
+            throw new ValidationError(
+                `must be an array of ${MIN_NUMBER_NAME_PART} - ` +
+                `${MAX_NUMBER_NAME_PART} elements`,
+                'Array of names'
+            )
 
         const pf = new PrefixValidator();
         const sf = new SuffixValidator();
@@ -58,22 +76,22 @@ export default class ArrayStringValidator implements Validator<string[]> {
         const index = this.indexing;
 
         switch(values.length) {
-            case 2:
+            case FIRST_LAST_NAME_INDEX:
                 fn.validate(values[index.firstname]);
                 ln.validate(values[index.lastname]);
                 break;
-            case 3:
+            case FIRST_MIDDLE_LAST_NAME_INDEX:
                 fn.validate(values[index.firstname]);
                 mn.validate(values[index.middlename]);
                 ln.validate(values[index.lastname]);
                 break;
-            case 4:
+            case PREFIX_FIRST_MIDDLE_LAST_NAME_INDEX:
                 pf.validate(values[index.prefix]);
                 fn.validate(values[index.firstname]);
                 mn.validate(values[index.middlename]);
                 ln.validate(values[index.lastname]);
                 break;
-            case 5:
+            case PREFIX_FIRST_MIDDLE_LAST_SUFFIX_NAME_INDEX:
                 pf.validate(values[index.prefix]);
                 fn.validate(values[index.firstname]);
                 mn.validate(values[index.middlename]);

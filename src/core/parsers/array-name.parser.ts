@@ -4,7 +4,16 @@
  * Created on March 15, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
  */
-import { Name, Namon, Fullname, Firstname, Lastname, Prefix, Suffix, LastnameFormat } from '../../models/index';
+import {
+    Name,
+    Namon,
+    Fullname,
+    Firstname,
+    Lastname,
+    Prefix,
+    Suffix,
+    LastnameFormat
+} from '../../models';
 import { ArrayNameValidator } from '../../validators/index';
 import { Parser } from './parser';
 

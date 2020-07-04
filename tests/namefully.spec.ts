@@ -106,7 +106,7 @@ describe('Namefully', () => {
         })
 
         test('should compress using middlename by default', () => {
-            expect(name.compress()).toEqual('John J Smith')
+            expect(name.compress()).toEqual('John J. Smith')
         })
 
         test('should not evoke the logger for short names when compressing', () => {
@@ -125,19 +125,19 @@ describe('Namefully', () => {
         })
 
         test('should limit a name to 10 chars while compressing', () => {
-            expect(name.compress(10, 'firstname', false)).toBe('J Joe Smith')
-            expect(name.compress(10, 'lastname', false)).toBe('John Joe S')
-            expect(name.compress(10, 'firstmid', false)).toBe('J J Smith')
-            expect(name.compress(10, 'midlast', false)).toBe('John J S')
+            expect(name.compress(10, 'firstname', false)).toBe('J. Joe Smith')
+            expect(name.compress(10, 'lastname', false)).toBe('John Joe S.')
+            expect(name.compress(10, 'firstmid', false)).toBe('J. J. Smith')
+            expect(name.compress(10, 'midlast', false)).toBe('John J. S.')
         })
 
         test('should zip a name by compressing specific name parts', () => {
-            expect(name.zip()).toBe('John J Smith')
-            expect(name.zip('firstname')).toBe('J Joe Smith')
-            expect(name.zip('middlename')).toBe('John J Smith')
-            expect(name.zip('lastname')).toBe('John Joe S')
-            expect(name.zip('firstmid')).toBe('J J Smith')
-            expect(name.zip('midlast')).toBe('John J S')
+            expect(name.zip()).toBe('John J. Smith')
+            expect(name.zip('firstname')).toBe('J. Joe Smith')
+            expect(name.zip('middlename')).toBe('John J. Smith')
+            expect(name.zip('lastname')).toBe('John Joe S.')
+            expect(name.zip('firstmid')).toBe('J. J. Smith')
+            expect(name.zip('midlast')).toBe('John J. S.')
         })
 
         test('should output possible usernames', () => {
@@ -280,7 +280,7 @@ describe('Namefully', () => {
         })
 
         test('should compress using middlename by default', () => {
-            expect(name.compress()).toEqual('Smith John J')
+            expect(name.compress()).toEqual('Smith John J.')
         })
 
         test('should not evoke the logger for short names when compressing', () => {
@@ -299,19 +299,19 @@ describe('Namefully', () => {
         })
 
         test('should limit name to 10 chars while compressing', () => {
-            expect(name.compress(10, 'firstname', false)).toBe('Smith J Joe')
-            expect(name.compress(10, 'lastname', false)).toBe('S John Joe')
-            expect(name.compress(10, 'firstmid', false)).toBe('Smith J J')
-            expect(name.compress(10, 'midlast', false)).toBe('S John J')
+            expect(name.compress(10, 'firstname', false)).toBe('Smith J. Joe')
+            expect(name.compress(10, 'lastname', false)).toBe('S. John Joe')
+            expect(name.compress(10, 'firstmid', false)).toBe('Smith J. J.')
+            expect(name.compress(10, 'midlast', false)).toBe('S. John J.')
         })
 
         test('should limit name to 10 chars while compressing', () => {
-            expect(name.zip()).toBe('Smith John J')
-            expect(name.zip('firstname')).toBe('Smith J Joe')
-            expect(name.zip('middlename')).toBe('Smith John J')
-            expect(name.zip('lastname')).toBe('S John Joe')
-            expect(name.zip('firstmid')).toBe('Smith J J')
-            expect(name.zip('midlast')).toBe('S John J')
+            expect(name.zip()).toBe('Smith John J.')
+            expect(name.zip('firstname')).toBe('Smith J. Joe')
+            expect(name.zip('middlename')).toBe('Smith John J.')
+            expect(name.zip('lastname')).toBe('S. John Joe')
+            expect(name.zip('firstmid')).toBe('Smith J. J.')
+            expect(name.zip('midlast')).toBe('S. John J.')
         })
 
         test('should output possible usernames', () => {
