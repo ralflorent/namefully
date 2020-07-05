@@ -1,6 +1,6 @@
 {
   "name": "namefully",
-  "version": "1.0.9",
+  "version": "1.1.0",
   "description": "Person name handler",
   "main": "dist/lib/index.js",
   "types": "dist/lib/index.d.ts",
