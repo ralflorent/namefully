@@ -4,7 +4,7 @@
  * Created on March 15, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
  */
-import { Name, Namon, Lastname, Firstname } from '../models';
+import { Name, Namon } from '../models';
 import {
     Validator,
     ValidatorType,
@@ -27,7 +27,7 @@ import {
 /**
  * Represents a validator to help the array `Name` parser
  * @class
- * @classdesc
+ *
  * This validator validates a array of `Name` objects following a specific order
  * based on the count of elements. It is expected that the array has to be
  * between two and five elements.

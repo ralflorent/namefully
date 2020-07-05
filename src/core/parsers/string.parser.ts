@@ -12,7 +12,7 @@ import { Parser, ArrayStringParser } from './index';
  * Represents a string parser
  * @class
  * @implements {Parser}
- * @classdesc
+ *
  * This parser parses a string name using a separator, if set, or simply using
  * the space character <' '> as a basis for the split.
  *

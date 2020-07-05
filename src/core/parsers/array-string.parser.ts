@@ -16,8 +16,14 @@ import {
     NameOrder
 } from '../../models';
 import { ArrayStringValidator } from '../../validators';
-import { organizeNameIndex } from '../../core';
+import { organizeNameIndex } from '../utils';
 import { Parser } from './parser';
+import {
+    FIRST_LAST_NAME_INDEX,
+    FIRST_MIDDLE_LAST_NAME_INDEX,
+    PREFIX_FIRST_MIDDLE_LAST_NAME_INDEX,
+    PREFIX_FIRST_MIDDLE_LAST_SUFFIX_NAME_INDEX
+} from '../constants';
 
 
 /**
@@ -82,22 +88,22 @@ export default class ArrayStringParser implements Parser<string[]> {
         };
 
         switch (raw.length) {
-            case 2: // first name + last name
+            case FIRST_LAST_NAME_INDEX:
                 fullname.firstname = new Firstname(raw[index.firstname]);
                 fullname.lastname = new Lastname(raw[index.lastname]);
                 break;
-            case 3: // first name + middle name + last name
+            case FIRST_MIDDLE_LAST_NAME_INDEX:
                 fullname.firstname = new Firstname(raw[index.firstname]);
                 fullname.middlename.push(new Name(raw[index.middlename], Namon.MIDDLE_NAME));
                 fullname.lastname = new Lastname(raw[index.lastname]);
                 break;
-            case 4: // prefix + first name + middle name + last name
+            case PREFIX_FIRST_MIDDLE_LAST_NAME_INDEX:
                 fullname.prefix = raw[index.prefix] as Prefix;
                 fullname.firstname = new Firstname(raw[index.firstname]);
                 fullname.middlename.push(new Name(raw[index.middlename], Namon.MIDDLE_NAME));
                 fullname.lastname = new Lastname(raw[index.lastname]);
                 break;
-            case 5: // prefix + first name + middle name + last name + suffix
+            case PREFIX_FIRST_MIDDLE_LAST_SUFFIX_NAME_INDEX:
                 fullname.prefix = raw[index.prefix] as Prefix;
                 fullname.firstname = new Firstname(raw[index.firstname]);
                 fullname.middlename.push(new Name(raw[index.middlename], Namon.MIDDLE_NAME));

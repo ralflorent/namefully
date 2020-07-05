@@ -27,7 +27,7 @@ import {
 /**
  * Represents a validator to help the array string parser
  * @class
- * @classdesc
+ *
  * This validator validates an array of string name following a specific order
  * based on the count of elements. It is expected that the array has to be between
  * two and five elements. Also, the order of appearance set in the configuration

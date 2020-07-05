@@ -98,14 +98,13 @@ export class FullnameBuilder {
      * Builds a `Fulllname`
      */
     build(): Fullname {
-        const fullname: Fullname = {
+        return {
             firstname: this._fn,
             lastname: this._ln,
             middlename: this._mn,
             prefix: this._px,
             suffix: this._sx
         };
-        return fullname;
     }
 }
 
