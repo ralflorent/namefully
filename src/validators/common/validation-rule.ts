@@ -30,8 +30,9 @@ export class ValidationRule {
      * - European (Greek, Cyrillic, Icelandic, German)
      * - hyphenated
      * - with apostrophe
+     * - with space
      */
-    static namon: RegExp = new RegExp(`^${ValidationRule.base.source}+((['-]${ValidationRule.base.source})?${ValidationRule.base.source}*)*$`);
+    static namon: RegExp = new RegExp(`^${ValidationRule.base.source}+(([' -]${ValidationRule.base.source})?${ValidationRule.base.source}*)*$`);
 
     /**
      * Matches 1+ name parts (namon) that are of nature:
@@ -70,6 +71,7 @@ export class ValidationRule {
      * - European (Greek, Cyrillic, Icelandic, German)
      * - hyphenated
      * - with apostrophe
+     * - with space
      */
     static lastname: RegExp = ValidationRule.namon;
 }

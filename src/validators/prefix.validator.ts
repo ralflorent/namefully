@@ -19,7 +19,7 @@ export default class PrefixValidator implements Validator<string> {
      * @param {string} value data to validate
      */
     validate(value: string): void {
-        const prefixes: Array<string> = Object.entries(Prefix).map(e => e[1].toLowerCase()); // values
+        const prefixes: string[] = Object.entries(Prefix).map(e => e[1].toLowerCase()); // values
         if (prefixes.indexOf(value.toLowerCase()) === -1)
             throw new ValidationError(`unknown value '${value}'`, 'Prefix');
     }

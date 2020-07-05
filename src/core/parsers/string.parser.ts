@@ -54,7 +54,6 @@ export default class StringParser implements Parser<string> {
     /**
      * Parses the raw data into a full name
      * @param options how to parse
-     * @returns {Fullname}
      */
     parse(options: {
         orderedBy: NameOrder,

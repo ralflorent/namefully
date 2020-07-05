@@ -4,7 +4,16 @@
  * Created on March 15, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
  */
-import { Name, Namon, Fullname, Firstname, Lastname, Prefix, Suffix, LastnameFormat } from '../../models/index';
+import {
+    Name,
+    Namon,
+    Fullname,
+    Firstname,
+    Lastname,
+    Prefix,
+    Suffix,
+    LastnameFormat
+} from '../../models';
 import { ArrayNameValidator } from '../../validators/index';
 import { Parser } from './parser';
 
@@ -13,7 +22,7 @@ import { Parser } from './parser';
  * Represents a `Name[]` parser
  * @class
  * @implements {Parser<Name[]>}
- * @classdesc
+ *
  * This parser parses an array of the class `Name` while checking that every part
  * plays the role they are supposed to play. The class `Name` is a ready-made
  * recipe that saves the how-to parsing for a raw data input.
@@ -36,7 +45,6 @@ export default class ArrayNameParser implements Parser<Name[]> {
 
     /**
      * Parses the raw data into a full name
-     * @returns {Fullname}
      */
     parse(options: { bypass: boolean, lastnameFormat: LastnameFormat }): Fullname {
         const { bypass, lastnameFormat } = options;
@@ -66,7 +74,10 @@ export default class ArrayNameParser implements Parser<Name[]> {
                     fullname.prefix = name.namon as Prefix;
                     break;
                 case Namon.FIRST_NAME:
-                    fullname.firstname = new Firstname(name.namon);
+                    if (name instanceof Firstname)
+                        fullname.firstname = new Firstname(name.namon, ...name.more);
+                    else
+                        fullname.firstname = new Firstname(name.namon);
                     break;
                 case Namon.LAST_NAME:
                     if (name instanceof Lastname)

@@ -5,6 +5,7 @@
  * @author Ralph Florent <ralflornt@gmail.com>
  */
 import { Name, Namon, Summary, Separator } from './index';
+import { convertToAscii, generatePassword } from '../core';
 
 
 /**
@@ -14,13 +15,15 @@ import { Name, Namon, Summary, Separator } from './index';
  */
 export class Firstname extends Name {
 
+    more: string[] = [];
     /**
      * Constructs a `Firstname`
      * @param {string} namon a piece of string that will be defined as a namon
      * @param {string[]} [more] additional pieces considered as a given name
      */
-    constructor(public namon: string, public more?: string[]) {
+    constructor(public namon: string, ...more: string[]) {
         super(namon, Namon.FIRST_NAME);
+        this.more = more;
     }
 
     /**
@@ -46,18 +49,17 @@ export class Firstname extends Name {
      * @param {boolean} includeAll whether to include other pieces of the first
      * name
      */
-    tostring(includeAll: boolean = false): string {
-        return !includeAll ?
-            this.namon :
-            this.namon.concat(
+    tostring(includeAll: boolean = true): string {
+        return !includeAll
+            ? this.namon
+            : this.namon.concat(
                 Separator.SPACE,
                 this.more.join(Separator.SPACE)
-            );
+            ).trim();
     }
 
     /**
      * Gets the initials of the first name
-     * @returns {Array<string>} the initials
      */
     getInitials(includeAll: boolean = false): string[] {
         const initials: string[] = [this.namon[0]];
@@ -71,29 +73,64 @@ export class Firstname extends Name {
      * Capitalizes a first name
      * @param {'initial' | 'all'} option how to capitalize its subparts
      */
-    capitalize(option: 'initial' | 'all' = 'initial'): void {
+    capitalize(option: 'initial' | 'all' = 'initial'): Firstname {
         if (option === 'initial') {
-            this.namon = this.namon[0].toUpperCase().concat(this.namon.slice(1, this.namon.length));
+            this.namon = this.namon[0].toUpperCase().concat(this.namon.slice(1));
             if (this.hasMore())
-                this.more.forEach(n => n = n[0].toUpperCase().concat(n.slice(1, n.length)));
+                this.more = this.more.map(n => n[0].toUpperCase().concat(n.slice(1)));
         } else {
             this.namon = this.namon.toUpperCase();
-            if (this.hasMore()) this.more.forEach(n => n = n.toUpperCase());
+            if (this.hasMore()) this.more = this.more.map(n => n.toUpperCase());
         }
+        return this;
     }
 
     /**
      * De-capitalizes a first name
      * @param {'initial' | 'all'} option how to decapitalize its subparts
      */
-    decapitalize(option: 'initial' | 'all' = 'initial'): void {
+    decapitalize(option: 'initial' | 'all' = 'initial'): Firstname {
         if (option === 'initial') {
-            this.namon = this.namon[0].toLowerCase().concat(this.namon.slice(1, this.namon.length));
-            if (this.hasMore()) this.more.forEach(n => n = n[0].toLowerCase().concat(n.slice(1, n.length)));
+            this.namon = this.namon[0].toLowerCase().concat(this.namon.slice(1));
+            if (this.hasMore())
+                this.more = this.more.map(n => n[0].toLowerCase().concat(n.slice(1)));
         } else {
             this.namon = this.namon.toLowerCase();
-            if (this.hasMore()) this.more.forEach(n => n = n.toLowerCase());
+            if (this.hasMore())
+                this.more = this.more.map(n => n.toLowerCase());
         }
+        return this;
+    }
+
+    /**
+     * Normalizes the first name as it should be
+     */
+    normalize(): Firstname {
+        this.namon = this.namon[0]
+            .toUpperCase()
+            .concat(this.namon.slice(1).toLowerCase());
+        if (this.hasMore())
+            this.more = this.more.map(
+                n => n[0]
+                    .toUpperCase()
+                    .concat(n.slice(1).toLowerCase())
+            );
+        return this;
+    }
+
+    /**
+     * Returns an ascii representation of each characters of a first name
+     * @param restrictions chars to skip
+     */
+    ascii(restrictions?: string[]): number[] {
+        return convertToAscii(this.tostring(true), restrictions);
+    }
+
+    /**
+     * Returns a password-like representation of a first name
+     */
+    passwd(): string {
+        return generatePassword(this.tostring(true))
     }
 }
 
@@ -103,11 +140,13 @@ export class Firstname extends Name {
 export interface Firstname {
     cap: typeof Firstname.prototype.capitalize;
     decap: typeof Firstname.prototype.decapitalize;
+    norm: typeof Firstname.prototype.normalize;
     stats: typeof Firstname.prototype.describe;
     inits: typeof Firstname.prototype.getInitials;
 }
 
 Firstname.prototype.cap = Firstname.prototype.capitalize;
 Firstname.prototype.decap = Firstname.prototype.decapitalize;
+Firstname.prototype.norm = Firstname.prototype.normalize;
 Firstname.prototype.stats = Firstname.prototype.describe;
 Firstname.prototype.inits = Firstname.prototype.getInitials;

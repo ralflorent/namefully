@@ -4,9 +4,19 @@
  * Created on March 15, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
  */
-import { Namon, Fullname, Firstname, Lastname, Name, Prefix, Suffix, NameIndex, NameOrder } from '../../models/index';
-import { ArrayStringValidator } from '../../validators/index';
-import { organizeNameIndex } from '../../core/index';
+import {
+    Namon,
+    Fullname,
+    Firstname,
+    Lastname,
+    Name,
+    Prefix,
+    Suffix,
+    NameIndex,
+    NameOrder
+} from '../../models';
+import { ArrayStringValidator } from '../../validators';
+import { organizeNameIndex } from '../../core';
 import { Parser } from './parser';
 
 
@@ -14,7 +24,7 @@ import { Parser } from './parser';
  * Represents an array string parser
  * @class
  * @implements {Parser<string[]>}
- * @classdesc
+ *
  * This parser parses an array of string name following a specific order based
  * on the count of elements. It is expected that the array has to be between two
  * and five elements. Also, the order of appearance set in the configuration
@@ -37,13 +47,12 @@ export default class ArrayStringParser implements Parser<string[]> {
 
     /**
      * Create a parser ready to parse the raw data
-     * @param {Array<string>} raw data
+     * @param {string[]} raw data
      */
     constructor(public raw: string[]) { }
 
     /**
      * Parses the raw data into a full name
-     * @returns {Fullname}
      */
     parse(options: { orderedBy: NameOrder, bypass: boolean }): Fullname {
 

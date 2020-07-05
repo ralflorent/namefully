@@ -3,44 +3,40 @@
 [![npm version][version-img]][version-url]
 [![CircleCI][circleci-img]][circleci-url]
 [![Coverage Status][codecov-img]][codecov-url]
-[![GPL-3.0 License][license-img]][license-url]
+[![MIT License][license-img]][license-url]
 
 ## Description
 
-Person name handler. [Try it live](https://stackblitz.com/edit/namefully).
+A JavaScript utility for handling person names.
+[Try it live](https://stackblitz.com/edit/namefully).
 
 ## Documentation
 
-Check out the official documentation at [https://namefully.netlify.app/](https://namefully.netlify.app/).
+Check out the official documentation at
+[https://namefully.netlify.app](https://namefully.netlify.app/).
 
 ## Motivation
 
-Have you ever had to format a user's name in a particular order (or shape)?
-Probably yes. If not, it will come at some point. Be patient. Anyway, that is
-simple and easy to implement. Then, a new requirement for a different project
-comes up and demands that you reuse and/or readjust that old implementation for some
-reason. And trust me, more requirements will keep coming, and you'll have to do
-it over and over. When you face this sort of situation on many occasions, it
-surely becomes annoying and forces you to proceed by copy-paste. Well, as you
-probably guess, that has been my situation for a while.
+Have you ever had to format a user's name in a particular order, way, or shape?
+Probably yes. If not, it will come at some point. Be patient.
 
 ## Key features
 
 1. Offer supports for Latin alphabet, including other European ones
 (e.g., German, Greek, Cyrillic, Icelandic characters)
-2. Accept different data shape as input
-3. Allow a developer to configure optional parameters
-4. Accept customized parsers (do it yourself)
-5. Format a name as desired
-6. Offer support for prefixes and suffixes
-7. Suggest possible usernames associated with the name
-8. Allow hyphenated names, including with apostrophes
+2. Accept different data shapes as input
+3. Use of optional parameters to access advanced features
+4. Format a name as desired
+5. Offer support for prefixes and suffixes
+6. Access to names' initials
+7. Allow hyphenated names, including with apostrophes
 
 ## Advanced features
 
 1. Alter the order of appearance of a name: by given name or surname
-2. Handle various subparts of a surname
+2. Handle various subparts of a surname and given name
 3. Use tokens (separators) to reshape prefixes and suffixes
+4. Accept customized parsers (do it yourself)
 
 ## Installation
 
@@ -67,10 +63,10 @@ import { Namefully } from 'namefully'
 
 const name = new Namefully('John Joe Smith')
 console.log(name.format('L, f m')) // => SMITH, John Joe
-console.log(name.zip()) // => John J Smith
+console.log(name.zip()) // => John J. Smith
 ```
 
-> NOTE: The package comes with its own declaration file for
+> NOTE: This package comes with its own declaration file for
 > [TypeScript](https://www.typescriptlang.org/) support.
 
 ## Options and default values
@@ -97,7 +93,8 @@ console.log(name.fn()) // => Thomas
 
 > NOTE: This option also affects all the other results of the API. In other words,
 > the results will prioritize the order of appearance set in the first place for
-> future operations. Keep in mind that in some cases it can be altered. See the example below.
+> the other operations. Keep in mind that in some cases, it can be altered on the
+> go. See the example below.
 
 ```ts
 // 'Smith' is the surname in this raw string case
@@ -110,13 +107,13 @@ console.log(name.full('firstname')) // => John Joe Smith
 
 ### separator
 
-`string: ':' | ',' | '-', | ',' | ' ' | '_'`, default: `(space)`
+`enum: Separator`, default: `Separator.SPACE`
 
 Only valid for raw string values, this option indicates how to split the parts of
 a raw string name under the hood.
 
 ```ts
-const name = new Namefully('Adam,Sandler', { separator: ',' })
+const name = new Namefully('Adam,Sandler', { separator: Separator.COMMA })
 console.log(name.full()) // => Adam Sandler
 ```
 
@@ -124,11 +121,11 @@ console.log(name.full()) // => Adam Sandler
 
 `string: 'uk' | 'us'`, default: `uk`
 
-Define the ways the international community defines an abbreviated title.
+Abide by the ways the international community defines an abbreviated title.
 American and Canadian English follow slightly different rules for abbreviated
 titles than British and Australian English. In North American English, titles
 before a name require a period: `Mr., Mrs., Ms., Dr.`. In British and Australian
-English, no full stops are used in these abbreviations.
+English, no periods are used in these abbreviations.
 
 ```ts
 const name = new Namefully({
@@ -137,14 +134,14 @@ const name = new Namefully({
     lastname: 'Smith'
 }, { titling: 'us' })
 console.log(name.full()) // => Mr. John Smith
-console.log(name.zip('fn')) // => Mr. J. Smith
+console.log(name.px()) // => Mr.
 ```
 
 ### ending
 
-`string: ':' | ',' | '-', | ',' | ' ' | '_'`, default: `(space)`
+`boolean`, default: `false`
 
-Set an ending character after the full name (before the suffix actually).
+Set an ending character after the full name (a comma before the suffix actually).
 
 ```ts
 const name = new Namefully({
@@ -152,8 +149,8 @@ const name = new Namefully({
     firstname: 'John',
     lastname: 'Smith',
     suffix: 'PhD'
-}, { ending: ',' })
-console.log(name.full()) // => Mr. John Smith, PhD
+}, { ending: true })
+console.log(name.full()) // => Mr John Smith, PhD
 ```
 
 ### lastnameFormat
@@ -176,18 +173,18 @@ console.log(name.full()) // => Jaden Smith-Pinkett
 
 `boolean`, default: `false`
 
-Skip all the validators (or validation rules using regular expressions).
+Skip all the validators (i.e., validation rules, regular expressions).
 
 ```ts
 const name = new Namefully('2Pac Shakur', { bypass: true }) // normally would fail the regex
-console.log(name.full()) // => 2Pac Shakur
+console.log(name.fn()) // => 2Pac
 ```
 
 > NOTE: This option can help to trick the utility and allow us to use it for
 > unsupported languages or inner contents like prefixes or suffixes. For example,
 > the Hindi characters will not pass the validation rules. Or, the Spanish
-> equivalent for `Mr` => `Sr` will cause a failure of the utility. Do note though
-> you risk facing some validation errors for certain API.
+> equivalent for `Mr` => `Sr` will raise an exception as it is not part of the
+> predefined prefixes.
 
 ### parser
 
@@ -202,10 +199,10 @@ import { Namefully, Firstname, Lastname, Parser } from 'namefully'
 class MyParser implements Parser<string> {
     constructor(public raw: string) {}
     parse() {
-        const names = this.raw.split('#');
+        const [fn, ln] = this.raw.split('#');
         return {
-            firstname: new Firstname(names[0]),
-            lastname: new Lastname(names[1]),
+            firstname: new Firstname(fn),
+            lastname: new Lastname(ln),
         }
     }
 }
@@ -221,14 +218,14 @@ To sum up, the default values are:
     "orderedBy": "firstname",
     "separator": " ",
     "titling": "uk",
-    "ending": " ",
+    "ending": false,
     "lastnameFormat": "father",
     "bypass": false,
     "parser": null
 }
 ```
 
-## Concepts and Examples
+## Concepts and examples
 
 The name standards used for the current version of this library are as
 follows:
@@ -239,9 +236,9 @@ The opening `[` and closing `]` brackets mean that these parts are optional. In
 other words, the most basic/typical case is a name that looks like this:
 `John Smith`, where `John` is the *Firstname* and `Smith`, the *Lastname*.
 
-> NOTE: Keep in mind that the order of appearance matters and (as shown [here](#orderedBy)) can be
-> altered through configured parameters. By default, the order of appearance is
-> as shown above and will be used as a basis for future examples and use cases.
+> NOTE: Do notice that the order of appearance matters and (as shown [here](#orderedBy))
+> can be altered through configured parameters. By default, the order of appearance
+> is as shown above and will be used as a basis for future examples and use cases.
 
 Once imported, all that is required to do is to create an instance of
 `Namefully` and the rest will follow.
@@ -254,23 +251,26 @@ Let us take a common example:
 
 So, this utility understands the name parts as follows:
 
-- a typical name: `John Smith`
-  - with middle name: `John Joe Smith`
-  - with prefix: `Mr John Smith`
-  - with suffix: `John Smith, PhD`
-  - with both prefix and suffix: `Mr John Smith, PhD`
-  - full name: `Mr. John Joe Smith, PhD`
-- zipped: `John J Smith`
-- possible usernames: `jsmith, johnsmith, j.smith`, etc.
+- typical name: `John Smith`
+- first name: `John`
+- middle name: `Joe`
+- last name: `Smith`
+- prefix: `Mr`
+- suffix: `PhD`
+- full name: `Mr John Joe Smith PhD`
+- birth name: `John Joe Smith`
+- zipped: `John J. Smith`
+- initials: `J J S`
+- usernames: `jsmith, johnsmith`, etc.
 
 ### Limitations
 
 `namefully` does not have support for certain use cases:
 
-- mononame:  `Plato`. You can still trick it though by setting the mononame as both
+- mononame:  `Plato`. It can be tricked though by setting the mononame as both
 first and last name;
-- multiple surnames: `De La Cruz`, `Da Vinci`. You can also trick it by using your
-own parsing method or by setting separately each name part via the `Nama|Name` type
+- multiple surnames: `De La Cruz`, `Da Vinci`. You can also trick it using your
+own parsing method or setting separately each name part via the `Nama|Name` type
 or the string array input;
 - multiple prefixes: `Prof. Dr. Einstein`. An alternative would be to use the `bypass` option.
 
@@ -281,22 +281,27 @@ See the [use cases](usecases) for further details.
 | Name | Arguments | Default | Returns | Description |
 |---|---|---|---|---|
 |*getPrefix*|none|none|`string`|Gets the prefix part of the full name, if any|
-|*getFirstname*|none|none|`string`|Gets the first name part of the full name|
-|*getMiddlenames*|none|none|`string[]`|Gets the middle name part of the full name|
+|*getFirstname*|`includeAll`|`true`|`string`|Gets the first name part of the full name|
+|*getMiddlenames*|none|none|`string[]`|Gets the middle name part of the full name, if any|
 |*getLastname*|`format`|`null`|`string`|Gets the last name part of the full name|
 |*getSuffix*|none|none|`string`|Gets the suffix part of the full name, if any|
 |*getFullname*|`orderedBy`|`null`|`string`|Gets the full name|
-|*getInitials*|`orderedBy`, `withMid`|`null`, `false`|`string`|Gets the initials of the first and last name|
-|*describe*|`what`|`fullname`|`object`|Gives some descriptive statistics of the characters' distribution.|
+|*getBirthname*|`orderedBy`|`null`|`string`|Gets the birth name, no prefix or suffix|
+|*getInitials*|`orderedBy`, `withMid`|`null`, `false`|`string`|Gets the initials of the first and last names|
+|*describe*|`nameType`|`null`|`Summary`|Gives some descriptive statistics of the characters' distribution.|
 |*shorten*|`orderedBy`|`null`|`string`|Returns a typical name (e.g. first and last name)|
-|*compress*|`limit`, `by`|`20`, `middlename`|`string`|Compresses a name by using different forms of variants|
+|*compress*|`limit`, `by`|`20`, `middlename`|`string`|Compresses a name using different forms of variants|
 |*username*|none|none|`string[]`|Suggests possible (randomly) usernames closest to the name|
 |*format*|`how`|`null`|`string`|Formats the name as desired|
-|*zip*|`by`|`null`|`string`|Shortens a full name|
+|*zip*|`nameType`|`null`|`string`|Shortens a full name|
+|*size*|none|none|`number`|Returns the count of characters of the birth name, excluding punctuations|
+|*ascii*|`options`|`{}`|`number[]`|Returns an ascii representation of each characters|
+|*to*|`case`|none|`string`|Transforms a birth name to a specific title case|
+|*passwd*|`nameType`|`null`|`string`|Returns a password-like representation of a name|
 
 ## Aliases
 
-If you find the names of the method somewhat too long, we provide aliases to make
+If you find the names of the methods somewhat too long, we provide aliases to make
 your life easier as a coder.
 
 |Method|Aliases|
@@ -307,6 +312,7 @@ your life easier as a coder.
 |*getLastname*|*ln*|
 |*getMiddlenames*|*mn*|
 |*getFullname*|*full*|
+|*getBirthname*|*birth*|
 |*getInitials*|*inits*|
 |*describe*|*stats*|
 
@@ -316,7 +322,7 @@ Developed by [Ralph Florent](https://github.com/ralflorent).
 
 ## License
 
-The underlying content of this utility is licensed under [GPL-3.0](LICENSE).
+The underlying content of this utility is licensed under [MIT](LICENSE).
 
 <!-- References -->
 [version-img]: https://img.shields.io/npm/v/namefully
@@ -326,4 +332,4 @@ The underlying content of this utility is licensed under [GPL-3.0](LICENSE).
 [codecov-img]: https://codecov.io/gh/ralflorent/namefully/branch/master/graph/badge.svg
 [codecov-url]: https://codecov.io/gh/ralflorent/namefully
 [license-img]: https://img.shields.io/npm/l/namefully
-[license-url]: http://www.gnu.org/licenses/gpl-3.0.en.html
+[license-url]: https://opensource.org/licenses/MIT

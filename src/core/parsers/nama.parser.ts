@@ -13,14 +13,13 @@ import { Parser } from './parser';
  * Represents a `Nama` parser
  * @class
  * @implements {Parser<Nama>}
- * @classdesc
+ *
  * This parser parses a JSON signature of the name parts provided as string
  * values. This is to facilitate a developer's life that holds users' info in a
  * JSON format. In other words, the developer only needs to provide similar info
  * and the rest will follow.
  */
 export default class NamaParser implements Parser<Nama> {
-
     /**
      * Create a parser ready to parse the raw data
      * @param {Nama} raw data as JSON object
@@ -29,7 +28,6 @@ export default class NamaParser implements Parser<Nama> {
 
     /**
      * Parses the raw data into a full name
-     * @returns {Fullname}
      */
     parse(options: { bypass: boolean }): Fullname {
 
