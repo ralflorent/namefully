@@ -783,7 +783,7 @@ export class Namefully {
                         `Cannot parse raw data. The key <${key}> should be a 'string|object' type`
                     );
             }
-            if (typeof (<Nama>raw)['firstname'] === 'string') // this key must always exist
+            if (typeof (raw as Nama)['firstname'] === 'string') // this key must always exist
                 this.initialize(new NamaParser(raw as Nama));
             else
                 this.fullname = raw as Fullname;
