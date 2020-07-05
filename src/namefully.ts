@@ -102,7 +102,7 @@ export class Namefully {
 
     /**
      * Constructs an instance of the utility and helps to benefit from many helpers
-     * @param {string | string[] | Name[] | Nama} raw element to parse or
+     * @param {string | string[] | Name[] | Nama | Fullname} raw element to parse or
      * construct the pieces of the name
      * @param {Config} options to configure how to run the utility
      */

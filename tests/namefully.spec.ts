@@ -4,8 +4,15 @@
  * Created on March 11, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
  */
-
-import { Namefully, Firstname, Lastname, Parser, Fullname, Separator } from '../src/index';
+import {
+    Namefully,
+    Firstname,
+    Lastname,
+    Parser,
+    Fullname,
+    FullnameBuilder,
+    Separator
+} from '../src/index';
 
 describe('Namefully', () => {
 
@@ -242,7 +249,6 @@ describe('Namefully', () => {
         })
     })
 
-
     describe('Ordered by lastname', () => {
         let name: Namefully;
 
@@ -418,9 +424,26 @@ describe('Namefully', () => {
             expect(name).toBeTruthy()
         })
 
-        test('should create an instance with JSON object', () => {
+        test('should create an instance with Nama JSON object', () => {
             const name = new Namefully({ firstname: 'John', lastname: 'Smith' })
             expect(name).toBeTruthy()
+        })
+
+        test('should create an instance with Fullname JSON object', () => {
+            const fullname = new FullnameBuilder()
+                .firstname('John')
+                .lastname('Smith')
+                .build()
+            expect(new Namefully(fullname)).toBeTruthy()
+
+            const bypassed = new FullnameBuilder(true) // true: bypass regex
+                .prefix('Mr')
+                .firstname('John')
+                .middlename('Joe')
+                .lastname('Smith')
+                .suffix('PhD')
+                .build()
+            expect(new Namefully(bypassed)).toBeTruthy()
         })
 
         test('should create an instance with a custom parser', () => {

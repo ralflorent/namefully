@@ -14,6 +14,7 @@ import {
     Separator,
     Parser,
     Fullname,
+    FullnameBuilder,
     Prefix,
     Suffix
 } from '../src/index';
@@ -127,7 +128,53 @@ function createFromArrayNamaUseCase(): void {
 
     let content = '';
     content += `+==============================================================================+\n`
-    content += `| USE CASE: Create an instance of Namefully using JSON object 'Nama's          |\n`
+    content += `| USE CASE: Create an instance of Namefully using Nama JSON object             |\n`
+    content += `+==============================================================================+\n`;
+    cases.forEach(c => {
+        const name = new Namefully(c);
+        content += `full name \t: ${name.getFullname()}\n`;
+        content += `birth name \t: ${name.getBirthname()}\n`;
+        content += `prefix \t\t: ${name.getPrefix()}\n`;
+        content += `first name \t: ${name.getFirstname()}\n`;
+        content += `middle name \t: ${name.getMiddlenames()}\n`;
+        content += `last name \t: ${name.getLastname()}\n`;
+        content += `initials \t: ${name.getInitials()}\n`;
+        content += `suffix \t\t: ${name.getSuffix()}\n`;
+        content += `----------------------------------------------------------------------------\n`;
+    });
+    console.log(content);
+}
+
+function createFromArrayFullnameUseCase(): void {
+
+    const cases = [
+        new FullnameBuilder()
+            .firstname('John')
+            .lastname('Smith')
+            .build(),
+        new FullnameBuilder()
+            .firstname('John')
+            .middlename('Joe')
+            .lastname('Smith')
+            .build(),
+        new FullnameBuilder()
+            .prefix('Mr')
+            .firstname('John')
+            .middlename('Joe')
+            .lastname('Smith')
+            .build(),
+        new FullnameBuilder()
+            .prefix('Mr')
+            .firstname('John')
+            .middlename('Joe')
+            .lastname('Smith')
+            .suffix('PhD')
+            .build()
+    ];
+
+    let content = '';
+    content += `+==============================================================================+\n`
+    content += `| USE CASE: Create an instance of Namefully using Fullname JSON object         |\n`
     content += `+==============================================================================+\n`;
     cases.forEach(c => {
         const name = new Namefully(c);
@@ -190,6 +237,7 @@ export {
     createFromArrayStringUseCase,
     createFromArrayNameUseCase,
     createFromArrayNamaUseCase,
+    createFromArrayFullnameUseCase,
     createWithOptionalParamsUseCase,
 };
 
@@ -198,5 +246,6 @@ export default {
     createFromArrayStringUseCase,
     createFromArrayNameUseCase,
     createFromArrayNamaUseCase,
+    createFromArrayFullnameUseCase,
     createWithOptionalParamsUseCase,
 };
