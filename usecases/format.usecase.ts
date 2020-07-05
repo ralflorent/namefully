@@ -5,10 +5,11 @@
  * @author Ralph Florent <ralflornt@gmail.com>
  */
 import { Namefully } from '../src/index';
-import { nameCases as cases } from './constants';
+import { NAMECASES } from './constants';
 
 function formatUseCase(): void {
-    const names = cases.map(c => new Namefully(c));
+    const names = NAMECASES.map(c => new Namefully(c.raw, c.options));
+
     let content = '';
     content += `+==============================================================================+\n`
     content += `| USE CASE: format the name as desired                                         |\n`
@@ -16,10 +17,9 @@ function formatUseCase(): void {
     names.forEach(name => {
         content += `full name     : ${name.getFullname()}\n`;
         content += `by default    : ${name.format()}\n`;
-        content += `[fn] [ln]     : ${name.format('f l')}\n`;
+        content += `short name    : ${name.format('short')}\n`;
+        content += `long name     : ${name.format('long')}\n`;
         content += `[LN], [fn]    : ${name.format('L, f')}\n`;
-        content += `[ln]_[mn]_[fn]: ${name.format('f_m_l')}\n`;
-        content += `[LN]-[MN] [FN]: ${name.format('F-M L')}\n`;
         content += `----------------------------------------------------------------------------\n`
     })
     console.log(content);

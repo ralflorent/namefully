@@ -4,10 +4,17 @@
  * Created on March 15, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
  */
-import { Nama, Namon } from '../models/index';
+import { Nama, Namon } from '../models';
+import { MIN_NUMBER_NAME_PART, MAX_NUMBER_NAME_PART } from '../core/constants';
 import {
-    Validator, ValidatorType, ValidationError , PrefixValidator, FirstnameValidator,
-    LastnameValidator, MiddlenameValidator, SuffixValidator
+    Validator,
+    ValidatorType,
+    ValidationError ,
+    PrefixValidator,
+    FirstnameValidator,
+    LastnameValidator,
+    MiddlenameValidator,
+    SuffixValidator
 } from './index';
 
 /**
@@ -24,7 +31,7 @@ export default class NamaValidator implements Validator<Nama> {
     validate(value: Nama): void {
 
         const entries = Object.entries(value);
-        if (entries.length <= 1 && entries.length > 5)
+        if (entries.length < MIN_NUMBER_NAME_PART && entries.length > MAX_NUMBER_NAME_PART)
             throw new ValidationError('incomplete JSON object', 'Nama')
 
         const validators = {

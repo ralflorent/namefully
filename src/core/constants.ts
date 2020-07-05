@@ -11,7 +11,7 @@ import { CharSet } from './core';
  * The current version of `Namefully`.
  * @constant
  */
-export const version = '1.1.0';
+export const version = '1.1.0'
 
 /**
  * CONFIG
@@ -42,6 +42,18 @@ export const NAME_INDEX: NameIndex = {
     suffix: 4,
 } as const
 
+export const FIRST_LAST_NAME_INDEX = 2
+export const LAST_FIRST_NAME_INDEX = 2
+export const FIRST_MIDDLE_LAST_NAME_INDEX = 3
+export const LAST_FIRST_MIDDLE_NAME_INDEX = 3
+export const PREFIX_FIRST_MIDDLE_LAST_NAME_INDEX = 4
+export const PREFIX_LAST_FIRST_MIDDLE_NAME_INDEX = 4
+export const PREFIX_FIRST_MIDDLE_LAST_SUFFIX_NAME_INDEX = 5
+export const PREFIX_LAST_FIRST_MIDDLE_SUFFIX_NAME_INDEX = 5
+
+export const MIN_NUMBER_NAME_PART = 2
+export const MAX_NUMBER_NAME_PART = 5
+
 /**
  * RESTRICTED_CHARS
  * @constant
@@ -54,8 +66,6 @@ export const RESTRICTED_CHARS = [
     Separator.PERIOD,
     Separator.COMMA,
 ] as const
-
-
 
 /**
  * PASSWORD_MAPPER
@@ -92,4 +102,4 @@ export const PASSWORD_MAPPER = new Map([
         '_', '=', '{', '}', ':', ';', ',', '.', '<', '>', '|', '~', ']',
         '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
     ])],
-]);
+])

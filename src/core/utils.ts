@@ -5,7 +5,19 @@
  * @author Ralph Florent <ralflornt@gmail.com>
  */
 import { NameIndex, NameOrder, Separator, NameType } from '../models';
-import { NAME_INDEX, RESTRICTED_CHARS, PASSWORD_MAPPER } from '../core';
+import {
+    NAME_INDEX,
+    RESTRICTED_CHARS,
+    PASSWORD_MAPPER,
+    FIRST_LAST_NAME_INDEX,
+    LAST_FIRST_NAME_INDEX,
+    FIRST_MIDDLE_LAST_NAME_INDEX,
+    LAST_FIRST_MIDDLE_NAME_INDEX,
+    PREFIX_FIRST_MIDDLE_LAST_NAME_INDEX,
+    PREFIX_LAST_FIRST_MIDDLE_NAME_INDEX,
+    PREFIX_FIRST_MIDDLE_LAST_SUFFIX_NAME_INDEX,
+    PREFIX_LAST_FIRST_MIDDLE_SUFFIX_NAME_INDEX,
+} from '../core';
 
 /**
  * Capitalizes a string
@@ -62,22 +74,22 @@ export function organizeNameIndex(
 
     if (orderedBy === 'firstname') {
         switch(argLength) {
-            case 2: // first name + last name
+            case FIRST_LAST_NAME_INDEX: // first name + last name
                 out.firstname = 0;
                 out.lastname = 1;
                 break;
-            case 3: // first name + middle name + last name
+            case FIRST_MIDDLE_LAST_NAME_INDEX: // first name + middle name + last name
                 out.firstname = 0;
                 out.middlename = 1;
                 out.lastname = 2;
                 break;
-            case 4: // prefix + first name + middle name + last name
+            case PREFIX_FIRST_MIDDLE_LAST_NAME_INDEX: // prefix + first name + middle name + last name
                 out.prefix = 0;
                 out.firstname = 1;
                 out.middlename = 2;
                 out.lastname = 3;
                 break;
-            case 5: // prefix + first name + middle name + last name + suffix
+            case PREFIX_FIRST_MIDDLE_LAST_SUFFIX_NAME_INDEX: // prefix + first name + middle name + last name + suffix
                 out.prefix = 0;
                 out.firstname = 1;
                 out.middlename = 2;
@@ -88,22 +100,22 @@ export function organizeNameIndex(
     }
     else {
         switch(argLength) {
-            case 2: // last name + first name
+            case LAST_FIRST_NAME_INDEX: // last name + first name
                 out.lastname = 0;
                 out.firstname = 1;
                 break;
-            case 3: // last name + first name + middle name
+            case LAST_FIRST_MIDDLE_NAME_INDEX: // last name + first name + middle name
                 out.lastname = 0;
                 out.firstname = 1;
                 out.middlename = 2;
                 break;
-            case 4: // prefix + last name + first name + middle name
+            case PREFIX_LAST_FIRST_MIDDLE_NAME_INDEX: // prefix + last name + first name + middle name
                 out.prefix = 0;
                 out.lastname = 1;
                 out.firstname = 2;
                 out.middlename = 3;
                 break;
-            case 5: // prefix + last name + first name + middle name + suffix
+            case PREFIX_LAST_FIRST_MIDDLE_SUFFIX_NAME_INDEX: // prefix + last name + first name + middle name + suffix
                 out.prefix = 0;
                 out.lastname = 1;
                 out.firstname = 2;
@@ -173,44 +185,4 @@ export function generatePassword(str: string): string {
         })
         .join(Separator.EMPTY);
     return password;
-}
-
-/**
- * Maps the characters to the 0-25 scheme of numbers
- * @param str string content
- * @param lang what language to consider during the mapping
- * @param restrictions unneeded content to skip
- */
-export function convertToA0(
-    str: string,
-    lang: 'en' | 'fr' | 'es' | 'de',
-    restrictions: string[] = [...RESTRICTED_CHARS]
-): number[] {
-    throw new Error('Not implemented yet');
-}
-
-/**
- * Maps the characters to the 1-26 scheme of numbers
- * @param str string content
- * @param lang what language to consider during the mapping
- * @param restrictions unneeded content to skip
- */
-export function convertToA1(
-    str: string,
-    lang: 'en' | 'fr' | 'es' | 'de',
-    restrictions: string[] = [...RESTRICTED_CHARS]
-): number[] {
-    throw new Error('Not implemented yet');
-}
-
-/**
- * Maps the characters to the phone code scheme of numbers
- * @param str string content
- * @param restrictions unneeded content to skip
- */
-export function convertToPhoneCode(
-    str: string,
-    restrictions: string[] = [...RESTRICTED_CHARS]
-): number[] {
-    throw new Error('Not implemented yet');
 }

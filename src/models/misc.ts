@@ -4,20 +4,8 @@
  * Created on March 07, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
  */
-import { Parser } from '../core/index';
-import { Name, Firstname, Lastname, Prefix, Suffix, Separator } from './index';
-
-/**
- * Interface for JSON signature that represents the full name
- * @interface
- */
-export interface Fullname {
-    firstname: Firstname;
-    lastname: Lastname;
-    middlename?: Name[];
-    prefix?: Prefix;
-    suffix?: Suffix;
-}
+import { Parser } from '../core/parsers';
+import { Separator } from './enums';
 
 /**
  * Defines the two ways that a full name can be ordered: first or last name
@@ -53,13 +41,47 @@ export type AbbrTitle = 'us' | 'uk';
  * @interface
  */
 export interface Config {
+    /**
+     * The order of appearance of a full name: by first name or last name
+     */
     orderedBy: NameOrder;
-    separator: Separator; // how to split names
-    titling: AbbrTitle, // whether to add period to a prefix
-    ending: boolean; // ending suffix
-    bypass: boolean; // bypass the validation rules
-    parser?: Parser<any>; // (user-defined) custom parser
-    lastnameFormat?: LastnameFormat; // how to format a surname
+    /**
+     * For literal string input, this is the parameter used to indicate the token
+     * to utilize to split the string names.
+     */
+    separator: Separator;
+    /**
+     * Whether or not to add period to a prefix using the American or British way.
+     */
+    titling: AbbrTitle,
+    /**
+     * Indicates if the ending suffix should be separated with a comma or space.
+     */
+    ending: boolean;
+    /**
+     * Bypass the validation rules with this option. Since we only provide a
+     * handful of suffixes or prefixes in English, this paramter is ideal to
+     * avoid checking the validity of them.
+     */
+    bypass: boolean;
+    /**
+     * Custom parser, a user-defined parser indicating how to the name set is
+     * organized. Namefully cannot guess it.
+     */
+    parser?: Parser<any>;
+    /**
+     * how to format a surname:
+     * - 'father' (father name only)
+     * - 'mother' (mother name only)
+     * - 'hyphenated' (joining both father and mother names with a hyphen)
+     * - 'all' (joining both father and mother names with a space).
+     *
+     * This parameter can be set either by an instance of a last name or during
+     * the creation of a namefully instance. To avoid ambiguity, we prioritize as
+     * source of truth the value set as optional parameter when instantiating
+     * namefully.
+     */
+    lastnameFormat?: LastnameFormat;
 }
 
 /**

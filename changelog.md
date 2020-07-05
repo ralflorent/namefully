@@ -4,6 +4,32 @@ This file contains the documentation on the notable changes and bug fixes, and
 is formatted following this [standard](https://keepachangelog.com/en/1.0.0/).
 This project also adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.0] - 2020-07-05
+
+**Added**:
+
+- Add a full name builder to construct `Namefully`
+- Augment a `namon` functionality
+  - capitalize
+  - decapitalize
+  - normalize
+  - reset
+- Add ASCII representations
+- Add password-like representations
+- Add support for title cases
+- Add support for birth names (full name without prefix or suffix)
+- Add test coverage for all the API methods
+- Update use cases for new features
+- Use string formats (`short`, `long`, `official`) when formatting a name
+
+**Fixed**:
+
+- Support space in regex
+- Use simplified regex
+- Support for more than one name parts in a first name
+- Revert changes in `compress(...)`: always include a token in the compressed part.
+- Switch to MIT License
+
 ## [1.0.9] - 2020-05-18
 
 **Added**:
@@ -48,12 +74,6 @@ This project also adheres to [Semantic Versioning](https://semver.org/).
 - Add a bypass to skip validation rules (regex)
 
 ## [1.0.5] - 2020-03-17
-
-**Fixed**:
-
-- Fix non-relative paths related error
-
-## [1.0.4] - 2020-03-17
 
 **Added**:
 
@@ -102,12 +122,12 @@ This project also adheres to [Semantic Versioning](https://semver.org/).
 
 Initial version
 
+[1.1.0]: https://github.com/ralflorent/namefully/compare/v1.0.9...v1.1.0
 [1.0.9]: https://github.com/ralflorent/namefully/compare/v1.0.8...v1.0.9
 [1.0.8]: https://github.com/ralflorent/namefully/compare/v1.0.7...v1.0.8
 [1.0.7]: https://github.com/ralflorent/namefully/compare/v1.0.6...v1.0.7
 [1.0.6]: https://github.com/ralflorent/namefully/compare/v1.0.5...v1.0.6
-[1.0.5]: https://github.com/ralflorent/namefully/compare/v1.0.4...v1.0.5
-[1.0.4]: https://github.com/ralflorent/namefully/compare/v1.0.3...v1.0.4
+[1.0.5]: https://github.com/ralflorent/namefully/compare/v1.0.3...v1.0.5
 [1.0.3]: https://github.com/ralflorent/namefully/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/ralflorent/namefully/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/ralflorent/namefully/compare/v1.0.0...v1.0.1

@@ -4,7 +4,20 @@
  * Created on March 09, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
  */
-import { Namefully, Name, Namon, Firstname, Lastname, Config, Separator, Parser, Fullname, Prefix, Suffix } from '../src/index';
+import {
+    Namefully,
+    Name,
+    Namon,
+    Firstname,
+    Lastname,
+    Config,
+    Separator,
+    Parser,
+    Fullname,
+    FullnameBuilder,
+    Prefix,
+    Suffix
+} from '../src/index';
 
 function createFromLiteralStringUseCase() {
     const cases = [
@@ -21,6 +34,7 @@ function createFromLiteralStringUseCase() {
     cases.forEach(c => {
         const name = new Namefully(c);
         content += `full name \t: ${name.getFullname()}\n`;
+        content += `birth name \t: ${name.getBirthname()}\n`;
         content += `prefix \t\t: ${name.getPrefix()}\n`;
         content += `first name \t: ${name.getFirstname()}\n`;
         content += `middle name \t: ${name.getMiddlenames()}\n`;
@@ -47,6 +61,7 @@ function createFromArrayStringUseCase() {
     cases.forEach(c => {
         const name = new Namefully(c);
         content += `full name \t: ${name.getFullname()}\n`;
+        content += `birth name \t: ${name.getBirthname()}\n`;
         content += `prefix \t\t: ${name.getPrefix()}\n`;
         content += `first name \t: ${name.getFirstname()}\n`;
         content += `middle name \t: ${name.getMiddlenames()}\n`;
@@ -83,6 +98,7 @@ function createFromArrayNameUseCase(): void {
             new Name('PhD', Namon.SUFFIX),
         ]
     ];
+
     let content = '';
     content += `+==============================================================================+\n`
     content += `| USE CASE: Create an instance of Namefully using the class Name               |\n`
@@ -90,6 +106,7 @@ function createFromArrayNameUseCase(): void {
     cases.forEach(c => {
         const name = new Namefully(c);
         content += `full name \t: ${name.getFullname()}\n`;
+        content += `birth name \t: ${name.getBirthname()}\n`;
         content += `prefix \t\t: ${name.getPrefix()}\n`;
         content += `first name \t: ${name.getFirstname()}\n`;
         content += `middle name \t: ${name.getMiddlenames()}\n`;
@@ -108,13 +125,61 @@ function createFromArrayNamaUseCase(): void {
         { prefix: 'Mr', firstname: 'John', middlename: 'Joe', lastname: 'Smith' },
         { prefix: 'Mr', firstname: 'John', middlename: 'Joe', lastname: 'Smith', suffix: 'PhD' },
     ];
+
     let content = '';
     content += `+==============================================================================+\n`
-    content += `| USE CASE: Create an instance of Namefully using JSON object 'Nama's          |\n`
+    content += `| USE CASE: Create an instance of Namefully using Nama JSON object             |\n`
     content += `+==============================================================================+\n`;
     cases.forEach(c => {
         const name = new Namefully(c);
         content += `full name \t: ${name.getFullname()}\n`;
+        content += `birth name \t: ${name.getBirthname()}\n`;
+        content += `prefix \t\t: ${name.getPrefix()}\n`;
+        content += `first name \t: ${name.getFirstname()}\n`;
+        content += `middle name \t: ${name.getMiddlenames()}\n`;
+        content += `last name \t: ${name.getLastname()}\n`;
+        content += `initials \t: ${name.getInitials()}\n`;
+        content += `suffix \t\t: ${name.getSuffix()}\n`;
+        content += `----------------------------------------------------------------------------\n`;
+    });
+    console.log(content);
+}
+
+function createFromArrayFullnameUseCase(): void {
+
+    const cases = [
+        new FullnameBuilder()
+            .firstname('John')
+            .lastname('Smith')
+            .build(),
+        new FullnameBuilder()
+            .firstname('John')
+            .middlename('Joe')
+            .lastname('Smith')
+            .build(),
+        new FullnameBuilder()
+            .prefix('Mr')
+            .firstname('John')
+            .middlename('Joe')
+            .lastname('Smith')
+            .build(),
+        new FullnameBuilder()
+            .prefix('Mr')
+            .firstname('John')
+            .middlename('Joe')
+            .lastname('Smith')
+            .suffix('PhD')
+            .build()
+    ];
+
+    let content = '';
+    content += `+==============================================================================+\n`
+    content += `| USE CASE: Create an instance of Namefully using Fullname JSON object         |\n`
+    content += `+==============================================================================+\n`;
+    cases.forEach(c => {
+        const name = new Namefully(c);
+        content += `full name \t: ${name.getFullname()}\n`;
+        content += `birth name \t: ${name.getBirthname()}\n`;
         content += `prefix \t\t: ${name.getPrefix()}\n`;
         content += `first name \t: ${name.getFirstname()}\n`;
         content += `middle name \t: ${name.getMiddlenames()}\n`;
@@ -142,7 +207,7 @@ function createWithOptionalParamsUseCase(): void {
     }
 
     const options: Partial<Config>[] = [
-        { orderedBy: 'lastname', separator: Separator.COLON, titling: 'us', ending: Separator.COMMA},
+        { orderedBy: 'lastname', separator: Separator.COLON, titling: 'us', ending: true },
         { parser: new MyParser('Juan#Garcia'), bypass: true }, // e.g., we don't cover this '#' separator
         // use this 'bypass' when it's very necessary, i.e, when you want to skip the regex
         { orderedBy: 'lastname', separator: Separator.COLON, bypass: true },
@@ -155,6 +220,7 @@ function createWithOptionalParamsUseCase(): void {
     options.forEach(o => {
         const name = new Namefully('Mr:Smith:John:Joe:PhD', o);
         content += `full name \t: ${name.getFullname()}\n`;
+        content += `birth name \t: ${name.getBirthname()}\n`;
         content += `prefix \t\t: ${name.getPrefix()}\n`;
         content += `first name \t: ${name.getFirstname()}\n`;
         content += `middle name \t: ${name.getMiddlenames()}\n`;
@@ -171,6 +237,7 @@ export {
     createFromArrayStringUseCase,
     createFromArrayNameUseCase,
     createFromArrayNamaUseCase,
+    createFromArrayFullnameUseCase,
     createWithOptionalParamsUseCase,
 };
 
@@ -179,5 +246,6 @@ export default {
     createFromArrayStringUseCase,
     createFromArrayNameUseCase,
     createFromArrayNamaUseCase,
+    createFromArrayFullnameUseCase,
     createWithOptionalParamsUseCase,
 };

@@ -106,6 +106,6 @@ export enum Separator {
     PERIOD = '.',
     SPACE = ' ',
     SINGLE_QUOTE = `'`,
-    DOUBLE_QUOTE = `"`,
+    DOUBLE_QUOTE = '"',
     UNDERSCORE = '_',
 }

@@ -4,15 +4,23 @@
  * Created on March 11, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
  */
-
-import { Namefully, Firstname, Lastname, Parser, Fullname, Separator } from '../src/index';
+import {
+    Namefully,
+    Firstname,
+    Lastname,
+    Parser,
+    Fullname,
+    FullnameBuilder,
+    Separator
+} from '../src/index';
 
 describe('Namefully', () => {
 
     describe('Ordered by firstname', () => {
-        const name = new Namefully('Mr John Joe Smith PhD')
+        let name: Namefully;
 
         beforeEach(() => {
+            name = new Namefully('Mr John Joe Smith PhD')
             const mock = jest.spyOn(console, 'warn')
             mock.mockClear()
         })
@@ -36,6 +44,11 @@ describe('Namefully', () => {
             expect(name.getInitials('firstname')).toEqual(['J', 'S'])
             expect(name.getInitials('lastname', true)).toEqual(['S', 'J', 'J'])
             expect(name.getInitials('firstname', true)).toEqual(['J', 'J', 'S'])
+        })
+
+        test('should evoke logger when no middle name was set for initials', () => {
+            new Namefully('John Smith').getInitials('firstname', true)
+            expect(console.warn).toBeCalledTimes(1)
         })
 
         test('should describe statistically the full name', () => {
@@ -88,6 +101,11 @@ describe('Namefully', () => {
             expect(summary.distribution).toEqual({ J: 1, O: 1, E: 1 })
         })
 
+        test('should evoke logger when no middle name was set for summary', () => {
+            new Namefully('John Smith').describe('middlename')
+            expect(console.warn).toBeCalledTimes(1)
+        })
+
         test('should shorten name to first and last names', () => {
             expect(name.shorten()).toEqual('John Smith')
             expect(name.shorten('lastname')).toEqual('Smith John')
@@ -95,7 +113,7 @@ describe('Namefully', () => {
         })
 
         test('should compress using middlename by default', () => {
-            expect(name.compress()).toEqual('John J Smith')
+            expect(name.compress()).toEqual('John J. Smith')
         })
 
         test('should not evoke the logger for short names when compressing', () => {
@@ -114,19 +132,19 @@ describe('Namefully', () => {
         })
 
         test('should limit a name to 10 chars while compressing', () => {
-            expect(name.compress(10, 'firstname', false)).toBe('J Joe Smith')
-            expect(name.compress(10, 'lastname', false)).toBe('John Joe S')
-            expect(name.compress(10, 'firstmid', false)).toBe('J J Smith')
-            expect(name.compress(10, 'midlast', false)).toBe('John J S')
+            expect(name.compress(10, 'firstname', false)).toBe('J. Joe Smith')
+            expect(name.compress(10, 'lastname', false)).toBe('John Joe S.')
+            expect(name.compress(10, 'firstmid', false)).toBe('J. J. Smith')
+            expect(name.compress(10, 'midlast', false)).toBe('John J. S.')
         })
 
         test('should zip a name by compressing specific name parts', () => {
-            expect(name.zip()).toBe('John J Smith')
-            expect(name.zip('firstname')).toBe('J Joe Smith')
-            expect(name.zip('middlename')).toBe('John J Smith')
-            expect(name.zip('lastname')).toBe('John Joe S')
-            expect(name.zip('firstmid')).toBe('J J Smith')
-            expect(name.zip('midlast')).toBe('John J S')
+            expect(name.zip()).toBe('John J. Smith')
+            expect(name.zip('firstname')).toBe('J. Joe Smith')
+            expect(name.zip('middlename')).toBe('John J. Smith')
+            expect(name.zip('lastname')).toBe('John Joe S.')
+            expect(name.zip('firstmid')).toBe('J. J. Smith')
+            expect(name.zip('midlast')).toBe('John J. S.')
         })
 
         test('should output possible usernames', () => {
@@ -179,6 +197,11 @@ describe('Namefully', () => {
             expect(name.format('s')).toEqual('PhD')
         })
 
+        test('should evoke logger when no middle name was set for formatting', () => {
+            new Namefully('John Smith').format('f m M l')
+            expect(console.warn).toBeCalledTimes(2)
+        })
+
         test('should return the count of chars of the birth name', () => {
             expect(name.size()).toEqual(12)
         })
@@ -196,6 +219,11 @@ describe('Namefully', () => {
                 .toEqual([74, 101])
         })
 
+        test('should evoke logger when no middle name was set for ascii', () => {
+            new Namefully('John Smith').ascii({ nameType: 'middlename' })
+            expect(console.warn).toBeCalledTimes(1)
+        })
+
         test('should titlecase the birth name', () => {
             expect(name.to('lower')).toEqual('john joe smith')
             expect(name.to('upper')).toEqual('JOHN JOE SMITH')
@@ -205,6 +233,7 @@ describe('Namefully', () => {
             expect(name.to('hyphen')).toEqual('john-joe-smith')
             expect(name.to('dot')).toEqual('john.joe.smith')
             expect(name.to('toggle')).toEqual('jOHN jOE sMITH')
+            expect(name.to(null)).toEqual('')
         })
 
         test('should return a password (hash-like content)', () => {
@@ -213,13 +242,18 @@ describe('Namefully', () => {
             expect(name.passwd('middlename')).toBeDefined()
             expect(name.passwd('lastname')).toBeDefined()
         })
+
+        test('should evoke logger when no middle name was set for password', () => {
+            new Namefully('John Smith').passwd('middlename')
+            expect(console.warn).toBeCalledTimes(1)
+        })
     })
 
-
     describe('Ordered by lastname', () => {
-        const name = new Namefully('Mr Smith John Joe PhD', { orderedBy: 'lastname' })
+        let name: Namefully;
 
         beforeEach(() => {
+            name = new Namefully('Mr Smith John Joe PhD', { orderedBy: 'lastname' });
             const mock = jest.spyOn(console, 'warn')
             mock.mockClear()
         })
@@ -252,7 +286,7 @@ describe('Namefully', () => {
         })
 
         test('should compress using middlename by default', () => {
-            expect(name.compress()).toEqual('Smith John J')
+            expect(name.compress()).toEqual('Smith John J.')
         })
 
         test('should not evoke the logger for short names when compressing', () => {
@@ -271,19 +305,19 @@ describe('Namefully', () => {
         })
 
         test('should limit name to 10 chars while compressing', () => {
-            expect(name.compress(10, 'firstname', false)).toBe('Smith J Joe')
-            expect(name.compress(10, 'lastname', false)).toBe('S John Joe')
-            expect(name.compress(10, 'firstmid', false)).toBe('Smith J J')
-            expect(name.compress(10, 'midlast', false)).toBe('S John J')
+            expect(name.compress(10, 'firstname', false)).toBe('Smith J. Joe')
+            expect(name.compress(10, 'lastname', false)).toBe('S. John Joe')
+            expect(name.compress(10, 'firstmid', false)).toBe('Smith J. J.')
+            expect(name.compress(10, 'midlast', false)).toBe('S. John J.')
         })
 
         test('should limit name to 10 chars while compressing', () => {
-            expect(name.zip()).toBe('Smith John J')
-            expect(name.zip('firstname')).toBe('Smith J Joe')
-            expect(name.zip('middlename')).toBe('Smith John J')
-            expect(name.zip('lastname')).toBe('S John Joe')
-            expect(name.zip('firstmid')).toBe('Smith J J')
-            expect(name.zip('midlast')).toBe('S John J')
+            expect(name.zip()).toBe('Smith John J.')
+            expect(name.zip('firstname')).toBe('Smith J. Joe')
+            expect(name.zip('middlename')).toBe('Smith John J.')
+            expect(name.zip('lastname')).toBe('S. John Joe')
+            expect(name.zip('firstmid')).toBe('Smith J. J.')
+            expect(name.zip('midlast')).toBe('S. John J.')
         })
 
         test('should output possible usernames', () => {
@@ -390,9 +424,26 @@ describe('Namefully', () => {
             expect(name).toBeTruthy()
         })
 
-        test('should create an instance with JSON object', () => {
+        test('should create an instance with Nama JSON object', () => {
             const name = new Namefully({ firstname: 'John', lastname: 'Smith' })
             expect(name).toBeTruthy()
+        })
+
+        test('should create an instance with Fullname JSON object', () => {
+            const fullname = new FullnameBuilder()
+                .firstname('John')
+                .lastname('Smith')
+                .build()
+            expect(new Namefully(fullname)).toBeTruthy()
+
+            const bypassed = new FullnameBuilder(true) // true: bypass regex
+                .prefix('Mr')
+                .firstname('John')
+                .middlename('Joe')
+                .lastname('Smith')
+                .suffix('PhD')
+                .build()
+            expect(new Namefully(bypassed)).toBeTruthy()
         })
 
         test('should create an instance with a custom parser', () => {
@@ -448,7 +499,7 @@ describe('Namefully', () => {
 
         test('should throw error when wrong object values', () => {
             const func = () => {
-                const json = {'firstname': 'John', 'lastname': 'Smith' }
+                const json = { 'firstname': 'John', 'lastname': 'Smith' }
                 json['firstname'] = null
                 json['lastname'] = undefined
                 new Namefully(json)
@@ -501,6 +552,61 @@ describe('Namefully', () => {
             }, { ending: true })
             expect(ending).toBeTruthy()
             expect(ending.getFullname()).toEqual('Fabrice Piazza, PhD')
+        })
+
+        test('should create an instance with lastnameFormat', () => {
+            const fn = new Firstname('Catherine')
+            const ln = new Lastname('Zeta', 'Jones')
+
+            const father = new Namefully([fn, ln], { lastnameFormat: 'father' })
+            expect(father).toBeTruthy()
+            expect(father.getFullname()).toEqual('Catherine Zeta')
+
+            const mother = new Namefully([fn, ln], { lastnameFormat: 'mother' })
+            expect(mother).toBeTruthy()
+            expect(mother.getFullname()).toEqual('Catherine Jones')
+
+            const hyphenated = new Namefully([fn, ln], { lastnameFormat: 'hyphenated' })
+            expect(hyphenated).toBeTruthy()
+            expect(hyphenated.getFullname()).toEqual('Catherine Zeta-Jones')
+
+            const all = new Namefully([fn, ln], { lastnameFormat: 'all'})
+            expect(all).toBeTruthy()
+            expect(all.getFullname()).toEqual('Catherine Zeta Jones')
+        })
+
+        test('should create an instance with bypass', () => {
+            const bypass = new Namefully('2Pac Shakur', { bypass: true })
+            expect(bypass).toBeTruthy()
+            expect(bypass.getFirstname()).toEqual('2Pac')
+        })
+
+        test('should create an instance with parser', () => {
+            class CustomParser implements Parser<string> {
+                constructor(public raw: string) {}
+                parse(): Fullname {
+                    const [fn, ln] = this.raw.split(';')
+                    return {
+                        firstname: new Firstname(fn),
+                        lastname: new Lastname(ln)
+                    }
+                }
+            }
+            const name = new Namefully(null, { parser: new CustomParser('Bernard;Pivot') })
+            expect(name).toBeTruthy()
+            expect(name.getFirstname()).toEqual('Bernard')
+            expect(name.getLastname()).toEqual('Pivot')
+        })
+
+        test('should create an instance with multiple options', () => {
+            const name = new Namefully('Mr,Gooding,Cuba,Mark,Jr', {
+                orderedBy: 'lastname',
+                titling: 'us',
+                separator: Separator.COMMA,
+                ending: true
+            })
+            expect(name).toBeTruthy()
+            expect(name.getFullname()).toEqual('Mr. Gooding Cuba Mark, Jr')
         })
     })
 

@@ -36,7 +36,7 @@ export class Summary {
             `frequency: ${this.frequency} \n`,
             `top      : ${this.top} \n`,
             `unique   : ${this.unique} \n`,
-            `distrib  : ${this.distribution} \n`,
+            `distrib  : ${Object.entries(this.distribution).map(e => `${e[1]}${e[0]}`).join(',')} \n`,
         );
     }
 

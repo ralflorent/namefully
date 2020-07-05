@@ -4,9 +4,19 @@
  * Created on March 15, 2020
  * @author Ralph Florent <ralflornt@gmail.com>
  */
-import { Namon, Fullname, Firstname, Lastname, Name, Prefix, Suffix, NameIndex, NameOrder } from '../../models/index';
-import { ArrayStringValidator } from '../../validators/index';
-import { organizeNameIndex } from '../../core/index';
+import {
+    Namon,
+    Fullname,
+    Firstname,
+    Lastname,
+    Name,
+    Prefix,
+    Suffix,
+    NameIndex,
+    NameOrder
+} from '../../models';
+import { ArrayStringValidator } from '../../validators';
+import { organizeNameIndex } from '../../core';
 import { Parser } from './parser';
 
 
