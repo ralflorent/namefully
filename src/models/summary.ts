@@ -11,11 +11,11 @@ import { Separator } from './index';
  * @class
  */
 export class Summary {
-    distribution: { [key: string]: number};
-    count: number;
-    frequency: number;
-    top: string;
-    unique: number;
+    readonly distribution: { [key: string]: number};
+    readonly count: number;
+    readonly frequency: number;
+    readonly top: string;
+    readonly unique: number;
 
     /**
      * Creates a `Summary` of a given string of alphabetical characters
@@ -23,7 +23,12 @@ export class Summary {
      * @param restrictions a set of undesired characters
      */
     constructor(private namon: string, restrictions: string[] = [Separator.SPACE]) {
-        this.compute(restrictions);
+        const summary = this.compute(restrictions);
+        this.distribution = summary.distribution;
+        this.count = summary.count;
+        this.frequency = summary.frequency;
+        this.top = summary.top;
+        this.unique = summary.unique;
     }
 
     /**
@@ -40,7 +45,7 @@ export class Summary {
         );
     }
 
-    private compute(restrictions: string[] = []): void {
+    private compute(restrictions: string[] = []) {
         // compute stats for the string
         let count = 0, maxfreq = 0, uniq = 0, top = '';
         const freqs = this.groupByChar();
@@ -56,11 +61,13 @@ export class Summary {
             }
         }
 
-        this.distribution = freqs;
-        this.count = count;
-        this.frequency = maxfreq;
-        this.top = top;
-        this.unique = uniq;
+        return {
+            distribution: freqs,
+            count: count,
+            frequency: maxfreq,
+            top: top,
+            unique: uniq
+        };
     }
 
     private groupByChar(): any {

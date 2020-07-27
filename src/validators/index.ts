@@ -18,6 +18,6 @@ export { default as MiddlenameValidator } from './middlename.validator';
 export { default as FullnameValidator } from './fullname.validator';
 export { default as NamaValidator } from './nama.validator';
 
-export {default as ArrayNameValidator } from './array-name.validator';
-export {default as ArrayStringValidator } from './array-string.validator';
-export {default as StringNameValidator } from './string-name.validator';
+export { default as ArrayNameValidator } from './array-name.validator';
+export { default as ArrayStringValidator } from './array-string.validator';
+export { default as StringNameValidator } from './string-name.validator';

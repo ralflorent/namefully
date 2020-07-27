@@ -6,13 +6,7 @@
  */
 import { Name, Firstname, Lastname, Prefix, Suffix, Namon } from './index';
 import { LastnameFormat } from './misc';
-import {
-    PrefixValidator,
-    FirstnameValidator,
-    NamonValidator,
-    LastnameValidator,
-    SuffixValidator,
-} from '../validators'
+import { Validators } from '../validators'
 
 /**
  * Interface for JSON signature that represents the full name
@@ -43,7 +37,7 @@ export class FullnameBuilder {
      * @param namon prefix name part
      */
     prefix(namon: string): this {
-        if (!this.bypass) new PrefixValidator().validate(namon);
+        if (!this.bypass) Validators.prefix.validate(namon);
         this._px = namon as Prefix;
         return this;
     }
@@ -55,7 +49,7 @@ export class FullnameBuilder {
      */
     firstname(namon: string, ...more: string[]): this {
         this._fn = new Firstname(namon, ...more);
-        if (!this.bypass) new FirstnameValidator().validate(this._fn.tostring());
+        if (!this.bypass) Validators.firstname.validate(this._fn.tostring());
         return this;
     }
 
@@ -64,11 +58,8 @@ export class FullnameBuilder {
      * @param nama middle names
      */
     middlename(...nama: string[]): this {
-        const validator = new NamonValidator();
-        this._mn = nama.map(namon => {
-            if (!this.bypass) validator.validate(namon);
-            return new Name(namon, Namon.MIDDLE_NAME)
-        });
+        if (!this.bypass) Validators.middlename.validate(nama);
+        this._mn = nama.map(namon => new Name(namon, Namon.MIDDLE_NAME));
         return this;
     }
 
@@ -80,7 +71,7 @@ export class FullnameBuilder {
      */
     lastname(father: string, mother?: string, format: LastnameFormat = 'father'): this {
         this._ln = new Lastname(father, mother, format);
-        if (!this.bypass) new LastnameValidator().validate(this._ln.tostring());
+        if (!this.bypass) Validators.lastname.validate(this._ln.tostring());
         return this;
     }
 
@@ -89,7 +80,7 @@ export class FullnameBuilder {
      * @param namon suffix name part
      */
     suffix(namon: string): this {
-        if (!this.bypass) new SuffixValidator().validate(namon);
+        if (!this.bypass) Validators.suffix.validate(namon);
         this._sx = namon as Suffix;
         return this;
     }

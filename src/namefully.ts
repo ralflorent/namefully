@@ -49,12 +49,12 @@ import { FullnameValidator } from './validators';
  * actually on how the developer indicates the roles of the name parts so that
  * it, internally, can perform certain operations and saves the developer some
  * calculations/processings. Nevertheless, Namefully can be constructed using
- * distinct raw data shape. This is intended to give some flexibility to the
+ * distinct raw data shapes. This is intended to give some flexibility to the
  * developer so that he or she is not bound to a particular data format. Please,
  * do follow closely the APIs to know how to properly use it in order to avoid
  * some errors (mainly validation's).
  *
- * `Namefully` also works like a trap door. Once a raw data is provided and
+ * `Namefully` also works like a trapdoor. Once a raw data is provided and
  * validated, a developer can only ACCESS in a vast amount of, yet effective ways
  * the name info. NO EDITING is possible. If the name is mistaken, a new instance
  * of `Namefully` must be created. Remember, this utility's primary objective is
@@ -81,7 +81,7 @@ import { FullnameValidator } from './validators';
  * - namon: 1 piece of a name (e.g., firstname)
  * - nama: 2+ pieces of a name (e.g., firstname + lastname)
  *
- * Happy handling!
+ * Happy name handling!
  */
 export class Namefully {
     /**
@@ -266,7 +266,7 @@ export class Namefully {
     /**
      * Gives some descriptive statistics that summarize the central tendency,
      * dispersion and shape of the characters' distribution.
-     * @param what which variant to use when describe a name part
+     * @param what which variant to use when describing a name part
      *
      * Treated as a categorical dataset, the summary contains the following info:
      * `count` : the number of *unrestricted* characters of the name;
