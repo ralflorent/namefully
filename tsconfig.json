@@ -4,10 +4,9 @@
         "baseUrl": "./",
         "module": "commonjs",
         "target": "es2015",
-        "moduleResolution": "node", // for inline -m es6
+        "moduleResolution": "node",
         "declaration": true,
         "noImplicitAny": true,
-        "importHelpers": true,
         "removeComments": false,
         "preserveConstEnums": true,
         "outDir": "dist/lib",
@@ -18,7 +17,6 @@
             "@core/*": ["src/core/*"],
             "@models/*": ["src/models/*"],
             "@validators/*": ["src/validators/*"],
-            "namefully": ["dist/lib/*"]
         },
     },
     "include": [

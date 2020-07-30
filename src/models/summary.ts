@@ -63,9 +63,9 @@ export class Summary {
 
         return {
             distribution: freqs,
-            count: count,
+            count,
             frequency: maxfreq,
-            top: top,
+            top,
             unique: uniq
         };
     }
