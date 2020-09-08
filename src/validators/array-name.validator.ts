@@ -8,12 +8,8 @@ import { Name, Namon } from '../models';
 import {
     Validator,
     ValidatorType,
-    ValidationError ,
-    PrefixValidator,
-    FirstnameValidator,
-    LastnameValidator,
-    MiddlenameValidator,
-    SuffixValidator
+    ValidationError,
+    Validators,
 } from './index';
 import {
     MIN_NUMBER_NAME_PART,
@@ -47,11 +43,11 @@ export default class ArrayNameValidator implements Validator<Name[]> {
             );
 
         const validators = {
-            [Namon.PREFIX]: new PrefixValidator(),
-            [Namon.FIRST_NAME]: new FirstnameValidator(),
-            [Namon.MIDDLE_NAME]: new MiddlenameValidator(),
-            [Namon.LAST_NAME]: new LastnameValidator(),
-            [Namon.SUFFIX]: new SuffixValidator(),
+            [Namon.PREFIX]: Validators.prefix,
+            [Namon.FIRST_NAME]: Validators.firstname,
+            [Namon.MIDDLE_NAME]: Validators.middlename,
+            [Namon.LAST_NAME]: Validators.lastname,
+            [Namon.SUFFIX]: Validators.suffix,
         } as const;
 
         switch(values.length) {

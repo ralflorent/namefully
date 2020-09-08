@@ -8,7 +8,7 @@ import { Parser } from '../core/parsers';
 import { Separator } from './enums';
 
 /**
- * Defines the two ways that a full name can be ordered: first or last name
+ * Defines the two ways that a full name can be ordered by: first or last name
  * @typedef NameOrder
  */
 export type NameOrder = 'firstname' | 'fn' | 'lastname' | 'ln';
@@ -60,12 +60,12 @@ export interface Config {
     ending: boolean;
     /**
      * Bypass the validation rules with this option. Since we only provide a
-     * handful of suffixes or prefixes in English, this paramter is ideal to
-     * avoid checking the validity of them.
+     * handful of suffixes or prefixes in English, this parameter is ideal to
+     * avoid checking their validity.
      */
     bypass: boolean;
     /**
-     * Custom parser, a user-defined parser indicating how to the name set is
+     * Custom parser, a user-defined parser indicating how the name set is
      * organized. Namefully cannot guess it.
      */
     parser?: Parser<any>;

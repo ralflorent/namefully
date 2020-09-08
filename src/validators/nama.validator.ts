@@ -9,12 +9,8 @@ import { MIN_NUMBER_NAME_PART, MAX_NUMBER_NAME_PART } from '../core/constants';
 import {
     Validator,
     ValidatorType,
-    ValidationError ,
-    PrefixValidator,
-    FirstnameValidator,
-    LastnameValidator,
-    MiddlenameValidator,
-    SuffixValidator
+    ValidationError,
+    Validators,
 } from './index';
 
 /**
@@ -35,11 +31,11 @@ export default class NamaValidator implements Validator<Nama> {
             throw new ValidationError('incomplete JSON object', 'Nama')
 
         const validators = {
-            [Namon.PREFIX]: new PrefixValidator(),
-            [Namon.FIRST_NAME]: new FirstnameValidator(),
-            [Namon.MIDDLE_NAME]: new MiddlenameValidator(),
-            [Namon.LAST_NAME]: new LastnameValidator(),
-            [Namon.SUFFIX]: new SuffixValidator(),
+            [Namon.PREFIX]: Validators.prefix,
+            [Namon.FIRST_NAME]: Validators.firstname,
+            [Namon.MIDDLE_NAME]: Validators.middlename,
+            [Namon.LAST_NAME]: Validators.lastname,
+            [Namon.SUFFIX]: Validators.suffix,
         };
         for (const entry of entries) {
             const k = entry[0] as keyof Nama;

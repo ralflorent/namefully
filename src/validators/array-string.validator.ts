@@ -16,12 +16,8 @@ import {
 import {
     Validator,
     ValidatorType,
-    ValidationError ,
-    PrefixValidator,
-    FirstnameValidator,
-    LastnameValidator,
-    MiddlenameValidator,
-    SuffixValidator
+    ValidationError,
+    Validators,
 } from './index';
 
 /**
@@ -67,11 +63,11 @@ export default class ArrayStringValidator implements Validator<string[]> {
                 'Array of names'
             )
 
-        const pf = new PrefixValidator();
-        const sf = new SuffixValidator();
-        const fn = new FirstnameValidator();
-        const ln = new LastnameValidator();
-        const mn = new MiddlenameValidator();
+        const px = Validators.prefix;
+        const fn = Validators.firstname;
+        const mn = Validators.middlename;
+        const ln = Validators.lastname;
+        const sx = Validators.suffix;
 
         const index = this.indexing;
 
@@ -86,17 +82,17 @@ export default class ArrayStringValidator implements Validator<string[]> {
                 ln.validate(values[index.lastname]);
                 break;
             case PREFIX_FIRST_MIDDLE_LAST_NAME_INDEX:
-                pf.validate(values[index.prefix]);
+                px.validate(values[index.prefix]);
                 fn.validate(values[index.firstname]);
                 mn.validate(values[index.middlename]);
                 ln.validate(values[index.lastname]);
                 break;
             case PREFIX_FIRST_MIDDLE_LAST_SUFFIX_NAME_INDEX:
-                pf.validate(values[index.prefix]);
+                px.validate(values[index.prefix]);
                 fn.validate(values[index.firstname]);
                 mn.validate(values[index.middlename]);
                 ln.validate(values[index.lastname]);
-                sf.validate(values[index.suffix])
+                sx.validate(values[index.suffix])
                 break;
         }
     }
