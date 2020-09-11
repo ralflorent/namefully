@@ -107,8 +107,7 @@ interface Indexing<T> {
 }
 
 /**
- * @interface NameIndex represents the JSON signature for indexing name parts
- * using numbered index
- * @extends Index<number>
+ * @typedef NameIndex represents the JSON signature for indexing name parts
+ * using numbered index.
  */
-export interface NameIndex extends Indexing<number> {}
+export type NameIndex = Indexing<number>;

@@ -7,8 +7,7 @@
 import { Separator } from './index';
 
 /**
- * Represents the statistical summary of a string representation
- * @class
+ * Represents the statistical summary of a string content
  */
 export class Summary {
     readonly distribution: { [key: string]: number};
@@ -37,40 +36,33 @@ export class Summary {
     tostring(): string {
         return Separator.EMPTY.concat(
             `Descriptive statistics for "${this.namon}" \n`,
+            `distrib  : ${Object.entries(this.distribution).map(e => `${e[1]}${e[0]}`).join(',')} \n`,
             `count    : ${this.count} \n`,
             `frequency: ${this.frequency} \n`,
             `top      : ${this.top} \n`,
             `unique   : ${this.unique} \n`,
-            `distrib  : ${Object.entries(this.distribution).map(e => `${e[1]}${e[0]}`).join(',')} \n`,
         );
     }
 
     private compute(restrictions: string[] = []) {
-        // compute stats for the string
-        let count = 0, maxfreq = 0, uniq = 0, top = '';
-        const freqs = this.groupByChar();
+        let count = 0, frequency = 0, unique = 0, top = '';
+        const distribution = this.groupByChar();
 
-        for (const char in freqs) {
+        for (const char in distribution) {
             if (restrictions.indexOf(char) === -1) {
-                count += freqs[char];
-                if (freqs[char] >= maxfreq) {
-                    maxfreq = freqs[char];
+                count += distribution[char];
+                if (distribution[char] >= frequency) {
+                    frequency = distribution[char];
                     top = char;
                 }
-                uniq++;
+                unique++;
             }
         }
 
-        return {
-            distribution: freqs,
-            count,
-            frequency: maxfreq,
-            top,
-            unique: uniq
-        };
+        return { distribution, count, frequency, top, unique };
     }
 
-    private groupByChar(): any {
+    private groupByChar() {
         const frequencies: { [key: string]: number } = {};
         for (const char of this.namon.toUpperCase())
             if (Object.keys(frequencies).includes(char))

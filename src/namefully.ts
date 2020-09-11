@@ -298,7 +298,7 @@ export class Namefully {
         what = allowShortNameType(what)
         switch(what) {
             case 'firstname':
-                return this.fullname.firstname.describe();
+                return this.fullname.firstname.describe(true);
             case 'lastname':
                 return this.fullname.lastname.describe();
             case 'middlename':
@@ -358,13 +358,13 @@ export class Namefully {
      * name goes beyond the limit value.
      *
      * Compressing a long name refers to reducing the name to the following forms:
-     * 1. by firstname: 'John Moe Beau Lennon' => 'J. Moe Beau Lennon'
-     * 2. by middlename: 'John Moe Beau Lennon' => 'John M. B. Lennon'
-     * 3. by lastname: 'John Moe Beau Lennon' => 'John Moe Beau L.'
-     * 4. by firstmid: 'John Moe Beau Lennon' => 'J. M. B. Lennon'
-     * 5. by midlast: 'John Moe Beau Lennon' => 'John M. B. L.'
+     * 1. by firstname: 'John Winston Ono Lennon' => 'J. Winston Ono Lennon'
+     * 2. by middlename: 'John Winston Ono Lennon' => 'John W. O. Lennon'
+     * 3. by lastname: 'John Winston Ono Lennon' => 'John Winston Ono L.'
+     * 4. by firstmid: 'John Winston Ono Lennon' => 'J. W. O. Lennon'
+     * 5. by midlast: 'John Winston Ono Lennon' => 'John W. O. L.'
      *
-     * By default, it compresses by 'firstmid' variant: 'J. M. B. Lennon'.
+     * By default, it compresses by 'middlename' variant: 'John W. O. Lennon'.
      */
     compress(
         limit: number = 20,
@@ -473,8 +473,6 @@ export class Namefully {
 
     /**
      * Suggests possible (randomly) usernames closest to the name
-     *
-     * **NOTE**
      * The validity of these usernames are not checked against any social media
      * or web app online.
      */
@@ -621,9 +619,12 @@ export class Namefully {
                 return birthname.toUpperCase();
             case 'lower':
                 return birthname.toLowerCase();
-            case 'camel': case 'pascal':
+            case 'camel':
+            case 'pascal':
                 const pascalCase = nama.map(n => capitalize(n)).join(Separator.EMPTY);
-                return _case === 'camel' ? decapitalize(pascalCase) : pascalCase;
+                return _case === 'camel'
+                    ? decapitalize(pascalCase)
+                    : pascalCase;
             case 'snake':
                 return nama.map(n => n.toLowerCase()).join(Separator.UNDERSCORE);
             case 'hyphen':
@@ -675,8 +676,7 @@ export class Namefully {
     }
 
     private parseNameOrder(orderedBy?: NameOrder): NameOrder {
-        orderedBy = orderedBy || this.config.orderedBy; // override config
-        return allowShortNameOrder(orderedBy);
+        return allowShortNameOrder(orderedBy || this.config.orderedBy);
     }
 
     private map(c: string): string {
@@ -773,14 +773,14 @@ export class Namefully {
             for (const [key, value] of Object.entries(raw)) { // make sure keys are correct
                 if (['firstname', 'lastname', 'middlename', 'prefix', 'suffix'].indexOf(key) === -1)
                     throw new Error(
-                        `Cannot parse raw data as json object that does not contains keys of` +
+                        `Cannot parse raw data as json object that does not contain keys of` +
                         `'${Object.keys(Namon)}'`
                     );
 
                 // make sure the values are proper string or object
                 if (typeof value !== 'string' && typeof value !== 'object')
                     throw new Error(
-                        `Cannot parse raw data. The key <${key}> should be a 'string|object' type`
+                        `Cannot parse raw data. The key <${key}> should be of a 'string|object' type`
                     );
             }
             if (typeof (raw as Nama)['firstname'] === 'string') // this key must always exist

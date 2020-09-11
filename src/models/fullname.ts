@@ -114,4 +114,4 @@ FullnameBuilder.prototype.px = FullnameBuilder.prototype.prefix;
 FullnameBuilder.prototype.fn = FullnameBuilder.prototype.firstname;
 FullnameBuilder.prototype.mn = FullnameBuilder.prototype.middlename;
 FullnameBuilder.prototype.ln = FullnameBuilder.prototype.lastname;
-FullnameBuilder.prototype.sx = FullnameBuilder.prototype.sx;
+FullnameBuilder.prototype.sx = FullnameBuilder.prototype.suffix;
