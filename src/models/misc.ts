@@ -7,6 +7,7 @@
 import { Parser } from '../core/parsers';
 import { Separator } from './enums';
 
+
 /**
  * Defines the two ways that a full name can be ordered by: first or last name
  * @typedef NameOrder

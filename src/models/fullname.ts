@@ -13,10 +13,10 @@ import { Validators } from '../validators'
  * @interface
  */
 export interface Fullname {
-    firstname: Firstname;
-    lastname: Lastname;
-    middlename?: Name[];
     prefix?: Prefix;
+    firstname: Firstname;
+    middlename?: Name[];
+    lastname: Lastname;
     suffix?: Suffix;
 }
 

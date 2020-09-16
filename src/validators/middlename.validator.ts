@@ -7,9 +7,7 @@
 import { Validator, ValidatorType, ValidationError, ValidationRule, NamonValidator } from './index';
 
 /**
- * Represents a middle name validator
- * @class
- * @implements {Validator}
+ * Represents a middle name validator.
  */
 export default class MiddlenameValidator implements Validator<string | string[]> {
     readonly type: ValidatorType = ValidatorType.MIDDLE_NAME;
@@ -18,7 +16,6 @@ export default class MiddlenameValidator implements Validator<string | string[]>
      * @param {string | string[]} values to validate
      */
     validate(values: string | string[]): void {
-
         if (typeof values === 'string') {
             if (!ValidationRule.middlename.test(values))
                 throw new ValidationError(`invalid string content '${values}'`, 'Middle name');

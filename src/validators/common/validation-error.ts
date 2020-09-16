@@ -7,8 +7,6 @@
 
 /**
  * Represents a validation error
- * @class
- * @extends Error
  */
 export class ValidationError extends Error {
     /**

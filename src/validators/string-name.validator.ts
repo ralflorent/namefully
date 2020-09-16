@@ -7,9 +7,7 @@
 import { Validator, ValidatorType, ValidationError, ValidationRule } from './index';
 
 /**
- * Represents a string full name validator
- * @class
- * @implements {Validator}
+ * Represents a string full name validator.
  */
 export default class StringNameValidator implements Validator<string> {
     readonly type: ValidatorType = ValidatorType.FULL_NAME;

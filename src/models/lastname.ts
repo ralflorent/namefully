@@ -9,8 +9,6 @@ import { convertToAscii, generatePassword } from '../core';
 
 /**
  * Represents a last name with some extra functionalities
- * @class
- * @extends Name
  */
 export class Lastname extends Name {
 
@@ -40,8 +38,7 @@ export class Lastname extends Name {
      * @see {@link describe} in `Namefully` class for further information
      */
     describe(format?: LastnameFormat): Summary {
-        format = format || this.format;
-        return new Summary(this.tostring(format));
+        return new Summary(this.tostring(format || this.format));
     }
 
     /**
@@ -57,9 +54,13 @@ export class Lastname extends Name {
             case 'mother':
                 return this.mother || Separator.EMPTY;
             case 'hyphenated':
-                return this.mother ? this.father.concat(Separator.HYPHEN, this.mother) : this.father;
+                return this.mother
+                    ? this.father.concat(Separator.HYPHEN, this.mother)
+                    : this.father;
             case 'all':
-                return this.mother ? this.father.concat(Separator.SPACE, this.mother) : this.father;
+                return this.mother
+                    ? this.father.concat(Separator.SPACE, this.mother)
+                    : this.father;
         }
     }
 
@@ -78,11 +79,14 @@ export class Lastname extends Name {
                 if (this.hasMother())
                     initials.push(this.mother[0]);
                 break;
-            case 'hyphenated': case 'all':
+            case 'hyphenated':
+            case 'all':
                 initials.push(this.father[0]);
                 if (this.hasMother())
                     initials.push(this.mother[0]);
                 break;
+            default:
+                initials.push(this.father[0]);
         }
         return initials;
     }

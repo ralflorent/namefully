@@ -7,8 +7,6 @@
 
 /**
  * Represents a set of validation rules (regex)
- * @class
- * @static
  *
  * This regex is intented to match specific alphabets only as a person name does
  * not contain special characters. `\w` does not cover non-Latin characters. So,
@@ -32,7 +30,9 @@ export class ValidationRule {
      * - with apostrophe
      * - with space
      */
-    static namon: RegExp = new RegExp(`^${ValidationRule.base.source}+(([' -]${ValidationRule.base.source})?${ValidationRule.base.source}*)*$`);
+    static namon: RegExp = new RegExp(
+        `^${ValidationRule.base.source}+(([' -]${ValidationRule.base.source})?${ValidationRule.base.source}*)*$`
+    );
 
     /**
      * Matches 1+ name parts (namon) that are of nature:
@@ -44,7 +44,9 @@ export class ValidationRule {
      * - with period
      * - with space
      */
-    static fullname: RegExp = new RegExp(`^${ValidationRule.base.source}+(([',. -]${ValidationRule.base.source})?${ValidationRule.base.source}*)*$`);
+    static fullname: RegExp = new RegExp(
+        `^${ValidationRule.base.source}+(([',. -]${ValidationRule.base.source})?${ValidationRule.base.source}*)*$`
+    );
 
     /**
      * Matches one name part (namon) that is of nature:
@@ -63,7 +65,9 @@ export class ValidationRule {
      * - with apostrophe
      * - with space
      */
-    static middlename: RegExp = new RegExp(`^${ValidationRule.base.source}+(([' -]${ValidationRule.base.source})?${ValidationRule.base.source}*)*$`);
+    static middlename: RegExp = new RegExp(
+        `^${ValidationRule.base.source}+(([' -]${ValidationRule.base.source})?${ValidationRule.base.source}*)*$`
+    );
 
     /**
      * Matches one name part (namon) that is of nature:

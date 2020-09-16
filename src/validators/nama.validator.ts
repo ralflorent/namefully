@@ -14,9 +14,7 @@ import {
 } from './index';
 
 /**
- * Represents a `Nama` validator to help the nama parser
- * @class
- * @implements {Validator}
+ * Represents a `Nama` validator to help the nama parser.
  */
 export default class NamaValidator implements Validator<Nama> {
     readonly type: ValidatorType = ValidatorType.NAMA;

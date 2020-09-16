@@ -17,6 +17,4 @@ export class CharSet<T> extends Set<T> {
 /**
  * Extends `Array` functionalities
  */
-export class CharArray<T> extends Array<T> {
-
-}
+export class CharArray<T> extends Array<T> {}

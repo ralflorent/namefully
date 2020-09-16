@@ -55,13 +55,12 @@ export default class ArrayStringValidator implements Validator<string[]> {
      * @param {string} value data to validate
      */
     validate(values: string[]): void {
-
         if (values.length < MIN_NUMBER_NAME_PART || values.length > MAX_NUMBER_NAME_PART)
             throw new ValidationError(
                 `must be an array of ${MIN_NUMBER_NAME_PART} - ` +
                 `${MAX_NUMBER_NAME_PART} elements`,
                 'Array of names'
-            )
+            );
 
         const px = Validators.prefix;
         const fn = Validators.firstname;

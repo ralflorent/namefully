@@ -96,6 +96,7 @@ export const PASSWORD_MAPPER = new Map([
     [ 'v', new CharSet(['v', 'V', '>', '<', '^']) ],
     [ 'w', new CharSet(['w', 'W', '[|]', 'vv']) ],
     [ 'x', new CharSet(['x', 'X', '%', '#']) ],
+    [ 'y', new CharSet(['y', 'Y', '-/', '-]']) ],
     [ 'z', new CharSet(['z', 'Z', '2', '!=']) ],
     [ '$', new CharSet([
         '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '+', '[',

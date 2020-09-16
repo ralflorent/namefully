@@ -10,11 +10,8 @@ import { convertToAscii, generatePassword } from '../core';
 
 /**
  * Represents a first name with some extra functionalities
- * @class
- * @extends Name
  */
 export class Firstname extends Name {
-
     more: string[] = [];
     /**
      * Constructs a `Firstname`

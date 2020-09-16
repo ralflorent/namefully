@@ -29,9 +29,9 @@ export enum Alphabet {
     LATIN = 'Latin',
     CYRILLIC = 'Cyrillic',
     GREEK = 'Greek',
-	ARMENIAN = 'Armenian',
-	GEORGIAN = 'Georgian',
-	HANGUL = 'Hangul',
+    ARMENIAN = 'Armenian',
+    GEORGIAN = 'Georgian',
+    HANGUL = 'Hangul',
 }
 
 /**

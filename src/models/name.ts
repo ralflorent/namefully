@@ -13,7 +13,6 @@ import { convertToAscii, generatePassword } from '../core';
  * @see {@link Namon} interface to understand the concept of namon/nama.
  */
 export class Name {
-
     private readonly initial: string;
     private readonly body: string;
 

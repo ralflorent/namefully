@@ -8,9 +8,7 @@ import { Fullname, Firstname, Lastname } from '../models/index';
 import { Validator, ValidatorType, ValidationError, Validators } from './index';
 
 /**
- * Represents a `Fullname` (JSON signature) validator for provided custom parser
- * @class
- * @implements {Validator}
+ * Represents a `Fullname` (JSON signature) validator for provided custom parser.
  */
 export default class FullnameValidator implements Validator<Fullname> {
     readonly type: ValidatorType = ValidatorType.FULL_NAME;

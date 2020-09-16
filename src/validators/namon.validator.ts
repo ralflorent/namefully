@@ -7,9 +7,7 @@
 import { Validator, ValidatorType, ValidationError, ValidationRule } from './index';
 
 /**
- * Represents a namon validator to help to parse single pieces of string
- * @class
- * @implements {Validator}
+ * Represents a namon validator to help to parse single pieces of string.
  */
 export default class NamonValidator implements Validator<string> {
     readonly type: ValidatorType = ValidatorType.NAMON;

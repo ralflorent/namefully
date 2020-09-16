@@ -8,9 +8,7 @@ import { Suffix } from '../models/index';
 import { Validator, ValidatorType, ValidationError } from './index';
 
 /**
- * Represents a suffix validator
- * @class
- * @implements {Validator}
+ * Represents a suffix validator.
  */
 export default class SuffixValidator implements Validator<string> {
     readonly type: ValidatorType = ValidatorType.SUFFIX;

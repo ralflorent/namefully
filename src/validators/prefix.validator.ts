@@ -8,9 +8,7 @@ import { Prefix } from '../models/index';
 import { Validator, ValidatorType, ValidationError } from './index';
 
 /**
- * Represents a prefix validator
- * @class
- * @implements {Validator}
+ * Represents a prefix validator.
  */
 export default class PrefixValidator implements Validator<string> {
     readonly type: ValidatorType = ValidatorType.PREFIX;
