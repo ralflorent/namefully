@@ -415,8 +415,7 @@ export class Namefully {
                         [fn.tostring(), lasts].join(Separator.SPACE);
                     break;
             }
-        }
-        else {
+        } else {
             switch (by) {
                 case 'firstname': case 'fn':
                     cname = hasmid ?
@@ -603,36 +602,101 @@ export class Namefully {
     }
 
     /**
+     * Transforms a birth name to UPPERCASE
+     */
+    upper(): string {
+        return this.getBirthname().toUpperCase();
+    }
+
+    /**
+     * Transforms a birth name to lowercase
+     */
+    lower(): string {
+        return this.getBirthname().toLowerCase();
+    }
+
+    /**
+     * Transforms a birth name to camelCase
+     */
+    camel(): string {
+        return decapitalize(this.pascal());
+    }
+
+    /**
+     * Transforms a birth name to PascalCase
+     */
+    pascal(): string {
+        return this.split().map(n => capitalize(n)).join(Separator.EMPTY);
+    }
+
+    /**
+     * Transforms a birth name to snake_case
+     */
+    snake(): string {
+        return this.split().map(n => n.toLowerCase()).join(Separator.UNDERSCORE);
+    }
+
+    /**
+     * Transforms a birth name to hyphen-case (or kebab-case)
+     */
+    hyphen(): string {
+        return this.split().map(n => n.toLowerCase()).join(Separator.HYPHEN);
+    }
+
+    /**
+     * Transforms a birth name to dot.case
+     */
+    dot(): string {
+        return this.split().map(n => n.toLowerCase()).join(Separator.PERIOD);
+    }
+
+    /**
+     * Transforms a birth name to ToGgLe CaSe
+     */
+    toggle(): string {
+        return toggleCase(this.getBirthname());
+    }
+
+    /**
+     * Splits a birth name using a separator
+     * @param sep separator
+     */
+    split(sep: string | RegExp = /[' -]/g): string[] {
+        return this.getBirthname().replace(sep, Separator.SPACE).split(Separator.SPACE);
+    }
+
+    /**
+     * Joins the name parts of a birth name using a separator
+     * @param sep separator
+     */
+    join(sep: string = Separator.EMPTY): string {
+        return this.split().join(sep);
+    }
+
+    /**
      * Transforms a birth name to a specific case
      * @param case which case to convert a birth name to
      */
     to(
-        _case: 'upper' | 'lower' | 'camel' | 'pascal' | 'snake' | 'hyphen' | 'dot' | 'toggle'
+        _case: 'upper' | 'lower' | 'camel' | 'pascal' | 'snake' | 'hyphen' | 'kebab' | 'dot' | 'toggle'
     ): string {
-        const birthname = this.getBirthname();
-        const nama = birthname
-            .replace(/[' -]/g, Separator.SPACE)
-            .split(Separator.SPACE);
-
         switch(_case) {
             case 'upper':
-                return birthname.toUpperCase();
+                return this.upper();
             case 'lower':
-                return birthname.toLowerCase();
+                return this.lower();
             case 'camel':
+                return this.camel();
             case 'pascal':
-                const pascalCase = nama.map(n => capitalize(n)).join(Separator.EMPTY);
-                return _case === 'camel'
-                    ? decapitalize(pascalCase)
-                    : pascalCase;
+                return this.pascal();
             case 'snake':
-                return nama.map(n => n.toLowerCase()).join(Separator.UNDERSCORE);
-            case 'hyphen':
-                return nama.map(n => n.toLowerCase()).join(Separator.HYPHEN);
+                return this.snake();
+            case 'hyphen': case 'kebab':
+                return this.hyphen();
             case 'dot':
-                return nama.map(n => n.toLowerCase()).join(Separator.PERIOD);
+                return this.dot();
             case 'toggle':
-                return toggleCase(birthname);
+                return this.toggle();
             default:
                 return Separator.EMPTY;
         }
@@ -658,6 +722,55 @@ export class Namefully {
             default:
                 return generatePassword(this.getBirthname());
         }
+    }
+
+    /**
+     * Flips definitely the name order from the preset/current config
+     */
+    flip(): void {
+        if (this.config.orderedBy === 'firstname') {
+            this.config.orderedBy = 'lastname';
+        } else {
+            this.config.orderedBy = 'firstname';
+        }
+        console.warn(`The name order is now changed to: ${this.config.orderedBy}`);
+    }
+
+    /**
+     * Confirms that a name part was set
+     * @param namon prefix, middle name, or suffix
+     */
+    has(namon: 'prefix' | 'middlename' | 'suffix'): boolean {
+        return namon === 'middlename' ? this.hasMiddlename() : !!this.fullname[namon];
+    }
+
+    /**
+     * Gets an exact copy of the core instance
+     */
+    clone(): this {
+        // @see https://gist.github.com/GeorgeGkas/36f7a7f9a9641c2115a11d58233ebed2
+        return Object.assign(
+            Object.create(
+              // Set the prototype of the new object to the prototype of the instance.
+              // Used to allow new object behave like class instance.
+              Object.getPrototypeOf(this),
+            ),
+            // Prevent shallow copies of nested structures like arrays, etc
+            JSON.parse(JSON.stringify(this)),
+        );
+    }
+
+    /**
+     * Gets a JSON representation of the full name
+     */
+    json() {
+        return {
+            prefix: this.getPrefix(),
+            firstname: this.getFirstname(),
+            middlename: this.getMiddlenames(),
+            lastname: this.getLastname(),
+            suffix: this.getSuffix(),
+        };
     }
 
     private hasMiddlename(): boolean {
@@ -810,6 +923,7 @@ export interface Namefully {
     sx: typeof Namefully.prototype.getSuffix;
     inits: typeof Namefully.prototype.getInitials;
     stats: typeof Namefully.prototype.describe;
+    kebab: typeof Namefully.prototype.hyphen;
 }
 
 Namefully.prototype.full = Namefully.prototype.getFullname;
@@ -821,3 +935,4 @@ Namefully.prototype.px = Namefully.prototype.getPrefix;
 Namefully.prototype.sx =  Namefully.prototype.getSuffix;
 Namefully.prototype.inits = Namefully.prototype.getInitials;
 Namefully.prototype.stats = Namefully.prototype.describe;
+Namefully.prototype.kebab = Namefully.prototype.hyphen;
