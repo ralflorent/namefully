@@ -13,7 +13,7 @@ A JavaScript utility for handling person names.
 ## Documentation
 
 Check out the official documentation at
-[https://namefully.netlify.app](https://namefully.netlify.app/).
+[https://namefully.dev](https://namefully.dev/).
 
 ## Motivation
 
@@ -22,7 +22,7 @@ Probably yes. If not, it will come at some point. Be patient.
 
 ## Key features
 
-1. Offer supports for Latin alphabet, including other European ones
+1. Offer supports for many writing systems, including Latin and European ones
 (e.g., German, Greek, Cyrillic, Icelandic characters)
 2. Accept different data shapes as input
 3. Use of optional parameters to access advanced features
@@ -77,7 +77,7 @@ Below are enlisted the options supported by `namefully`.
 
 `string: 'firstname' | 'lastname'`, default: `firstname`
 
-Indicate in what order the names appear when set as a raw string values or
+Indicate in what order the names appear when set as raw string values or
 string array values. That is, the first element/piece of the name is either the
 given name (e.g., `Jon Snow`)  or the surname (e.g.,`Snow Jon`).
 
