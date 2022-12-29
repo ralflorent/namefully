@@ -1,8 +1,26 @@
-# Changelog
+# Change Log
 
 This file contains the documentation on the notable changes and bug fixes, and
 is formatted following this [standard](https://keepachangelog.com/en/1.0.0/).
 This project also adheres to [Semantic Versioning](https://semver.org/).
+
+## [1.2.0] - 2022-12-30
+
+- Improved usability of `Config`
+- Improved error handling `NameError`
+- Added named constructors for `Name`
+- Used convenient getters (e.g., `FirstName.hasMore`, `LastName.hasMother`)
+- Applied small refactoring: introduce additional class members
+- Added support for initials in `format`
+- Added text parser for dynamic birth names (ordered by first name)
+- Reconfigured CI build setup via GitHub actions
+- Improved API documentation
+- Breaking changes:
+  - changed to a simpler file structure
+  - used JavaScript naming convention for class members, methods and functions (e.g. `firstName`)
+  - `prefix` and `suffix` are now available as class members
+  - used semantic names instead for types (e.g.,`titling` -> `title`; `lastnameFormat` -> `surname`)
+  - removed support for summary, ascii and password fields.
 
 ## [1.1.0] - 2020-07-05
 
@@ -122,6 +140,7 @@ This project also adheres to [Semantic Versioning](https://semver.org/).
 
 Initial version
 
+[1.2.0]: https://github.com/ralflorent/namefully/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/ralflorent/namefully/compare/v1.0.9...v1.1.0
 [1.0.9]: https://github.com/ralflorent/namefully/compare/v1.0.8...v1.0.9
 [1.0.8]: https://github.com/ralflorent/namefully/compare/v1.0.7...v1.0.8

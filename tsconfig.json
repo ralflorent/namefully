@@ -11,19 +11,8 @@
         "preserveConstEnums": true,
         "outDir": "dist/lib",
         "sourceMap": true,
-        "lib": ["dom", "es2015", "es2016", "es2017", "es2018"],
-        "paths": {
-            "@root/*": ["src/*"],
-            "@core/*": ["src/core/*"],
-            "@models/*": ["src/models/*"],
-            "@validators/*": ["src/validators/*"],
-        },
+        "lib": ["dom", "es2015", "es2016", "es2017", "es2018"]
     },
-    "include": [
-        "src/**/*",
-    ],
-    "exclude": [
-        "node_modules",
-        "**/*.spec.ts"
-    ]
+    "include": ["src/**/*"],
+    "exclude": ["node_modules", "**/*.spec.ts"]
 }

@@ -1,10 +1,20 @@
 /**
- * Main entry to `Namefully`
+ * Welcome to namefully!
  *
- * Created on March 03, 2020
- * @author Ralph Florent <ralflornt@gmail.com>
+ * `namefully` is a JavaScript utility for handing person names.
+ *
+ * Sources
+ * - repo: https://github.com/ralflorent/namefully
+ * - docs: https://namefully.netlify.app
+ * - npm: https://npmjs.com/package/namefully
+ *
+ * @license MIT
  */
-export * from './namefully';
-export * from './core';
-export * from './models';
-export * from './validators';
+export * from './config'
+export * from './error'
+export * from './full-name'
+export * from './name'
+export * from './namefully'
+export { Parser } from './parser'
+export * from './types'
+export { NameIndex } from './utils'

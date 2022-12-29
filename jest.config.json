@@ -1,13 +1,7 @@
 {
     "transform": {
-      "^.+\\.(t|j)sx?$": "ts-jest"
+        "^.+\\.(t|j)sx?$": "ts-jest"
     },
     "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
-    "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json", "node"],
-    "moduleNameMapper": {
-        "^@root/(.*)$": "<rootDir>/src/$1",
-        "^@core/(.*)$": "<rootDir>/src/core/$1",
-        "^@models/(.*)$": "<rootDir>/src/models/$1",
-        "^@validators/(.*)$": "<rootDir>/src/validators/$1"
-    }
+    "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json", "node"]
 }
