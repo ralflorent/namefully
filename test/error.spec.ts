@@ -1,7 +1,7 @@
 import { Config } from '../src/config'
 import { InputError, NameError, NameErrorType, NotAllowedError, UnknownError, ValidationError } from '../src/error'
-import { FullName, IFullName } from '../src/full-name'
-import { FirstName, LastName, Name } from '../src/name'
+import { FullName } from '../src/full-name'
+import { FirstName, LastName, Name, JsonName } from '../src/name'
 import { Namefully } from '../src/namefully'
 import { Namon } from '../src/types'
 import { Validators } from '../src/validator'
@@ -66,7 +66,7 @@ describe('ValidationError', () => {
 
 describe('InputError', () => {
     test('is thrown if the json name keys are not as expected', () => {
-        expect(() => new Namefully({} as IFullName)).toThrow(InputError)
+        expect(() => new Namefully({} as JsonName)).toThrow(InputError)
         expect(() => Validators.nama.validate(new Map([[Namon.PREFIX, '']]))).toThrow(InputError)
         expect(() =>
             Validators.nama.validate(
@@ -124,7 +124,7 @@ describe('NotAllowedError', () => {
 
 describe('UnknownError', () => {
     test('is thrown if a json name cannot be parsed from FullName', () => {
-        expect(() => FullName.parse({} as IFullName)).toThrow(UnknownError)
+        expect(() => FullName.parse({} as JsonName)).toThrow(UnknownError)
     })
 })
 
