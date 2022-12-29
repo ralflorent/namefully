@@ -299,7 +299,7 @@ The underlying content of this utility is licensed under [MIT](LICENSE).
 [version-url]: https://www.npmjs.com/package/namefully
 [ci-img]: https://github.com/ralflorent/namefully/workflows/build/badge.svg
 [ci-url]: https://github.com/ralflorent/namefully/actions/workflows/config.yml
-[codecov-img]: https://codecov.io/gh/ralflorent/namefully/branch/master/graph/badge.svg
+[codecov-img]: https://codecov.io/gh/ralflorent/namefully/branch/main/graph/badge.svg
 [codecov-url]: https://codecov.io/gh/ralflorent/namefully
 [license-img]: https://img.shields.io/npm/l/namefully
 [license-url]: https://opensource.org/licenses/MIT
