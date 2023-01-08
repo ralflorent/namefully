@@ -11,6 +11,7 @@
  * @license MIT
  */
 export * from './config'
+export { VERSION as version } from './constants'
 export * from './error'
 export * from './full-name'
 export * from './name'

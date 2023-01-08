@@ -183,7 +183,7 @@ Defines the distinct formats to output a compound surname (e.g., Hispanic surnam
 
 ```ts
 const name = new Namefully(
-    [FirstName('John'), LastName('Doe', 'Smith')],
+    [new FirstName('John'), new LastName('Doe', 'Smith')],
     { surname: Surname.HYPHENATED },
 );
 console.log(name.full); // John Doe-Smith
@@ -212,7 +212,7 @@ To sum it all up, the default values are:
 {
     orderedBy: NameOrder.FIRST_NAME,
     separator: Separator.SPACE,
-    title: Title.UK
+    title: Title.UK,
     ending: false,
     bypass: true,
     surname: Surname.FATHER
@@ -234,7 +234,7 @@ class SimpleParser extends Parser<string> {
     }
 }
 
-const name = new Namefully(SimpleParser('Juan#Garcia'));
+const name = new Namefully(new SimpleParser('Juan#Garcia'));
 console.log(name.full); // Juan Garcia
 ```
 

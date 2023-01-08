@@ -126,7 +126,7 @@ export class FullName {
     }
 
     setMiddleName(names: string[] | Name[]): FullName {
-        if (!Array.isArray(names)) return
+        if (!Array.isArray(names)) return this
         if (!this._config.bypass) Validators.middleName.validate(names)
         this._middleName = (names as Array<string | Name>).map((name) =>
             name instanceof Name ? name : Name.middle(name),

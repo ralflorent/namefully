@@ -56,10 +56,6 @@ export abstract class Parser<T = any> {
 }
 
 export class StringParser extends Parser<string> {
-    constructor(raw: string) {
-        super(raw)
-    }
-
     parse(options: Partial<Config>): FullName {
         const config = Config.merge(options)
         const names = this.raw.split(config.separator.token)
@@ -68,10 +64,6 @@ export class StringParser extends Parser<string> {
 }
 
 export class ArrayStringParser extends Parser<string[]> {
-    constructor(raw: string[]) {
-        super(raw)
-    }
-
     parse(options: Partial<Config>): FullName {
         const config = Config.merge(options)
         const fullName = new FullName(config)
@@ -119,10 +111,6 @@ export class ArrayStringParser extends Parser<string[]> {
 }
 
 export class NamaParser extends Parser<JsonName> {
-    constructor(raw: JsonName) {
-        super(raw)
-    }
-
     parse(options: Partial<Config>): FullName {
         const config = Config.merge(options)
 
@@ -152,10 +140,6 @@ export class NamaParser extends Parser<JsonName> {
 }
 
 export class ArrayNameParser extends Parser<Name[]> {
-    constructor(raw: Name[]) {
-        super(raw)
-    }
-
     parse(options: Partial<Config>): FullName {
         const config = Config.merge(options)
         const fullName = new FullName(config)

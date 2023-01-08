@@ -32,14 +32,6 @@ const copyAlias = '_copy'
  * above.
  */
 export class Config {
-    private _name: string
-    private _orderedBy: NameOrder
-    private _separator: Separator
-    private _title: Title
-    private _ending: boolean
-    private _bypass: boolean
-    private _surname: Surname
-
     /**
      * Cache for multiple instances.
      */
@@ -107,22 +99,14 @@ export class Config {
     }
 
     private constructor(
-        name: string,
-        orderedBy = NameOrder.FIRST_NAME,
-        separator = Separator.SPACE,
-        title = Title.UK,
-        ending = false,
-        bypass = true,
-        surname = Surname.FATHER,
-    ) {
-        this._name = name
-        this._orderedBy = orderedBy
-        this._separator = separator
-        this._title = title
-        this._ending = ending
-        this._bypass = bypass
-        this._surname = surname
-    }
+        private _name: string,
+        private _orderedBy = NameOrder.FIRST_NAME,
+        private _separator = Separator.SPACE,
+        private _title = Title.UK,
+        private _ending = false,
+        private _bypass = true,
+        private _surname = Surname.FATHER,
+    ) {}
 
     /**
      * Returns a named configuration with default values.

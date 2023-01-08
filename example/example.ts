@@ -1,8 +1,8 @@
-import { Namefully, NameOrder } from '../src/index'
+import { Namefully } from '../src/index'
 
 function example() {
     // Gives a simple name some super power.
-    const name = new Namefully('Thomas Alva Edison', { orderedBy: NameOrder.LAST_NAME })
+    const name = new Namefully('Thomas Alva Edison')
 
     // Gets the count of characters, including space.
     console.log(name.length) // 18
