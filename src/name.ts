@@ -23,10 +23,7 @@ export class Name {
     }
 
     set value(newValue: string) {
-        if (newValue.trim().length < 2) {
-            throw new InputError({ source: newValue, message: 'must be 2+ characters' })
-        }
-
+        this.validate(newValue)
         this.namon = newValue
         this.initial = newValue[0]
     }
@@ -150,6 +147,12 @@ export class Name {
         this.value = decapitalize(this.namon, range ?? this.capsRange)
         return this
     }
+
+    protected validate(name?: string): void {
+        if (name && name.trim().length < 2) {
+            throw new InputError({ source: name, message: 'must be 2+ characters' })
+        }
+    }
 }
 
 /**
@@ -167,12 +170,7 @@ export class FirstName extends Name {
      */
     constructor(value: string, ...more: string[]) {
         super(value, Namon.FIRST_NAME)
-
-        for (const name of more) {
-            if (name.trim().length < 2) {
-                throw new InputError({ source: name, message: 'must be 2+ characters' })
-            }
-        }
+        more.forEach((n) => this.validate(n))
         this._more = more
     }
 
@@ -253,10 +251,7 @@ export class LastName extends Name {
      */
     constructor(father: string, mother?: string, readonly format = Surname.FATHER) {
         super(father, Namon.LAST_NAME)
-
-        if (mother && mother.trim().length < 2) {
-            throw new InputError({ source: mother, message: 'must be 2+ characters' })
-        }
+        this.validate(mother)
         this._mother = mother
     }
 
