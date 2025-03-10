@@ -1,6 +1,6 @@
-import { MIN_NUMBER_OF_NAME_PARTS, MAX_NUMBER_OF_NAME_PARTS } from './constants'
-import { Name } from './name'
-import { NameOrder, CapsRange } from './types'
+import { MIN_NUMBER_OF_NAME_PARTS, MAX_NUMBER_OF_NAME_PARTS } from './constants';
+import { Name } from './name';
+import { NameOrder, CapsRange } from './types';
 
 /**
  * A fixed set of values to handle specific positions for list of names.
@@ -26,109 +26,99 @@ import { NameOrder, CapsRange } from './types'
  * `['Jane', 'Smith']`.
  */
 export class NameIndex {
-    /**
-     * The minimum number of parts in a list of names.
-     */
-    static get min(): number {
-        return MIN_NUMBER_OF_NAME_PARTS
-    }
+  /** The minimum number of parts in a list of names. */
+  static get min(): number {
+    return MIN_NUMBER_OF_NAME_PARTS;
+  }
 
-    /**
-     * The maximum number of parts in a list of names.
-     */
-    static get max(): number {
-        return MAX_NUMBER_OF_NAME_PARTS
-    }
+  /** The maximum number of parts in a list of names. */
+  static get max(): number {
+    return MAX_NUMBER_OF_NAME_PARTS;
+  }
 
-    private constructor(
-        readonly prefix: number,
-        readonly firstName: number,
-        readonly middleName: number,
-        readonly lastName: number,
-        readonly suffix: number,
-    ) {}
+  private constructor(
+    readonly prefix: number,
+    readonly firstName: number,
+    readonly middleName: number,
+    readonly lastName: number,
+    readonly suffix: number,
+  ) {}
 
-    /**
-     * The default or base indexing: firstName lastName.
-     */
-    static base(): NameIndex {
-        return new this(-1, 0, -1, 1, -1)
-    }
+  /** The default or base indexing: firstName lastName. */
+  static base(): NameIndex {
+    return new this(-1, 0, -1, 1, -1);
+  }
 
-    /**
-     * Gets the name index for a list of names based on the `count` of elements
-     * and their `order` of appearance.
-     */
-    static when(order: NameOrder, count = 2): NameIndex {
-        if (order === NameOrder.FIRST_NAME) {
-            switch (count) {
-                case 2: // first name + last name
-                    return new this(-1, 0, -1, 1, -1)
-                case 3: // first name + middle name + last name
-                    return new this(-1, 0, 1, 2, -1)
-                case 4: // prefix + first name + middle name + last name
-                    return new this(0, 1, 2, 3, -1)
-                case 5: // prefix + first name + middle name + last name + suffix
-                    return new this(0, 1, 2, 3, 4)
-                default:
-                    return NameIndex.base()
-            }
-        } else {
-            switch (count) {
-                case 2: // last name + first name
-                    return new this(-1, 1, -1, 0, -1)
-                case 3: // last name + first name + middle name
-                    return new this(-1, 1, 2, 0, -1)
-                case 4: // prefix + last name + first name + middle name
-                    return new this(0, 2, 3, 1, -1)
-                case 5: // prefix + last name + first name + middle name + suffix
-                    return new this(0, 2, 3, 1, 4)
-                default:
-                    return NameIndex.base()
-            }
-        }
+  /**
+   * Gets the name index for a list of names based on the `count` of elements
+   * and their `order` of appearance.
+   */
+  static when(order: NameOrder, count = 2): NameIndex {
+    if (order === NameOrder.FIRST_NAME) {
+      switch (count) {
+        case 2: // first name + last name
+          return new this(-1, 0, -1, 1, -1);
+        case 3: // first name + middle name + last name
+          return new this(-1, 0, 1, 2, -1);
+        case 4: // prefix + first name + middle name + last name
+          return new this(0, 1, 2, 3, -1);
+        case 5: // prefix + first name + middle name + last name + suffix
+          return new this(0, 1, 2, 3, 4);
+        default:
+          return NameIndex.base();
+      }
+    } else {
+      switch (count) {
+        case 2: // last name + first name
+          return new this(-1, 1, -1, 0, -1);
+        case 3: // last name + first name + middle name
+          return new this(-1, 1, 2, 0, -1);
+        case 4: // prefix + last name + first name + middle name
+          return new this(0, 2, 3, 1, -1);
+        case 5: // prefix + last name + first name + middle name + suffix
+          return new this(0, 2, 3, 1, 4);
+        default:
+          return NameIndex.base();
+      }
     }
+  }
 }
 
 /**
  * Capitalizes a string via a `CapsRange` option.
  */
 export function capitalize(str: string, range: CapsRange = CapsRange.INITIAL): string {
-    if (!str || range === CapsRange.NONE) return str
-    const initial = str[0].toUpperCase()
-    const rest = str.slice(1).toLowerCase()
-    return range === CapsRange.INITIAL ? initial.concat(rest) : str.toUpperCase()
+  if (!str || range === CapsRange.NONE) return str;
+  const initial = str[0].toUpperCase();
+  const rest = str.slice(1).toLowerCase();
+  return range === CapsRange.INITIAL ? initial.concat(rest) : str.toUpperCase();
 }
 
-/**
- * Decapitalizes a string via a `CapsRange` option.
- */
+/** Decapitalizes a string via a `CapsRange` option. */
 export function decapitalize(str: string, range: CapsRange = CapsRange.INITIAL): string {
-    if (!str || range === CapsRange.NONE) return str
-    const initial = str[0].toLowerCase()
-    const rest = str.slice(1)
-    return range === CapsRange.INITIAL ? initial.concat(rest) : str.toLowerCase()
+  if (!str || range === CapsRange.NONE) return str;
+  const initial = str[0].toLowerCase();
+  const rest = str.slice(1);
+  return range === CapsRange.INITIAL ? initial.concat(rest) : str.toLowerCase();
 }
 
-/**
- * Toggles a string representation.
- */
+/** Toggles a string representation. */
 export function toggleCase(str: string): string {
-    const chars = []
-    for (const c of str) {
-        if (c === c.toUpperCase()) {
-            chars.push(c.toLowerCase())
-        } else {
-            chars.push(c.toUpperCase())
-        }
+  const chars = [];
+  for (const c of str) {
+    if (c === c.toUpperCase()) {
+      chars.push(c.toLowerCase());
+    } else {
+      chars.push(c.toUpperCase());
     }
-    return chars.join('')
+  }
+  return chars.join('');
 }
 
 export function isStringArray(value?: unknown): boolean {
-    return Array.isArray(value) && value.length > 0 && value.every((e) => typeof e === 'string')
+  return Array.isArray(value) && value.length > 0 && value.every((e) => typeof e === 'string');
 }
 
 export function isNameArray(value?: unknown): boolean {
-    return Array.isArray(value) && value.length > 0 && value.every((e) => e instanceof Name)
+  return Array.isArray(value) && value.length > 0 && value.every((e) => e instanceof Name);
 }

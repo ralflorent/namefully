@@ -13,7 +13,7 @@ A JavaScript utility for handling person names.
 ## Documentation
 
 Check out the official documentation at
-[namefully.netlify.com](https://namefully.netlify.com).
+[namefully.netlify.app](https://namefully.netlify.app).
 
 ## Motivation
 
