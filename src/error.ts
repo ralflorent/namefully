@@ -81,9 +81,7 @@ export class NameError extends Error {
     this.name = 'NameError';
   }
 
-  /**
-   * The actual source input which caused the error.
-   */
+  /** The actual source input which caused the error. */
   get sourceAsString(): string {
     let input = '';
     if (!this.source) input = '<undefined>';
@@ -93,16 +91,12 @@ export class NameError extends Error {
     return input;
   }
 
-  /**
-   * Whether a message describing the failure exists.
-   */
+  /** Whether a message describing the failure exists. */
   get hasMessage(): boolean {
     return this.message && this.message.trim().length > 0;
   }
 
-  /**
-   * Returns a string representation of the error.
-   */
+  /** Returns a string representation of the error. */
   toString(): string {
     let report = `${this.name} (${this.sourceAsString})`;
     if (this.hasMessage) report = `${report}: ${this.message}`;
@@ -134,13 +128,9 @@ export class InputError extends NameError {
   }
 }
 
-/**
- * An error thrown to indicate that a name fails the validation rules.
- */
+/** An error thrown to indicate that a name fails the validation rules. */
 export class ValidationError extends NameError {
-  /**
-   * Name of the invalid `nameType` if available.
-   */
+  /** Name of the invalid `nameType` if available. */
   readonly nameType: string;
 
   /**
@@ -171,9 +161,7 @@ export class ValidationError extends NameError {
  * a non-supported key.
  */
 export class NotAllowedError extends NameError {
-  /**
-   * The revoked operation name.
-   */
+  /** The revoked operation name. */
   readonly operation: string;
 
   /**
@@ -209,9 +197,7 @@ export class NotAllowedError extends NameError {
  * programmer.
  */
 export class UnknownError extends NameError {
-  /**
-   * The possible unknown error, with trace revealing its source and reason.
-   */
+  /** The possible unknown error, with trace revealing its source and reason. */
   readonly origin?: Error;
 
   /**

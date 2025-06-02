@@ -1,8 +1,8 @@
 {
   "name": "@ralflorent/namefully",
-  "version": "1.2.0",
-  "description": "A JavaScript utility for handling person names in a particular order, way, or shape.",
-  "keywords": ["name", "format"],
+  "version": "1.2.1",
+  "description": "Handle personal names in a particular order, way, or shape.",
+  "keywords": ["family", "format", "human", "name", "parse", "personal"],
   "exports": "./src/index.ts",
   "publish": {
     "include": ["LICENSE", "README.md", "src/**/*.ts"]

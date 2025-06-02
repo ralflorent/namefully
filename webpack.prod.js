@@ -6,7 +6,6 @@ const TerserJSPlugin = require('terser-webpack-plugin');
 module.exports = {
   name: 'namefully',
   mode: 'production',
-  devtool: 'source-map',
   entry: {
     namefully: './src/index.ts',
     'namefully.min': './src/index.ts',
@@ -29,7 +28,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
+        test: /\.ts$/,
         exclude: /(node_modules)/,
         use: 'ts-loader',
       },

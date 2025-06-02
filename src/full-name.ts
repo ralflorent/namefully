@@ -36,44 +36,32 @@ export class FullName {
     this.#config = Config.merge(options);
   }
 
-  /**
-   * A snapshot of the configuration used to set up this full name.
-   */
+  /** A snapshot of the configuration used to set up this full name. */
   get config(): Config {
     return this.#config;
   }
 
-  /**
-   * The prefix part of the full name.
-   */
+  /** The prefix part of the full name. */
   get prefix(): Nullable<Name> {
     return this.#prefix;
   }
 
-  /**
-   * The first name part of the full name.
-   */
+  /** The first name part of the full name. */
   get firstName(): FirstName {
     return this.#firstName;
   }
 
-  /**
-   * The last name part of the full name.
-   */
+  /** The last name part of the full name. */
   get lastName(): LastName {
     return this.#lastName;
   }
 
-  /**
-   * The middle name part of the full name.
-   */
+  /** The middle name part of the full name. */
   get middleName(): Name[] {
     return this.#middleName;
   }
 
-  /**
-   * The suffix part of the full name.
-   */
+  /** The suffix part of the full name. */
   get suffix(): Nullable<Name> {
     return this.#suffix;
   }

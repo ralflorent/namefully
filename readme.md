@@ -1,13 +1,12 @@
 # namefully
 
 [![npm version][version-img]][version-url]
+[![JSR Version][jsr-version]][jsr-url]
 [![CI build][ci-img]][ci-url]
 [![Coverage Status][codecov-img]][codecov-url]
 [![MIT License][license-img]][license-url]
 
-## Description
-
-A JavaScript utility for handling person names.
+Human name handling made easy.
 [Try it live](https://stackblitz.com/edit/namefully).
 
 ## Documentation
@@ -291,14 +290,16 @@ Developed by [Ralph Florent](https://github.com/ralflorent).
 
 ## License
 
-The underlying content of this utility is licensed under [MIT](LICENSE).
+The underlying content of this utility is licensed under [MIT License](LICENSE).
 
 <!-- References -->
 
 [version-img]: https://img.shields.io/npm/v/namefully
 [version-url]: https://www.npmjs.com/package/namefully
+[jsr-version]: https://jsr.io/badges/@ralflorent/namefully
+[jsr-url]: https://jsr.io/@ralflorent/namefully
 [ci-img]: https://github.com/ralflorent/namefully/workflows/build/badge.svg
-[ci-url]: https://github.com/ralflorent/namefully/actions/workflows/config.yml
+[ci-url]: https://github.com/ralflorent/namefully/actions/workflows/ci.yml
 [codecov-img]: https://codecov.io/gh/ralflorent/namefully/branch/main/graph/badge.svg
 [codecov-url]: https://codecov.io/gh/ralflorent/namefully
 [license-img]: https://img.shields.io/npm/l/namefully

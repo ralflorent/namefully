@@ -32,121 +32,88 @@ export class Name {
     this.initial = newValue[0];
   }
 
-  /**
-   * The piece of string treated as a name.
-   */
+  /** The piece of string treated as a name. */
   get value(): string {
     return this.#namon;
   }
 
-  /**
-   * The length of the name.
-   */
+  /** The length of the name. */
   get length(): number {
     return this.#namon.length;
   }
 
-  /**
-   * Whether the name is a prefix.
-   */
+  /** Whether the name is a prefix. */
   get isPrefix(): boolean {
     return this.type === Namon.PREFIX;
   }
 
-  /**
-   * Whether the name is a first name.
-   */
+  /** Whether the name is a first name. */
   get isFirstName(): boolean {
     return this.type === Namon.FIRST_NAME;
   }
 
-  /**
-   * Whether the name is a middle name.
-   */
+  /** Whether the name is a middle name. */
   get isMiddleName(): boolean {
     return this.type === Namon.MIDDLE_NAME;
   }
 
-  /**
-   * Whether the name is a last name.
-   */
+  /** Whether the name is a last name. */
   get isLastName(): boolean {
     return this.type === Namon.LAST_NAME;
   }
 
-  /**
-   * Whether the name is a suffix.
-   */
+  /** Whether the name is a suffix. */
   get isSuffix(): boolean {
     return this.type === Namon.SUFFIX;
   }
 
-  /**
-   * Creates a prefix.
-   */
+  /** Creates a prefix. */
   static prefix(value: string): Name {
     return new this(value, Namon.PREFIX);
   }
 
-  /**
-   * Creates a first name.
-   */
+  /** Creates a first name. */
   static first(value: string): Name {
     return new this(value, Namon.FIRST_NAME);
   }
 
-  /**
-   * Creates a middle name.
-   */
+  /** Creates a middle name. */
   static middle(value: string): Name {
     return new this(value, Namon.MIDDLE_NAME);
   }
 
-  /**
-   * Creates a last name.
-   */
+  /** Creates a last name. */
   static last(value: string): Name {
     return new this(value, Namon.LAST_NAME);
   }
 
-  /**
-   * Creates a suffix.
-   */
+  /** Creates a suffix. */
   static suffix(value: string): Name {
     return new this(value, Namon.SUFFIX);
   }
 
-  /**
-   * Gets the initials (first character) of this name.
-   */
+  /** Gets the initials (first character) of this name. */
   initials(): string[] {
     return [this.initial];
   }
 
-  /**
-   * String representation of this object.
-   */
+  /** String representation of this object. */
   toString(): string {
     return this.#namon;
   }
-  /**
-   * Returns true if the other is equal to this name.
-   */
+
+  /** Returns true if the other is equal to this name. */
   equal(other: Name | unknown): boolean {
     return other instanceof Name && other.value === this.value && other.type === this.type;
   }
 
-  /**
-   * Capitalizes the name.
-   */
+  /** Capitalizes the name. */
   caps(range?: CapsRange): Name {
     this.value = capitalize(this.#namon, range ?? this.capsRange);
     return this;
   }
 
-  /**
-   * De-capitalizes the name.
-   */
+  /** De-capitalizes the name. */
   decaps(range?: CapsRange): Name {
     this.value = decapitalize(this.#namon, range ?? this.capsRange);
     return this;
@@ -178,9 +145,7 @@ export class FirstName extends Name {
     this.#more = more;
   }
 
-  /**
-   * Determines whether a first name has `more` name parts.
-   */
+  /** Determines whether a first name has `more` name parts. */
   get hasMore(): boolean {
     return this.#more.length > 0;
   }
@@ -189,9 +154,7 @@ export class FirstName extends Name {
     return super.length + (this.hasMore ? this.#more.reduce((acc, n) => acc + n).length : 0);
   }
 
-  /**
-   * Returns a combined version of the `value` and `more` if any.
-   */
+  /** Returns a combined version of the `value` and `more` if any. */
   get asNames(): Name[] {
     const names: Name[] = [Name.first(this.value)];
     if (this.hasMore) {
@@ -200,9 +163,7 @@ export class FirstName extends Name {
     return names;
   }
 
-  /**
-   * The additional name parts of the first name.
-   */
+  /** The additional name parts of the first name. */
   get more(): string[] {
     return this.#more;
   }
@@ -233,9 +194,7 @@ export class FirstName extends Name {
     return this;
   }
 
-  /**
-   * Makes a copy of the current name.
-   */
+  /** Makes a copy of the current name. */
   copyWith(values?: { first?: string; more?: string[] }): FirstName {
     return new FirstName(values.first ?? this.value, ...(values.more ?? this.#more));
   }
@@ -263,23 +222,17 @@ export class LastName extends Name {
     this.#mother = mother;
   }
 
-  /**
-   * The surname inherited from a father side.
-   */
+  /** The surname inherited from a father side. */
   get father(): string {
     return this.value;
   }
 
-  /**
-   * The surname inherited from a mother side.
-   */
+  /** The surname inherited from a mother side. */
   get mother(): string | undefined {
     return this.#mother;
   }
 
-  /**
-   * Returns `true` if the mother's surname is defined.
-   */
+  /** Returns `true` if the mother's surname is defined. */
   get hasMother(): boolean {
     return !!this.#mother;
   }
@@ -288,9 +241,7 @@ export class LastName extends Name {
     return super.length + (this.#mother?.length ?? 0);
   }
 
-  /**
-   * Returns a combined version of the `father` and `mother` if any.
-   */
+  /** Returns a combined version of the `father` and `mother` if any. */
   get asNames(): Name[] {
     const names: Name[] = [Name.last(this.value)];
     if (this.hasMother) {
@@ -346,9 +297,7 @@ export class LastName extends Name {
     return this;
   }
 
-  /**
-   * Makes a copy of the current name.
-   */
+  /** Makes a copy of the current name. */
   copyWith(values?: { father?: string; mother?: string; format?: Surname }): LastName {
     return new LastName(values.father ?? this.value, values.mother ?? this.mother, values.format ?? this.format);
   }

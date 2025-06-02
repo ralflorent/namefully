@@ -23,7 +23,7 @@ export abstract class Parser<T = any> {
   static build(text: string): Parser {
     const parts = text.trim().split(Separator.SPACE.token);
     const length = parts.length;
-    if (length === 0 || length === 1) {
+    if (length < 2) {
       throw new InputError({
         source: text,
         message: 'cannot build from invalid input',
@@ -87,10 +87,6 @@ export class ArrayStringParser extends Parser<string[]> {
     if (raw.length === 5) fullName.setSuffix(Name.suffix(raw[suffix]));
 
     return fullName;
-  }
-
-  #split(raw: string, config: Config): Name[] {
-    return raw.split(config.separator.token).map((name) => Name.middle(name));
   }
 }
 

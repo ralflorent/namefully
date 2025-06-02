@@ -1,7 +1,7 @@
 {
   "name": "namefully",
-  "version": "1.2.0",
-  "description": "A JavaScript utility for handling person names in a particular order, way, or shape.",
+  "version": "1.2.1",
+  "description": "Handle personal names in a particular order, way, or shape.",
   "author": "Ralph Florent",
   "license": "MIT",
   "repository": "github:ralflorent/namefully",
@@ -13,13 +13,17 @@
     "dist/**/*"
   ],
   "keywords": [
+    "family",
+    "format",
+    "human",
     "name",
-    "format"
+    "parse",
+    "personal"
   ],
   "scripts": {
     "example": "webpack --config webpack.dev.js --progress && node ./dist/example/index.js",
     "format": "prettier --write '{src,test}/**/*.ts'",
-    "prebuild": "rm -rf dist",
+    "prebuild": "shx rm -rf dist",
     "build": "tsc && tsc -p tsconfig.dts.json && webpack --config webpack.prod.js --progress",
     "lint": "tslint -p tsconfig.json",
     "test": "jest --collectCoverage=true"
@@ -30,6 +34,7 @@
     "clean-webpack-plugin": "^3.0.0",
     "jest": "^29.5.0",
     "prettier": "^3.2.5",
+    "shx": "^0.4.0",
     "terser-webpack-plugin": "^2.3.5",
     "ts-jest": "^29.1.0",
     "ts-loader": "^6.2.1",

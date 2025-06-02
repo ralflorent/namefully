@@ -40,21 +40,15 @@ export class Config {
   #bypass: boolean;
   #surname: Surname;
 
-  /**
-   * Cache for multiple instances.
-   */
+  /** Cache for multiple instances. */
   private static cache = new Map<string, Config>();
 
-  /**
-   * The order of appearance of a full name.
-   */
+  /** The order of appearance of a full name. */
   get orderedBy(): NameOrder {
     return this.#orderedBy;
   }
 
-  /**
-   * The token used to indicate how to split string values.
-   */
+  /** The token used to indicate how to split string values. */
   get separator(): Separator {
     return this.#separator;
   }
@@ -67,9 +61,7 @@ export class Config {
     return this.#title;
   }
 
-  /**
-   * The option indicating if an ending suffix is used in a formal way.
-   */
+  /** The option indicating if an ending suffix is used in a formal way. */
   get ending(): boolean {
     return this.#ending;
   }
@@ -99,9 +91,7 @@ export class Config {
     return this.#surname;
   }
 
-  /**
-   * The name of the cached configuration.
-   */
+  /** The name of the cached configuration. */
   get name(): string {
     return this.#name;
   }
@@ -165,7 +155,7 @@ export class Config {
    */
   copyWith(options: Partial<Config> = {}): Config {
     const { name, orderedBy, separator, title, ending, bypass, surname } = options;
-    const config = Config.create(this.genNewName(name ?? this.name + copyAlias));
+    const config = Config.create(this.#genNewName(name ?? this.name + copyAlias));
     config.#orderedBy = orderedBy ?? this.orderedBy;
     config.#separator = separator ?? this.separator;
     config.#title = title ?? this.title;
@@ -175,16 +165,12 @@ export class Config {
     return config;
   }
 
-  /**
-   * Makes an exact copy of the current configuration.
-   */
+  /** Makes an exact copy of the current configuration. */
   clone(): Config {
     return this.copyWith();
   }
 
-  /**
-   * Resets the configuration by setting it back to its default values.
-   */
+  /** Resets the configuration by setting it back to its default values. */
   reset(): void {
     this.#orderedBy = NameOrder.FIRST_NAME;
     this.#separator = Separator.SPACE;
@@ -205,10 +191,8 @@ export class Config {
     }
   }
 
-  /**
-   * Generates a unique new name.
-   */
-  private genNewName(name: string): string {
-    return name === this.name || Config.cache.has(name) ? this.genNewName(name + copyAlias) : name;
+  /** Generates a unique new name. */
+  #genNewName(name: string): string {
+    return name === this.name || Config.cache.has(name) ? this.#genNewName(name + copyAlias) : name;
   }
 }
