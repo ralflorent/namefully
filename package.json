@@ -1,52 +1,46 @@
 {
-    "name": "namefully",
-    "version": "1.2.0",
-    "description": "A JavaScript utility for handling person names in a particular order, way, or shape.",
-    "main": "dist/lib/index.js",
-    "types": "dist/lib/index.d.ts",
-    "files": [
-        "dist/**/*"
-    ],
-    "browser": "dist/umd/namefully.min.js",
-    "scripts": {
-        "example": "webpack --config webpack.dev.js --progress && node ./dist/example/index.js",
-        "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-        "build": "tsc",
-        "build:umd": "webpack --config webpack.prod.js --progress",
-        "lint": "tslint -p tsconfig.json",
-        "test": "jest --collectCoverage=true",
-        "prepare": "npm run build && npm run build:umd"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/ralflorent/namefully.git"
-    },
-    "keywords": [
-        "name",
-        "format"
-    ],
-    "author": {
-        "name": "Ralph Florent",
-        "email": "ralflornt@gmail.com"
-    },
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/ralflorent/namefully/issues"
-    },
-    "homepage": "https://namefully.netlify.com",
-    "devDependencies": {
-        "@types/jest": "^25.1.3",
-        "@types/node": "^13.9.0",
-        "clean-webpack-plugin": "^3.0.0",
-        "jest": "^25.1.0",
-        "prettier": "2.6.0",
-        "terser-webpack-plugin": "^2.3.5",
-        "ts-jest": "^25.2.1",
-        "ts-loader": "^6.2.1",
-        "tsconfig-paths-webpack-plugin": "^3.2.0",
-        "tslint": "^6.0.0",
-        "typescript": "^3.8.3",
-        "webpack": "^4.42.0",
-        "webpack-cli": "^3.3.11"
-    }
+  "name": "namefully",
+  "version": "1.2.1",
+  "description": "Handle personal names in a particular order, way, or shape.",
+  "author": "Ralph Florent",
+  "license": "MIT",
+  "repository": "github:ralflorent/namefully",
+  "homepage": "https://namefully.netlify.app",
+  "main": "dist/lib/index.js",
+  "types": "dist/types/index.d.ts",
+  "browser": "dist/umd/namefully.min.js",
+  "files": [
+    "dist/**/*"
+  ],
+  "keywords": [
+    "family",
+    "format",
+    "human",
+    "name",
+    "parse",
+    "personal"
+  ],
+  "scripts": {
+    "example": "webpack --config webpack.dev.js --progress && node ./dist/example/index.js",
+    "format": "prettier --write '{src,test}/**/*.ts'",
+    "prebuild": "shx rm -rf dist",
+    "build": "tsc && tsc -p tsconfig.dts.json && webpack --config webpack.prod.js --progress",
+    "lint": "tslint -p tsconfig.json",
+    "test": "jest --collectCoverage=true"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.1",
+    "@types/node": "*",
+    "clean-webpack-plugin": "^3.0.0",
+    "jest": "^29.5.0",
+    "prettier": "^3.2.5",
+    "shx": "^0.4.0",
+    "terser-webpack-plugin": "^2.3.5",
+    "ts-jest": "^29.1.0",
+    "ts-loader": "^6.2.1",
+    "tslint": "^6.0.0",
+    "typescript": "~5.3.0",
+    "webpack": "^4.42.0",
+    "webpack-cli": "^3.3.11"
+  }
 }

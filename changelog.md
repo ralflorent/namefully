@@ -4,6 +4,12 @@ This file contains the documentation on the notable changes and bug fixes, and
 is formatted following this [standard](https://keepachangelog.com/en/1.0.0/).
 This project also adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.2.1] - 2025-06-01
+
+- Upgraded TypeScript and other dependencies
+- Applied effective TypeScript
+- Add support for [jsr.io](https://jsr.io/@ralflorent/namefully)
+
 ## [1.2.0] - 2022-12-30
 
 - Improved usability of `Config`
@@ -140,6 +146,7 @@ This project also adheres to [Semantic Versioning](https://semver.org/).
 
 Initial version
 
+[1.2.1]: https://github.com/ralflorent/namefully/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/ralflorent/namefully/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/ralflorent/namefully/compare/v1.0.9...v1.1.0
 [1.0.9]: https://github.com/ralflorent/namefully/compare/v1.0.8...v1.0.9
