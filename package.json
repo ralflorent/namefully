@@ -9,21 +9,12 @@
   "main": "dist/lib/index.js",
   "types": "dist/types/index.d.ts",
   "browser": "dist/umd/namefully.min.js",
-  "files": [
-    "dist/**/*"
-  ],
-  "keywords": [
-    "family",
-    "format",
-    "human",
-    "name",
-    "parse",
-    "personal"
-  ],
+  "files": ["dist/**/*"],
+  "keywords": ["format", "parse", "human", "personal", "family", "name"],
   "scripts": {
-    "example": "webpack --config webpack.dev.js --progress && node ./dist/example/index.js",
+    "example": "webpack --config webpack.dev.js --progress && node ./build/example/index.js",
     "format": "prettier --write '{src,test}/**/*.ts'",
-    "prebuild": "shx rm -rf dist",
+    "prebuild": "shx rm -rf dist build",
     "build": "tsc && tsc -p tsconfig.dts.json && webpack --config webpack.prod.js --progress",
     "lint": "tslint -p tsconfig.json",
     "test": "jest --collectCoverage=true"
@@ -42,5 +33,15 @@
     "typescript": "~5.3.0",
     "webpack": "^4.42.0",
     "webpack-cli": "^3.3.11"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "all",
+    "printWidth": 120
+  },
+  "jest": {
+    "transform": {
+      "^.+.ts$": "ts-jest"
+    }
   }
 }
