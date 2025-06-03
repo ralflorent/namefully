@@ -20,9 +20,17 @@ export abstract class Parser<T = unknown> {
    * Builds a dynamic `Parser` on the fly and throws a `NameError` when unable
    * to do so. The built parser only knows how to operate birth names.
    */
-  static build(text: string): Parser {
+  static build(text: string, index?: NameIndex): Parser {
     const parts = text.trim().split(Separator.SPACE.token);
     const length = parts.length;
+
+    if (index instanceof NameIndex) {
+      const names = Object.entries(index.toJson())
+        .filter(([, position]) => position > -1 && position < length)
+        .map(([key, position]) => new Name(parts[position], Namon.all.get(key)));
+      return new ArrayNameParser(names);
+    }
+
     if (length < 2) {
       throw new InputError({
         source: text,
@@ -40,9 +48,9 @@ export abstract class Parser<T = unknown> {
   /**
    * Builds asynchronously a dynamic `Parser`.
    */
-  static buildAsync(text: string): Promise<Parser> {
+  static buildAsync(text: string, index?: NameIndex): Promise<Parser> {
     try {
-      return Promise.resolve(Parser.build(text));
+      return Promise.resolve(Parser.build(text, index));
     } catch (error) {
       return Promise.reject(error);
     }

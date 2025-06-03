@@ -5,7 +5,7 @@ import { FullName } from './full-name';
 import { Name, JsonName } from './name';
 import { ArrayNameParser, ArrayStringParser, NamaParser, Parser, StringParser } from './parser';
 import { Flat, NameOrder, NameType, Namon, Nullable, Surname } from './types';
-import { capitalize, decapitalize, isNameArray, isStringArray, toggleCase } from './utils';
+import { capitalize, decapitalize, isNameArray, isStringArray, NameIndex, toggleCase } from './utils';
 
 /**
  * A helper for organizing person names in a particular order, way, or shape.
@@ -73,9 +73,9 @@ export class Namefully {
    * It works like `parse` except that this function returns `null` where `parse`
    * would throw a `NameError`.
    */
-  static tryParse(text: string): Namefully | undefined {
+  static tryParse(text: string, index?: NameIndex): Namefully | undefined {
     try {
-      return new this(Parser.build(text));
+      return new Namefully(Parser.build(text, index));
     } catch {
       return undefined;
     }
@@ -96,8 +96,8 @@ export class Namefully {
    * Keep in mind that prefix and suffix are not considered during the parsing
    * process.
    */
-  static async parse(text: string): Promise<Namefully> {
-    return Parser.buildAsync(text).then((parser) => new Namefully(parser));
+  static async parse(text: string, index?: NameIndex): Promise<Namefully> {
+    return Parser.buildAsync(text, index).then((parser) => new Namefully(parser));
   }
 
   /** The current configuration. */
@@ -163,6 +163,11 @@ export class Namefully {
   /** The first name combined with the last name's initial. */
   get public(): string {
     return this.format('f $l');
+  }
+
+  /** The combination of prefix and last name. */
+  get salutation(): string {
+    return this.format('p l');
   }
 
   /** Returns the full name as set. */
@@ -282,18 +287,19 @@ export class Namefully {
    * - `John Smith` => `['J', 'S']`
    * - `John Ben Smith` => `['J', 'B', 'S']`.
    */
-  initials(options?: { orderedBy?: NameOrder; only?: NameType }): string[] {
-    const initials: string[] = [];
+  initials(options?: {
+    orderedBy?: NameOrder;
+    only?: NameType;
+    asJson?: boolean;
+  }): string[] | Record<string, string[]> {
     const firstInits = this.#fullName.firstName.initials();
     const midInits = this.#fullName.middleName.map((n) => n.initials()[0]);
     const lastInits = this.#fullName.lastName.initials();
 
-    const mergedOptions = {
-      orderedBy: this.config.orderedBy,
-      only: NameType.BIRTH_NAME,
-      ...options,
-    };
-    const { orderedBy, only } = mergedOptions;
+    if (options?.asJson) return { firstName: firstInits, middleName: midInits, lastName: lastInits };
+
+    const initials: string[] = [];
+    const { orderedBy = this.config.orderedBy, only = NameType.BIRTH_NAME } = options ?? {};
 
     if (only !== NameType.BIRTH_NAME) {
       if (only === NameType.FIRST_NAME) {
@@ -377,16 +383,14 @@ export class Namefully {
   ): string {
     if (this.length <= options.limit) return this.full;
 
-    const mergedOptions = {
-      limit: 20,
-      by: Flat.MIDDLE_NAME,
-      withPeriod: true,
-      recursive: false,
-      withMore: false,
-      ...options,
-    };
-
-    const { by, limit, recursive, withMore, withPeriod, surname } = mergedOptions;
+    const {
+      by = Flat.MIDDLE_NAME,
+      limit = 20,
+      recursive = false,
+      withMore = false,
+      withPeriod = true,
+      surname,
+    } = options;
     const sep = withPeriod ? '.' : '';
     const fn = this.#fullName.firstName.toString();
     const mn = this.middleName().join(' ');

@@ -80,9 +80,7 @@ console.log(name.zip()); // Thomas A. E.
 ```
 
 > **Note** that if you intend to use this utility for non-standard name cases such as
-> many middle names or last names, some extra work is required. For example,
-> using `Namefully.parse()` lets you parse names containing many middle names
-> with the risk of throwing a `NameError` when the parsing is not possible.
+> many middle names or last names, use `Namefully.parse()` or `NameBuilder` instead.
 
 ## `Config` and default values
 
@@ -166,11 +164,10 @@ console.log(name.prefix); // Mr.
 Sets an ending character after the full name (a comma before the suffix actually).
 
 ```ts
-const name = new Namefully({
-    firstName: 'John',
-    lastName: 'Smith',
-    suffix: 'Ph.D'
-}, { ending: true })
+const name = new Namefully(
+  { firstName: 'John', lastName: 'Smith', suffix: 'Ph.D'},
+  { ending: true },
+)
 console.log(name.full) // John Smith, Ph.D
 console.log(name.suffix) // Ph.D
 ```
@@ -183,8 +180,8 @@ Defines the distinct formats to output a compound surname (e.g., Hispanic surnam
 
 ```ts
 const name = new Namefully(
-    [new FirstName('John'), new LastName('Doe', 'Smith')],
-    { surname: Surname.HYPHENATED },
+  [new FirstName('John'), new LastName('Doe', 'Smith')],
+  { surname: Surname.HYPHENATED },
 );
 console.log(name.full); // John Doe-Smith
 ```
@@ -210,12 +207,12 @@ To sum it all up, the default values are:
 
 ```ts
 {
-    orderedBy: NameOrder.FIRST_NAME,
-    separator: Separator.SPACE,
-    title: Title.UK,
-    ending: false,
-    bypass: true,
-    surname: Surname.FATHER
+  orderedBy: NameOrder.FIRST_NAME,
+  separator: Separator.SPACE,
+  title: Title.UK,
+  ending: false,
+  bypass: true,
+  surname: Surname.FATHER
 }
 ```
 
@@ -224,18 +221,41 @@ To sum it all up, the default values are:
 Customize your own parser to indicate the full name yourself.
 
 ```ts
-import { Config, FullName, Namefully, Parser } from 'namefully'
+import { Config, FullName, Namefully, Parser } from 'namefully';
 
 // Suppose you want to cover this '#' separator
 class SimpleParser extends Parser<string> {
-    parse(options: Partial<Config>): FullName {
-        const [firstName, lastName] = this.raw.split('#')
-        return FullName.parse({ firstName, lastName }, Config.merge(options))
-    }
+  parse(options: Partial<Config>): FullName {
+    const [firstName, lastName] = this.raw.split('#');
+    return FullName.parse({ firstName, lastName }, Config.merge(options));
+  }
 }
 
 const name = new Namefully(new SimpleParser('Juan#Garcia'));
 console.log(name.full); // Juan Garcia
+```
+
+**Or** use `NameIndex` to specify where the name parts are located in a text.
+
+```ts
+import { Namefully, NameIndex } from 'namefully';
+
+const indexing = NameIndex.only({ firstName: 0, lastName: 3 });
+const name = Namefully.tryParse('Dwayne "The Rock" Johnson', indexing);
+console.log(name.full); // Dwayne Johnson
+```
+
+**Or** simply use `NameBuilder` to build a name on the fly (with lifecycle hooks if needed).
+
+```ts
+import { Name, NameBuilder } from 'namefully';
+
+const builder = NameBuilder.of(Name.first('Nikola')); // can be more than one name
+builder.add(Name.last('Tesla'));
+builder.add(Name.prefix('Mr'));
+
+const name = builder.build() // with options if needed
+console.log(name.full); // Mr Nikola Tesla
 ```
 
 ## Concepts and examples
@@ -259,7 +279,7 @@ Once imported, all that is required to do is to create an instance of
 
 ### Basic cases
 
-Let us take a common example:
+Let us take a common example with all the parts:
 
 `Mr John Joe Smith PhD`
 
@@ -276,15 +296,15 @@ So, this utility understands the name parts as follows:
 - flattened: `John J. S.`
 - initials: `J J S`
 - public: `John S`
+- salutation: `Mr Smith`
 
 ### Limitations
 
-`namefully` does not have support for certain use cases:
+`namefully` does not support certain use cases:
 
-- mononame: `Plato`. A workaround is to set the mononame as both first and last name;
-- multiple prefixes: `Prof. Dr. Einstein`.
-
-See the [test cases][test-cases] for further details.
+- mononame: `Plato` - a workaround is to set the mononame as both first and last name;
+- nickname: `Dwayne "The Rock" Johnson` - use custom parser instead.
+- multiple prefixes or suffixes: `Prof. Dr. Einstein`.
 
 ## Contributing
 
