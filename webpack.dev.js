@@ -2,8 +2,10 @@ const path = require('path');
 
 module.exports = {
   mode: 'development',
+  target: 'node',
   entry: {
-    index: './example/example.ts',
+    index: './example/main.ts',
+    advanced: './example/advanced.ts',
   },
   output: {
     path: path.join(__dirname, '/build/example'),

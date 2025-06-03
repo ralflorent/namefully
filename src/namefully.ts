@@ -34,7 +34,7 @@ import { capitalize, decapitalize, isNameArray, isStringArray, toggleCase } from
  * this: `John Smith`, where `John` is the first name piece and `Smith`, the last
  * name piece.
  *
- * @see https://departments.weber.edu/qsupport&training/Data_Standards/Name.htm
+ * @see https://www.fbiic.gov/public/2008/nov/Naming_practice_guide_UK_2006.pdf
  * for more info on name standards.
  *
  * **IMPORTANT**: Keep in mind that the order of appearance (or name order) matters
@@ -52,13 +52,10 @@ import { capitalize, decapitalize, isNameArray, isStringArray, toggleCase } from
  * Happy name handling 😊!
  */
 export class Namefully {
-  /**
-   * A copy of high-quality name data.
-   */
+  /** A copy of high-quality name data. */
   #fullName: FullName;
 
-  /**
-   * Creates a name with distinguishable parts from a raw string content.
+  /** Creates a name with distinguishable parts from a raw string content.
    * @param names element to parse.
    * @param options additional settings.
    *
@@ -79,7 +76,7 @@ export class Namefully {
   static tryParse(text: string): Namefully | undefined {
     try {
       return new this(Parser.build(text));
-    } catch (error) {
+    } catch {
       return undefined;
     }
   }
@@ -652,18 +649,22 @@ export class Namefully {
         return char === 'm' ? this.middleName().join(' ') : this.middleName().join(' ').toUpperCase();
       case 'o':
       case 'O':
-        const sep = this.config.ending ? ',' : '';
-        const names: string[] = [];
-        if (this.prefix) names.push(this.prefix);
-        names.push(`${this.last},`.toUpperCase());
-        if (this.hasMiddle) {
-          names.push(this.first, this.middleName().join(' ') + sep);
-        } else {
-          names.push(this.first + sep);
-        }
-        if (this.suffix) names.push(this.suffix);
-        const nama = names.join(' ').trim();
-        return char === 'o' ? nama : nama.toUpperCase();
+        return ((character: string): string => {
+          const sep = this.config.ending ? ',' : '',
+            names: string[] = [];
+          if (this.prefix) names.push(this.prefix);
+
+          names.push(`${this.last},`.toUpperCase());
+          if (this.hasMiddle) {
+            names.push(this.first, this.middleName().join(' ') + sep);
+          } else {
+            names.push(this.first + sep);
+          }
+          if (this.suffix) names.push(this.suffix);
+
+          const nama = names.join(' ').trim();
+          return character === 'o' ? nama : nama.toUpperCase();
+        })(char);
       case 'p':
         return this.prefix;
       case 'P':
@@ -686,3 +687,12 @@ export class Namefully {
     }
   }
 }
+
+/**
+ * A default export for the `namefully` utility.
+ * @param names element to parse.
+ * @param options additional settings.
+ */
+export default (names: string | string[] | Name[] | JsonName | Parser, options?: Partial<Config>) => {
+  return new Namefully(names, options);
+};

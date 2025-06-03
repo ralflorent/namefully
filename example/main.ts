@@ -1,8 +1,8 @@
-import { Namefully } from '../src/index';
+import namefully from '../src/index';
 
-function example() {
+function main() {
   // Gives a simple name some super power.
-  const name = new Namefully('Thomas Alva Edison');
+  const name = namefully('Thomas Alva Edison');
 
   // Gets the count of characters, including space.
   console.log(name.length); // 18
@@ -38,4 +38,4 @@ function example() {
   console.log(name.toDotCase()); // thomas.alva.edison
 }
 
-example();
+main();

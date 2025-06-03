@@ -9,7 +9,7 @@ import { InputError } from './error';
 /**
  * A parser signature that helps to organize the names accordingly.
  */
-export abstract class Parser<T = any> {
+export abstract class Parser<T = unknown> {
   /**
    * Constructs a custom parser accordingly.
    * @param raw data to be parsed
