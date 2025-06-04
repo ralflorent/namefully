@@ -1,6 +1,0 @@
-# Ignore artifacts:
-dist
-coverage
-node_modules
-.github
-*.md

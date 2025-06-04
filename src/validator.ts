@@ -278,30 +278,12 @@ export class ArrayStringValidator extends ArrayValidator<string> {
   validate(values: string[]): void {
     this.validateIndex(values);
 
-    switch (values.length) {
-      case 2:
-        Validators.firstName.validate(values[this.index.firstName]);
-        Validators.lastName.validate(values[this.index.lastName]);
-        break;
-      case 3:
-        Validators.firstName.validate(values[this.index.firstName]);
-        Validators.middleName.validate(values[this.index.middleName]);
-        Validators.lastName.validate(values[this.index.lastName]);
-        break;
-      case 4:
-        Validators.namon.validate(values[this.index.prefix]);
-        Validators.firstName.validate(values[this.index.firstName]);
-        Validators.middleName.validate(values[this.index.middleName]);
-        Validators.lastName.validate(values[this.index.lastName]);
-        break;
-      case 5:
-        Validators.namon.validate(values[this.index.prefix]);
-        Validators.firstName.validate(values[this.index.firstName]);
-        Validators.middleName.validate(values[this.index.middleName]);
-        Validators.lastName.validate(values[this.index.lastName]);
-        Validators.namon.validate(values[this.index.suffix]);
-        break;
-    }
+    Validators.firstName.validate(values[this.index.firstName]);
+    Validators.lastName.validate(values[this.index.lastName]);
+
+    if (values.length >= 3) Validators.middleName.validate(values[this.index.middleName]);
+    if (values.length >= 4) Validators.namon.validate(values[this.index.prefix]);
+    if (values.length === 5) Validators.namon.validate(values[this.index.suffix]);
   }
 
   validateIndex(values: string[]): void {

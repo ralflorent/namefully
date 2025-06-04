@@ -1,8 +1,8 @@
 {
   "name": "@ralflorent/namefully",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "description": "Handle personal names in a particular order, way, or shape.",
-  "keywords": ["family", "format", "human", "name", "parse", "personal"],
+  "keywords": ["format", "parse", "human", "personal", "family", "name"],
   "exports": "./src/index.ts",
   "publish": {
     "include": ["LICENSE", "README.md", "src/**/*.ts"]

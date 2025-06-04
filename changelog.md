@@ -4,11 +4,18 @@ This file contains the documentation on the notable changes and bug fixes, and
 is formatted following this [standard](https://keepachangelog.com/en/1.0.0/).
 This project also adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.3.0] - 2025-06-03
+
+- Addded name builder capabilities with lifecycle hooks
+- Parsed non-standard name cases with indexers
+- Returned initials as JSON dictionary if needed
+- Applied minor updates to documentation
+
 ## [1.2.1] - 2025-06-01
 
 - Upgraded TypeScript and other dependencies
 - Applied effective TypeScript
-- Add support for [jsr.io](https://jsr.io/@ralflorent/namefully)
+- Added support for [jsr.io](https://jsr.io/@ralflorent/namefully)
 
 ## [1.2.0] - 2022-12-30
 
@@ -146,6 +153,7 @@ This project also adheres to [Semantic Versioning](https://semver.org/).
 
 Initial version
 
+[1.3.0]: https://github.com/ralflorent/namefully/compare/v1.2.1...v1.3.0
 [1.2.1]: https://github.com/ralflorent/namefully/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/ralflorent/namefully/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/ralflorent/namefully/compare/v1.0.9...v1.1.0

@@ -5,7 +5,7 @@ import { FullName } from './full-name';
 import { Name, JsonName } from './name';
 import { ArrayNameParser, ArrayStringParser, NamaParser, Parser, StringParser } from './parser';
 import { Flat, NameOrder, NameType, Namon, Nullable, Surname } from './types';
-import { capitalize, decapitalize, isNameArray, isStringArray, toggleCase } from './utils';
+import { capitalize, decapitalize, isNameArray, isStringArray, NameIndex, toggleCase } from './utils';
 
 /**
  * A helper for organizing person names in a particular order, way, or shape.
@@ -34,7 +34,7 @@ import { capitalize, decapitalize, isNameArray, isStringArray, toggleCase } from
  * this: `John Smith`, where `John` is the first name piece and `Smith`, the last
  * name piece.
  *
- * @see https://departments.weber.edu/qsupport&training/Data_Standards/Name.htm
+ * @see https://www.fbiic.gov/public/2008/nov/Naming_practice_guide_UK_2006.pdf
  * for more info on name standards.
  *
  * **IMPORTANT**: Keep in mind that the order of appearance (or name order) matters
@@ -52,13 +52,10 @@ import { capitalize, decapitalize, isNameArray, isStringArray, toggleCase } from
  * Happy name handling 😊!
  */
 export class Namefully {
-  /**
-   * A copy of high-quality name data.
-   */
+  /** A copy of high-quality name data. */
   #fullName: FullName;
 
-  /**
-   * Creates a name with distinguishable parts from a raw string content.
+  /** Creates a name with distinguishable parts from a raw string content.
    * @param names element to parse.
    * @param options additional settings.
    *
@@ -76,10 +73,10 @@ export class Namefully {
    * It works like `parse` except that this function returns `null` where `parse`
    * would throw a `NameError`.
    */
-  static tryParse(text: string): Namefully | undefined {
+  static tryParse(text: string, index?: NameIndex): Namefully | undefined {
     try {
-      return new this(Parser.build(text));
-    } catch (error) {
+      return new Namefully(Parser.build(text, index));
+    } catch {
       return undefined;
     }
   }
@@ -99,8 +96,8 @@ export class Namefully {
    * Keep in mind that prefix and suffix are not considered during the parsing
    * process.
    */
-  static async parse(text: string): Promise<Namefully> {
-    return Parser.buildAsync(text).then((parser) => new Namefully(parser));
+  static async parse(text: string, index?: NameIndex): Promise<Namefully> {
+    return Parser.buildAsync(text, index).then((parser) => new Namefully(parser));
   }
 
   /** The current configuration. */
@@ -166,6 +163,11 @@ export class Namefully {
   /** The first name combined with the last name's initial. */
   get public(): string {
     return this.format('f $l');
+  }
+
+  /** The combination of prefix and last name. */
+  get salutation(): string {
+    return this.format('p l');
   }
 
   /** Returns the full name as set. */
@@ -285,18 +287,19 @@ export class Namefully {
    * - `John Smith` => `['J', 'S']`
    * - `John Ben Smith` => `['J', 'B', 'S']`.
    */
-  initials(options?: { orderedBy?: NameOrder; only?: NameType }): string[] {
-    const initials: string[] = [];
+  initials(options?: {
+    orderedBy?: NameOrder;
+    only?: NameType;
+    asJson?: boolean;
+  }): string[] | Record<string, string[]> {
     const firstInits = this.#fullName.firstName.initials();
     const midInits = this.#fullName.middleName.map((n) => n.initials()[0]);
     const lastInits = this.#fullName.lastName.initials();
 
-    const mergedOptions = {
-      orderedBy: this.config.orderedBy,
-      only: NameType.BIRTH_NAME,
-      ...options,
-    };
-    const { orderedBy, only } = mergedOptions;
+    if (options?.asJson) return { firstName: firstInits, middleName: midInits, lastName: lastInits };
+
+    const initials: string[] = [];
+    const { orderedBy = this.config.orderedBy, only = NameType.BIRTH_NAME } = options ?? {};
 
     if (only !== NameType.BIRTH_NAME) {
       if (only === NameType.FIRST_NAME) {
@@ -380,16 +383,14 @@ export class Namefully {
   ): string {
     if (this.length <= options.limit) return this.full;
 
-    const mergedOptions = {
-      limit: 20,
-      by: Flat.MIDDLE_NAME,
-      withPeriod: true,
-      recursive: false,
-      withMore: false,
-      ...options,
-    };
-
-    const { by, limit, recursive, withMore, withPeriod, surname } = mergedOptions;
+    const {
+      by = Flat.MIDDLE_NAME,
+      limit = 20,
+      recursive = false,
+      withMore = false,
+      withPeriod = true,
+      surname,
+    } = options;
     const sep = withPeriod ? '.' : '';
     const fn = this.#fullName.firstName.toString();
     const mn = this.middleName().join(' ');
@@ -652,18 +653,22 @@ export class Namefully {
         return char === 'm' ? this.middleName().join(' ') : this.middleName().join(' ').toUpperCase();
       case 'o':
       case 'O':
-        const sep = this.config.ending ? ',' : '';
-        const names: string[] = [];
-        if (this.prefix) names.push(this.prefix);
-        names.push(`${this.last},`.toUpperCase());
-        if (this.hasMiddle) {
-          names.push(this.first, this.middleName().join(' ') + sep);
-        } else {
-          names.push(this.first + sep);
-        }
-        if (this.suffix) names.push(this.suffix);
-        const nama = names.join(' ').trim();
-        return char === 'o' ? nama : nama.toUpperCase();
+        return ((character: string): string => {
+          const sep = this.config.ending ? ',' : '',
+            names: string[] = [];
+          if (this.prefix) names.push(this.prefix);
+
+          names.push(`${this.last},`.toUpperCase());
+          if (this.hasMiddle) {
+            names.push(this.first, this.middleName().join(' ') + sep);
+          } else {
+            names.push(this.first + sep);
+          }
+          if (this.suffix) names.push(this.suffix);
+
+          const nama = names.join(' ').trim();
+          return character === 'o' ? nama : nama.toUpperCase();
+        })(char);
       case 'p':
         return this.prefix;
       case 'P':
@@ -686,3 +691,12 @@ export class Namefully {
     }
   }
 }
+
+/**
+ * A default export for the `namefully` utility.
+ * @param names element to parse.
+ * @param options additional settings.
+ */
+export default (names: string | string[] | Name[] | JsonName | Parser, options?: Partial<Config>) => {
+  return new Namefully(names, options);
+};

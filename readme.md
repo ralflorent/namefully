@@ -44,6 +44,7 @@ You may want to use this library if:
 3. Use tokens (separators) to reshape prefixes and suffixes
 4. Accept customized parsers (do it yourself)
 5. Parse non-standard name cases
+6. Build a name on the fly (via a builder)
 
 ## Installation
 
@@ -65,10 +66,10 @@ This package is also available in [Angular](https://angular.io/) and
 
 ## Usage
 
-See `example/example.ts`.
+See [examples] or [test cases][test-cases] for more details.
 
 ```ts
-import { Namefully } from 'namefully'
+import { Namefully } from 'namefully';
 
 const name = new Namefully('Thomas Alva Edison');
 console.log(name.short); // Thomas Edison
@@ -78,10 +79,8 @@ console.log(name.format('L, f m')); // EDISON, Thomas Alva
 console.log(name.zip()); // Thomas A. E.
 ```
 
-> NOTE: if you intend to use this utility for non-standard name cases such as
-> many middle names or last names, some extra work is required. For example,
-> using `Namefully.parse()` lets you parse names containing many middle names
-> with the risk of throwing a `NameError` when the parsing is not possible.
+> **Note** that if you intend to use this utility for non-standard name cases such as
+> many middle names or last names, use `Namefully.parse()` or `NameBuilder` instead.
 
 ## `Config` and default values
 
@@ -112,7 +111,7 @@ const name2 = new Namefully(['Edison', 'Thomas'], { orderedBy: NameOrder.LAST_NA
 console.log(name2.first); // Thomas
 ```
 
-> NOTE: This option also affects all the other results of the API. In other
+> **Note** that this option also affects all the other results of the API. In other
 > words, the results will prioritize the order of appearance set in the first
 > place for the other operations. Keep in mind that in some cases, it can be
 > altered on the go. See the example below.
@@ -165,11 +164,10 @@ console.log(name.prefix); // Mr.
 Sets an ending character after the full name (a comma before the suffix actually).
 
 ```ts
-const name = new Namefully({
-    firstName: 'John',
-    lastName: 'Smith',
-    suffix: 'Ph.D'
-}, { ending: true })
+const name = new Namefully(
+  { firstName: 'John', lastName: 'Smith', suffix: 'Ph.D'},
+  { ending: true },
+)
 console.log(name.full) // John Smith, Ph.D
 console.log(name.suffix) // Ph.D
 ```
@@ -182,8 +180,8 @@ Defines the distinct formats to output a compound surname (e.g., Hispanic surnam
 
 ```ts
 const name = new Namefully(
-    [new FirstName('John'), new LastName('Doe', 'Smith')],
-    { surname: Surname.HYPHENATED },
+  [new FirstName('John'), new LastName('Doe', 'Smith')],
+  { surname: Surname.HYPHENATED },
 );
 console.log(name.full); // John Doe-Smith
 ```
@@ -209,12 +207,12 @@ To sum it all up, the default values are:
 
 ```ts
 {
-    orderedBy: NameOrder.FIRST_NAME,
-    separator: Separator.SPACE,
-    title: Title.UK,
-    ending: false,
-    bypass: true,
-    surname: Surname.FATHER
+  orderedBy: NameOrder.FIRST_NAME,
+  separator: Separator.SPACE,
+  title: Title.UK,
+  ending: false,
+  bypass: true,
+  surname: Surname.FATHER
 }
 ```
 
@@ -223,23 +221,47 @@ To sum it all up, the default values are:
 Customize your own parser to indicate the full name yourself.
 
 ```ts
-import { Config, FullName, Namefully, Parser } from 'namefully'
+import { Config, FullName, Namefully, Parser } from 'namefully';
 
 // Suppose you want to cover this '#' separator
 class SimpleParser extends Parser<string> {
-    parse(options: Partial<Config>): FullName {
-        const [firstName, lastName] = this.raw.split('#')
-        return FullName.parse({ firstName, lastName }, Config.merge(options))
-    }
+  parse(options: Partial<Config>): FullName {
+    const [firstName, lastName] = this.raw.split('#');
+    return FullName.parse({ firstName, lastName }, Config.merge(options));
+  }
 }
 
 const name = new Namefully(new SimpleParser('Juan#Garcia'));
 console.log(name.full); // Juan Garcia
 ```
 
+**Or** use `NameIndex` to specify where the name parts are located in a text.
+
+```ts
+import { Namefully, NameIndex } from 'namefully';
+
+const indexing = NameIndex.only({ firstName: 0, lastName: 3 });
+const name = Namefully.tryParse('Dwayne "The Rock" Johnson', indexing);
+console.log(name.full); // Dwayne Johnson
+```
+
+**Or** simply use `NameBuilder` to build a name on the fly (with lifecycle hooks if needed).
+
+```ts
+import { Name, NameBuilder } from 'namefully';
+
+const builder = NameBuilder.of(Name.first('Nikola')); // can be more than one name
+builder.add(Name.last('Tesla'));
+builder.add(Name.prefix('Mr'));
+
+const name = builder.build() // with options if needed
+console.log(name.full); // Mr Nikola Tesla
+```
+
 ## Concepts and examples
 
-The name standards used for the current version of this library are as follows:
+The name standards (inspired by this [UK name guide][name-standards]) used for
+the current version of this library are as follows:
 
 `[prefix] firstName [middleName] lastName [suffix]`
 
@@ -257,7 +279,7 @@ Once imported, all that is required to do is to create an instance of
 
 ### Basic cases
 
-Let us take a common example:
+Let us take a common example with all the parts:
 
 `Mr John Joe Smith PhD`
 
@@ -274,23 +296,24 @@ So, this utility understands the name parts as follows:
 - flattened: `John J. S.`
 - initials: `J J S`
 - public: `John S`
+- salutation: `Mr Smith`
 
 ### Limitations
 
-`namefully` does not have support for certain use cases:
+`namefully` does not support certain use cases:
 
-- mononame: `Plato`. A workaround is to set the mononame as both first and last name;
-- multiple prefixes: `Prof. Dr. Einstein`.
+- mononame: `Plato` - a workaround is to set the mononame as both first and last name;
+- nickname: `Dwayne "The Rock" Johnson` - use custom parser instead.
+- multiple prefixes or suffixes: `Prof. Dr. Einstein`.
 
-See the [test cases](test) for further details.
+## Contributing
 
-## Author
-
-Developed by [Ralph Florent](https://github.com/ralflorent).
+Visit [CONTRIBUTING.md][contributing-url] for details on the contribution guidelines,
+the code of conduct, and the process for submitting pull requests.
 
 ## License
 
-The underlying content of this utility is licensed under [MIT License](LICENSE).
+The underlying content of this utility is licensed under [MIT License][license-url].
 
 <!-- References -->
 
@@ -304,3 +327,8 @@ The underlying content of this utility is licensed under [MIT License](LICENSE).
 [codecov-url]: https://codecov.io/gh/ralflorent/namefully
 [license-img]: https://img.shields.io/npm/l/namefully
 [license-url]: https://opensource.org/licenses/MIT
+
+[contributing-url]: https://github.com/ralflorent/namefully/blob/main/CONTRIBUTING.md
+[examples]: https://github.com/ralflorent/namefully/tree/main/example
+[test-cases]: https://github.com/ralflorent/namefully/tree/main/test
+[name-standards]: https://www.fbiic.gov/public/2008/nov/Naming_practice_guide_UK_2006.pdf

@@ -36,7 +36,7 @@ export class NameIndex {
     return MAX_NUMBER_OF_NAME_PARTS;
   }
 
-  private constructor(
+  protected constructor(
     readonly prefix: number,
     readonly firstName: number,
     readonly middleName: number,
@@ -81,6 +81,20 @@ export class NameIndex {
           return NameIndex.base();
       }
     }
+  }
+
+  static only({ prefix = -1, firstName, middleName = -1, lastName, suffix = -1 }: Record<string, number>): NameIndex {
+    return new this(prefix, firstName, middleName, lastName, suffix);
+  }
+
+  toJson(): Record<string, number> {
+    return {
+      prefix: this.prefix,
+      firstName: this.firstName,
+      middleName: this.middleName,
+      lastName: this.lastName,
+      suffix: this.suffix,
+    };
   }
 }
 

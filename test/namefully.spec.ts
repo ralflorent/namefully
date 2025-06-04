@@ -2,8 +2,10 @@ import { Config } from '../src/config';
 import { NameError } from '../src/error';
 import { FirstName, LastName, Name } from '../src/name';
 import { Namefully } from '../src/namefully';
+import { NameBuilder } from '../src/builder';
 import { Flat, NameOrder, NameType, Namon, Separator, Surname, Title } from '../src/types';
 import { SimpleParser, findNameCase } from './helpers';
+import { NameIndex } from '../src/utils';
 
 describe('Namefully', () => {
   describe('(default settings)', () => {
@@ -129,6 +131,7 @@ describe('Namefully', () => {
       expect(name.short).toBe('John Smith');
       expect(name.long).toBe('John Ben Smith');
       expect(name.public).toBe('John S');
+      expect(name.salutation).toBe('Mr Smith');
       expect(name.full).toBe('Mr John Ben Smith Ph.D');
       expect(name.fullName()).toBe('Mr John Ben Smith Ph.D');
       expect(name.fullName(NameOrder.LAST_NAME)).toBe('Mr Smith John Ben Ph.D');
@@ -142,6 +145,7 @@ describe('Namefully', () => {
       expect(name.initials({ only: NameType.FIRST_NAME })).toStrictEqual(['J']);
       expect(name.initials({ only: NameType.MIDDLE_NAME })).toStrictEqual(['B']);
       expect(name.initials({ only: NameType.LAST_NAME })).toStrictEqual(['S']);
+      expect(name.initials({ asJson: true })).toStrictEqual({ firstName: ['J'], middleName: ['B'], lastName: ['S'] });
     });
 
     test('.shorten() shortens a full name to a first and last name', () => {
@@ -192,6 +196,7 @@ describe('Namefully', () => {
       expect(name.short).toBe('Smith John');
       expect(name.long).toBe('Smith John Ben');
       expect(name.public).toBe('John S');
+      expect(name.salutation).toBe('Mr Smith');
       expect(name.full).toBe('Mr Smith John Ben Ph.D');
       expect(name.fullName()).toBe('Mr Smith John Ben Ph.D');
       expect(name.fullName(NameOrder.FIRST_NAME)).toBe('Mr John Ben Smith Ph.D');
@@ -205,6 +210,7 @@ describe('Namefully', () => {
       expect(name.initials({ only: NameType.FIRST_NAME })).toStrictEqual(['J']);
       expect(name.initials({ only: NameType.MIDDLE_NAME })).toStrictEqual(['B']);
       expect(name.initials({ only: NameType.LAST_NAME })).toStrictEqual(['S']);
+      expect(name.initials({ asJson: true })).toStrictEqual({ firstName: ['J'], middleName: ['B'], lastName: ['S'] });
     });
 
     test('.shorten() shortens a full name to a first and last name', () => {
@@ -251,6 +257,12 @@ describe('Namefully', () => {
       expect(new Namefully([Name.first('John'), Name.last('Smith'), Name.suffix('Ph.D')]).birth).toBe('John Smith');
     });
 
+    test('NameBuilder', () => {
+      const builder = NameBuilder.create();
+      builder.add(Name.first('John'), Name.last('Smith'), Name.suffix('Ph.D'));
+      expect(builder.build().birth).toBe('John Smith');
+    });
+
     test('Parser<T> (Custom Parser)', () => {
       expect(new Namefully(new SimpleParser('John#Smith'), Config.create('simpleParser')).toString()).toBe(
         'John Smith',
@@ -258,6 +270,8 @@ describe('Namefully', () => {
     });
 
     test('tryParse()', () => {
+      expect(Namefully.tryParse('John')).toBeUndefined();
+
       let parsed = Namefully.tryParse('John Smith');
       expect(parsed).toBeDefined();
       expect(parsed?.short).toBe('John Smith');
@@ -280,7 +294,16 @@ describe('Namefully', () => {
       expect(parsed?.middle).toBe('Some');
       expect(parsed?.middleName().join(' ')).toBe('Some Other Name Parts');
 
-      expect(Namefully.tryParse('John')).toBeUndefined();
+      parsed = Namefully.tryParse(
+        'John "Nickname" Smith Ph.D',
+        NameIndex.only({ firstName: 0, lastName: 2, suffix: 3 }),
+      );
+      expect(parsed).toBeDefined();
+      expect(parsed?.short).toBe('John Smith');
+      expect(parsed?.first).toBe('John');
+      expect(parsed?.last).toBe('Smith');
+      expect(parsed?.suffix).toBe('Ph.D');
+      expect(parsed?.middle).toBeUndefined();
     });
 
     test('parse()', async () => {
