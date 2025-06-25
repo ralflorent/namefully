@@ -4,9 +4,16 @@ This file contains the documentation on the notable changes and bug fixes, and
 is formatted following this [standard](https://keepachangelog.com/en/1.0.0/).
 This project also adheres to [Semantic Versioning](https://semver.org/).
 
+## [2.0.0] - 2025-06-24
+
+- Refactored codebase to support both ESM (default) and CommonJS formats
+- Fixed minor lints related to TypeScript
+- Moved tests closer to source files
+- Switched bundler: Webpack -> Rollup
+
 ## [1.3.0] - 2025-06-03
 
-- Addded name builder capabilities with lifecycle hooks
+- Added name builder capabilities with lifecycle hooks
 - Parsed non-standard name cases with indexers
 - Returned initials as JSON dictionary if needed
 - Applied minor updates to documentation
@@ -153,6 +160,7 @@ This project also adheres to [Semantic Versioning](https://semver.org/).
 
 Initial version
 
+[2.0.0]: https://github.com/ralflorent/namefully/compare/v1.3.0...v2.0.0
 [1.3.0]: https://github.com/ralflorent/namefully/compare/v1.2.1...v1.3.0
 [1.2.1]: https://github.com/ralflorent/namefully/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/ralflorent/namefully/compare/v1.1.0...v1.2.0

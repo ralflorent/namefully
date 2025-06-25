@@ -204,7 +204,7 @@ export class UnknownError extends NameError {
    */
   constructor(error: ErrorMessage & { error?: Error }) {
     super(error.source, error.message, NameErrorType.UNKNOWN);
-    this.origin = error.error
+    this.origin = error.error;
     this.name = 'UnknownError';
   }
 

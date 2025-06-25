@@ -67,8 +67,8 @@ class ValidationRule {
 }
 
 const toNameSource = (values: unknown[]): string => {
-  return isNameArray(values) ? (values as Name[]).map((n: Name) => n.toString()).join(' ') : ''
-}
+  return isNameArray(values) ? (values as Name[]).map((n: Name) => n.toString()).join(' ') : '';
+};
 
 export interface Validator<T> {
   validate(value: T): void;
