@@ -1,11 +1,8 @@
 {
+  "extends": "./tsconfig.json",
   "compilerOptions": {
     "declaration": true,
     "emitDeclarationOnly": true,
-    "outDir": "dist/types",
-    "module": "commonjs",
-    "target": "es2015",
-    "moduleResolution": "node"
-  },
-  "include": ["src"]
+    "removeComments": false
+  }
 }

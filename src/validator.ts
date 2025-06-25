@@ -1,8 +1,8 @@
-import { MIN_NUMBER_OF_NAME_PARTS, MAX_NUMBER_OF_NAME_PARTS } from './constants';
-import { InputError, ValidationError } from './error';
-import { FirstName, LastName, Name } from './name';
-import { Namon } from './types';
-import { NameIndex } from './utils';
+import { MIN_NUMBER_OF_NAME_PARTS, MAX_NUMBER_OF_NAME_PARTS } from './constants.js';
+import { InputError, NameError, ValidationError } from './error.js';
+import { FirstName, LastName, Name, isNameArray } from './name.js';
+import { Namon } from './types.js';
+import { NameIndex } from './utils.js';
 
 /**
  * Represents a set of validation rules (regex)
@@ -64,6 +64,10 @@ class ValidationRule {
    * - with space
    */
   static lastName: RegExp = ValidationRule.namon;
+}
+
+const toNameSource = (values: unknown[]): string => {
+  return isNameArray(values) ? (values as Name[]).map((n: Name) => n.toString()).join(' ') : ''
 }
 
 export interface Validator<T> {
@@ -155,11 +159,11 @@ class MiddleNameValidator implements Validator<string | string[] | Name[]> {
       try {
         const validator = NamonValidator.create();
         for (const name of value) validator.validate(name, Namon.MIDDLE_NAME);
-      } catch (error) {
+      } catch (error: unknown) {
         throw new ValidationError({
-          source: value,
+          source: toNameSource(value),
           nameType: 'middleName',
-          message: error?.message,
+          message: (error as NameError)?.message,
         });
       }
     } else {
@@ -208,7 +212,7 @@ class NameValidator implements Validator<Name> {
   validate(name: Name, type?: Namon): void {
     if (type && name.type !== type) {
       throw new ValidationError({
-        source: [name],
+        source: name.toString(),
         nameType: name.type.toString(),
         message: 'wrong type',
       });
@@ -216,7 +220,7 @@ class NameValidator implements Validator<Name> {
 
     if (!ValidationRule.namon.test(name.value)) {
       throw new ValidationError({
-        source: [name],
+        source: name.toString(),
         nameType: name.type.toString(),
         message: 'invalid content',
       });
@@ -233,15 +237,11 @@ export class NamaValidator implements Validator<Map<Namon, string>> {
 
   validate(value: Map<Namon, string>): void {
     this.validateKeys(value);
-    Validators.firstName.validate(value.get(Namon.FIRST_NAME));
-    Validators.lastName.validate(value.get(Namon.LAST_NAME));
+    Validators.firstName.validate(value.get(Namon.FIRST_NAME)!);
+    Validators.lastName.validate(value.get(Namon.LAST_NAME)!);
 
-    if (value.has(Namon.PREFIX)) {
-      Validators.namon.validate(value.get(Namon.PREFIX));
-    }
-    if (value.has(Namon.SUFFIX)) {
-      Validators.namon.validate(value.get(Namon.SUFFIX));
-    }
+    if (value.has(Namon.PREFIX)) Validators.namon.validate(value.get(Namon.PREFIX)!);
+    if (value.has(Namon.SUFFIX)) Validators.namon.validate(value.get(Namon.SUFFIX)!);
   }
 
   validateKeys(nama: Map<Namon, string>): void {
@@ -301,14 +301,14 @@ export class ArrayNameValidator implements Validator<Name[]> {
   validate(value: Name[]): void {
     if (value.length < MIN_NUMBER_OF_NAME_PARTS) {
       throw new InputError({
-        source: value,
+        source: toNameSource(value),
         message: `expecting at least ${MIN_NUMBER_OF_NAME_PARTS} elements`,
       });
     }
 
     if (!this.#hasBasicNames(value)) {
       throw new InputError({
-        source: value,
+        source: toNameSource(value),
         message: 'both first and last names are required',
       });
     }

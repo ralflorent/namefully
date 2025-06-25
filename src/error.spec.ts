@@ -1,10 +1,10 @@
-import { Config } from '../src/config';
-import { InputError, NameError, NameErrorType, NotAllowedError, UnknownError, ValidationError } from '../src/error';
-import { FullName } from '../src/full-name';
-import { FirstName, LastName, Name, JsonName } from '../src/name';
-import { Namefully } from '../src/namefully';
-import { Namon } from '../src/types';
-import { Validators } from '../src/validator';
+import { Config } from './config.js';
+import { InputError, NameError, NameErrorType, NotAllowedError, UnknownError, ValidationError } from './error.js';
+import { FullName } from './fullname.js';
+import { FirstName, LastName, Name, JsonName } from './name.js';
+import { Namefully } from './namefully.js';
+import { Namon } from './types.js';
+import { Validators } from './validator.js';
 
 describe('ValidationError', () => {
   const config = Config.merge({ name: 'error_handling', bypass: false });
@@ -148,7 +148,7 @@ describe('NameError', () => {
 
   test('can be created for validation purposes', () => {
     const error = new ValidationError({
-      source: [Name.first('Jane'), Name.last('Doe')],
+      source: [Name.first('Jane').value, Name.last('Doe').value],
       nameType: 'firstName',
       message: message,
     });

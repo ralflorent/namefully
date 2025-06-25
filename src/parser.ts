@@ -1,10 +1,10 @@
-import { FullName } from './full-name';
-import { Config } from './config';
-import { NameIndex } from './utils';
-import { ArrayStringValidator, ArrayNameValidator, NamaValidator } from './validator';
-import { FirstName, LastName, Name, JsonName } from './name';
-import { Namon, Nullable, Separator } from './types';
-import { InputError } from './error';
+import { FullName } from './fullname.js';
+import { Config } from './config.js';
+import { NameIndex } from './utils.js';
+import { ArrayStringValidator, ArrayNameValidator, NamaValidator } from './validator.js';
+import { FirstName, LastName, Name, JsonName } from './name.js';
+import { Namon, Nullable, Separator } from './types.js';
+import { InputError } from './error.js';
 
 /**
  * A parser signature that helps to organize the names accordingly.
@@ -27,7 +27,7 @@ export abstract class Parser<T = unknown> {
     if (index instanceof NameIndex) {
       const names = Object.entries(index.toJson())
         .filter(([, position]) => position > -1 && position < length)
-        .map(([key, position]) => new Name(parts[position], Namon.all.get(key)));
+        .map(([key, position]) => new Name(parts[position], Namon.all.get(key)!));
       return new ArrayNameParser(names);
     }
 
@@ -41,7 +41,7 @@ export abstract class Parser<T = unknown> {
     } else {
       const last = parts.pop();
       const [first, ...middles] = parts;
-      return new ArrayStringParser([first, middles.join(' '), last]);
+      return new ArrayStringParser([first, middles.join(' '), last!]);
     }
   }
 

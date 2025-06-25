@@ -1,8 +1,8 @@
-import { FirstName, LastName, Name } from '../src/name';
-import { FullName } from '../src/full-name';
-import { Config } from '../src/config';
-import { Namon } from '../src/types';
-import { NameError } from '../src/error';
+import { FirstName, LastName, Name } from './name.js';
+import { FullName } from './fullname.js';
+import { Config } from './config.js';
+import { Namon } from './types.js';
+import { NameError } from './error.js';
 
 describe('FullName', () => {
   let prefix: Name;

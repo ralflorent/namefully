@@ -1,4 +1,6 @@
-import { Namefully, Name, NameBuilder, NameError } from '../src';
+import { NameBuilder } from './builder.js';
+import { NameError } from './error.js';
+import { Name } from './name.js';
 
 describe('NameBuilder', () => {
   let names: Name[];

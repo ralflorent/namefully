@@ -1,13 +1,13 @@
-import { InputError } from './error';
-import { CapsRange, Namon, Surname } from './types';
-import { capitalize, decapitalize } from './utils';
+import { InputError } from './error.js';
+import { CapsRange, Namon, Surname } from './types.js';
+import { capitalize, decapitalize } from './utils.js';
 
 /**
  * Representation of a string type name with some extra capabilities.
  */
 export class Name {
-  #namon: string;
-  protected initial: string;
+  #namon!: string;
+  protected initial!: string;
   protected capsRange: CapsRange;
 
   /**
@@ -120,7 +120,7 @@ export class Name {
   }
 
   protected validate(name?: string): void {
-    if (name?.trim().length < 2) {
+    if (name && name?.trim()?.length < 2) {
       throw new InputError({ source: name, message: 'must be 2+ characters' });
     }
   }
@@ -196,7 +196,7 @@ export class FirstName extends Name {
 
   /** Makes a copy of the current name. */
   copyWith(values?: { first?: string; more?: string[] }): FirstName {
-    return new FirstName(values.first ?? this.value, ...(values.more ?? this.#more));
+    return new FirstName(values?.first ?? this.value, ...(values?.more ?? this.#more));
   }
 }
 
@@ -244,9 +244,8 @@ export class LastName extends Name {
   /** Returns a combined version of the `father` and `mother` if any. */
   get asNames(): Name[] {
     const names: Name[] = [Name.last(this.value)];
-    if (this.hasMother) {
-      names.push(Name.last(this.#mother));
-    }
+    if (this.#mother) names.push(Name.last(this.#mother));
+
     return names;
   }
 
@@ -269,12 +268,12 @@ export class LastName extends Name {
     const inits: string[] = [];
     switch (format) {
       case Surname.MOTHER:
-        if (this.hasMother) inits.push(this.#mother[0]);
+        if (this.#mother) inits.push(this.#mother[0]);
         break;
       case Surname.HYPHENATED:
       case Surname.ALL:
         inits.push(this.initial);
-        if (this.hasMother) inits.push(this.#mother[0]);
+        if (this.#mother) inits.push(this.#mother[0]);
         break;
       case Surname.FATHER:
       default:
@@ -286,21 +285,25 @@ export class LastName extends Name {
   caps(range?: CapsRange): LastName {
     range = range || this.capsRange;
     this.value = capitalize(this.value, range);
-    if (this.hasMother) this.#mother = capitalize(this.#mother, range);
+    if (this.hasMother) this.#mother = capitalize(this.#mother!, range);
     return this;
   }
 
   decaps(range?: CapsRange): LastName {
     range = range || this.capsRange;
     this.value = decapitalize(this.value, range);
-    if (this.hasMother) this.#mother = decapitalize(this.#mother, range);
+    if (this.hasMother) this.#mother = decapitalize(this.#mother!, range);
     return this;
   }
 
   /** Makes a copy of the current name. */
   copyWith(values?: { father?: string; mother?: string; format?: Surname }): LastName {
-    return new LastName(values.father ?? this.value, values.mother ?? this.mother, values.format ?? this.format);
+    return new LastName(values?.father ?? this.value, values?.mother ?? this.mother, values?.format ?? this.format);
   }
+}
+
+export function isNameArray(value?: unknown): boolean {
+  return Array.isArray(value) && value.length > 0 && value.every((e) => e instanceof Name);
 }
 
 /**

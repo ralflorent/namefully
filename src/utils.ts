@@ -1,6 +1,5 @@
-import { MIN_NUMBER_OF_NAME_PARTS, MAX_NUMBER_OF_NAME_PARTS } from './constants';
-import { Name } from './name';
-import { NameOrder, CapsRange } from './types';
+import { MIN_NUMBER_OF_NAME_PARTS, MAX_NUMBER_OF_NAME_PARTS } from './constants.js';
+import { NameOrder, CapsRange } from './types.js';
 
 /**
  * A fixed set of values to handle specific positions for list of names.
@@ -131,8 +130,4 @@ export function toggleCase(str: string): string {
 
 export function isStringArray(value?: unknown): boolean {
   return Array.isArray(value) && value.length > 0 && value.every((e) => typeof e === 'string');
-}
-
-export function isNameArray(value?: unknown): boolean {
-  return Array.isArray(value) && value.length > 0 && value.every((e) => e instanceof Name);
 }

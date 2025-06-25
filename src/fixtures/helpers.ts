@@ -1,9 +1,9 @@
-import { Config } from '../src/config';
-import { FullName } from '../src/full-name';
-import { FirstName, LastName, Name, JsonName } from '../src/name';
-import { Namefully } from '../src/namefully';
-import { Parser } from '../src/parser';
-import { NameOrder, Separator, Surname, Title } from '../src/types';
+import { Config } from '../config.js';
+import { FullName } from '../fullname.js';
+import { FirstName, LastName, Name, JsonName } from '../name.js';
+import { Namefully } from '../namefully.js';
+import { Parser } from '../parser.js';
+import { NameOrder, Separator, Surname, Title } from '../types.js';
 
 export class SimpleParser extends Parser<string> {
   parse(options: Partial<Config>): FullName {

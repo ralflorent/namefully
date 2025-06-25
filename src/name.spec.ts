@@ -1,6 +1,6 @@
-import { InputError } from '../src/error';
-import { FirstName, LastName, Name } from '../src/name';
-import { CapsRange, Namon, Surname } from '../src/types';
+import { InputError } from './error.js';
+import { FirstName, LastName, Name } from './name.js';
+import { CapsRange, Namon, Surname } from './types.js';
 
 describe('Name', () => {
   let name: Name;
@@ -8,7 +8,7 @@ describe('Name', () => {
   beforeEach(() => (name = Name.middle('John')));
 
   test('throws an exception if a name has less than 2 characters', () => {
-    expect(() => Name.first('')).toThrow(InputError);
+    expect(() => Name.first('Q')).toThrow(InputError);
     expect(() => new FirstName('John', 'B')).toThrow(InputError);
     expect(() => new LastName('Smith', 'D')).toThrow(InputError);
   });

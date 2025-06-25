@@ -1,11 +1,11 @@
-import { Config } from './config';
-import { ALLOWED_TOKENS } from './constants';
-import { InputError, NotAllowedError } from './error';
-import { FullName } from './full-name';
-import { Name, JsonName } from './name';
-import { ArrayNameParser, ArrayStringParser, NamaParser, Parser, StringParser } from './parser';
-import { Flat, NameOrder, NameType, Namon, Nullable, Surname } from './types';
-import { capitalize, decapitalize, isNameArray, isStringArray, NameIndex, toggleCase } from './utils';
+import { Config } from './config.js';
+import { ALLOWED_TOKENS } from './constants.js';
+import { InputError, NotAllowedError } from './error.js';
+import { FullName } from './fullname.js';
+import { Name, JsonName, isNameArray } from './name.js';
+import { ArrayNameParser, ArrayStringParser, NamaParser, Parser, StringParser } from './parser.js';
+import { Flat, NameOrder, NameType, Namon, Nullable, Surname } from './types.js';
+import { capitalize, decapitalize, isStringArray, NameIndex, toggleCase } from './utils.js';
 
 /**
  * A helper for organizing person names in a particular order, way, or shape.
@@ -111,7 +111,7 @@ export class Namefully {
   }
 
   /** The prefix part. */
-  get prefix(): Nullable<string> {
+  get prefix(): string | undefined {
     return this.#fullName.prefix?.toString();
   }
 
@@ -121,7 +121,7 @@ export class Namefully {
   }
 
   /** The first middle name part if any. */
-  get middle(): Nullable<string> {
+  get middle(): string | undefined {
     return this.hasMiddle ? this.middleName()[0] : undefined;
   }
 
@@ -136,7 +136,7 @@ export class Namefully {
   }
 
   /** The suffix part. */
-  get suffix(): Nullable<string> {
+  get suffix(): string | undefined {
     return this.#fullName.suffix?.toString();
   }
 
@@ -381,8 +381,6 @@ export class Namefully {
       surname: Surname;
     }>,
   ): string {
-    if (this.length <= options.limit) return this.full;
-
     const {
       by = Flat.MIDDLE_NAME,
       limit = 20,
@@ -391,6 +389,9 @@ export class Namefully {
       withPeriod = true,
       surname,
     } = options;
+
+    if (this.length <= limit) return this.full;
+
     const sep = withPeriod ? '.' : '';
     const fn = this.#fullName.firstName.toString();
     const mn = this.middleName().join(' ');
@@ -685,7 +686,7 @@ export class Namefully {
         return this.#fullName.lastName.initials()[0];
       case '$m':
       case '$M':
-        return this.hasMiddle ? this.middle[0] : undefined;
+        return this.hasMiddle ? this.middle![0] : undefined;
       default:
         return undefined;
     }
