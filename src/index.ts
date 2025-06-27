@@ -11,7 +11,7 @@
  *
  * @license MIT
  */
-import namefully from './namefully';
+import namefully from './namefully.js';
 
 export * from './builder.js';
 export * from './config.js';

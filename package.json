@@ -8,18 +8,22 @@
   "homepage": "https://namefully.netlify.app",
   "keywords": ["format", "parse", "human", "personal", "family", "name"],
   "type": "module",
-  "main": "dist/esm/index.js",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.js",
   "browser": "dist/namefully.min.js",
   "files": ["dist"],
   "exports": {
-    ".": "./dist/esm/index.js",
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js",
+      "types": "./dist/esm/index.d.js"
+    },
     "./*": {
       "import": "./dist/esm/*.js",
-      "require": "./dist/cjs/*.js"
+      "require": "./dist/cjs/*.js",
+      "types": "./dist/esm/*.d.js"
     }
-  },
-  "typesVersions": {
-    "*": { "*": ["./dist/esm/*"] }
   },
   "scripts": {
     "start": "tsx example/main.ts",
