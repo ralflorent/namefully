@@ -1,11 +1,11 @@
-import { Config } from '../src/config';
-import { NameError } from '../src/error';
-import { FirstName, LastName, Name } from '../src/name';
-import { Namefully } from '../src/namefully';
-import { NameBuilder } from '../src/builder';
-import { Flat, NameOrder, NameType, Namon, Separator, Surname, Title } from '../src/types';
-import { SimpleParser, findNameCase } from './helpers';
-import { NameIndex } from '../src/utils';
+import { Config } from './config.js';
+import { NameError } from './error.js';
+import { FirstName, LastName, Name } from './name.js';
+import { Namefully } from './namefully.js';
+import { NameBuilder } from './builder.js';
+import { Flat, NameOrder, NameType, Namon, Separator, Surname, Title } from './types.js';
+import { SimpleParser, findNameCase } from './fixtures/helpers.js';
+import { NameIndex } from './utils.js';
 
 describe('Namefully', () => {
   describe('(default settings)', () => {

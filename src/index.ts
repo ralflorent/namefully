@@ -11,17 +11,17 @@
  *
  * @license MIT
  */
-import namefully from './namefully';
+import namefully from './namefully.js';
 
-export * from './builder';
-export * from './config';
-export { VERSION as version } from './constants';
-export * from './error';
-export * from './full-name';
-export * from './name';
-export * from './namefully';
-export { Parser } from './parser';
-export * from './types';
-export { NameIndex } from './utils';
+export * from './builder.js';
+export * from './config.js';
+export { VERSION as version } from './constants.js';
+export * from './error.js';
+export * from './fullname.js';
+export * from './name.js';
+export * from './namefully.js';
+export { Parser } from './parser.js';
+export * from './types.js';
+export { NameIndex } from './utils.js';
 
 export default namefully;

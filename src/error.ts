@@ -1,8 +1,7 @@
-import { Name } from './name';
-import { Nullable } from './types';
-import { isNameArray, isStringArray } from './utils';
+import { Nullable } from './types.js';
+import { isStringArray } from './utils.js';
 
-type NameSource = Nullable<string | string[] | Name[]>;
+type NameSource = Nullable<string | string[]>;
 
 interface ErrorMessage {
   source: NameSource;
@@ -86,14 +85,13 @@ export class NameError extends Error {
     let input = '';
     if (!this.source) input = '<undefined>';
     if (typeof this.source === 'string') input = this.source;
-    if (isNameArray(this.source)) input = (this.source as Name[]).map((n) => n.toString()).join(' ');
     if (isStringArray(this.source)) input = (this.source as string[]).join(' ');
     return input;
   }
 
   /** Whether a message describing the failure exists. */
   get hasMessage(): boolean {
-    return this.message && this.message.trim().length > 0;
+    return this.message.trim().length > 0;
   }
 
   /** Returns a string representation of the error. */

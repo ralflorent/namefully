@@ -1,16 +1,16 @@
 {
-  "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": "./",
-    "module": "commonjs",
-    "target": "es2015",
+    "outDir": "dist/esm",
+    "target": "es2022",
+    "module": "esnext",
     "moduleResolution": "node",
-    "noImplicitAny": true,
     "removeComments": true,
-    "preserveConstEnums": true,
-    "outDir": "dist/lib",
-    "lib": ["dom", "es2015", "es2016", "es2017", "es2018"]
+    "esModuleInterop": true,
+    "noImplicitAny": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "lib": ["es2022"]
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "**/*.spec.ts"]
+  "include": ["src"],
+  "exclude": ["**/*.spec.ts", "src/fixtures"]
 }

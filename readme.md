@@ -330,5 +330,5 @@ The underlying content of this utility is licensed under [MIT License][license-u
 
 [contributing-url]: https://github.com/ralflorent/namefully/blob/main/CONTRIBUTING.md
 [examples]: https://github.com/ralflorent/namefully/tree/main/example
-[test-cases]: https://github.com/ralflorent/namefully/tree/main/test
+[test-cases]: https://github.com/ralflorent/namefully/tree/main/src/namefully.spec.ts
 [name-standards]: https://www.fbiic.gov/public/2008/nov/Naming_practice_guide_UK_2006.pdf

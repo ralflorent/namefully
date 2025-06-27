@@ -1,4 +1,4 @@
-import { NameOrder, Separator, Title, Surname } from './types';
+import { NameOrder, Separator, Title, Surname } from './types.js';
 
 const defaultName = 'default';
 const copyAlias = '_copy';
@@ -121,7 +121,7 @@ export class Config {
   static create(name = defaultName): Config {
     if (!Config.cache.has(name)) Config.cache.set(name, new this(name));
 
-    return Config.cache.get(name);
+    return Config.cache.get(name)!;
   }
 
   /**
@@ -187,7 +187,7 @@ export class Config {
    */
   updateOrder(order: NameOrder): void {
     if (order && order !== this.#orderedBy) {
-      Config.cache.get(this.name).#orderedBy = order;
+      Config.cache.get(this.name)!.#orderedBy = order;
     }
   }
 

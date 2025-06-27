@@ -1,7 +1,7 @@
-import { Name } from './name';
-import { Namefully } from './namefully';
-import { Config } from './config';
-import { ArrayNameValidator } from './validator';
+import { Name } from './name.js';
+import { Namefully } from './namefully.js';
+import { Config } from './config.js';
+import { ArrayNameValidator } from './validator.js';
 
 type VoidCallback = () => void;
 type Callback<Type, Return> = (value: Type) => Return;

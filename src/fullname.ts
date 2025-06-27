@@ -1,8 +1,8 @@
-import { Config } from './config';
-import { NameError, UnknownError } from './error';
-import { FirstName, LastName, Name, JsonName } from './name';
-import { Nullable, Namon, Title } from './types';
-import { Validators } from './validator';
+import { Config } from './config.js';
+import { NameError, UnknownError } from './error.js';
+import { FirstName, LastName, Name, JsonName } from './name.js';
+import { Nullable, Namon, Title } from './types.js';
+import { Validators } from './validator.js';
 
 /**
  * The core component of this utility.
@@ -22,9 +22,9 @@ import { Validators } from './validator';
  */
 export class FullName {
   #prefix: Nullable<Name>;
-  #firstName: FirstName;
+  #firstName!: FirstName;
   #middleName: Name[] = [];
-  #lastName: LastName;
+  #lastName!: LastName;
   #suffix: Nullable<Name>;
   #config: Config;
 
@@ -76,7 +76,7 @@ export class FullName {
       const fullName = new FullName(config);
       fullName.setPrefix(json.prefix);
       fullName.setFirstName(json.firstName);
-      fullName.setMiddleName(json.middleName);
+      fullName.setMiddleName(json.middleName ?? []);
       fullName.setLastName(json.lastName);
       fullName.setSuffix(json.suffix);
       return fullName;
@@ -86,7 +86,7 @@ export class FullName {
       throw new UnknownError({
         source: Object.values(json).join(' '),
         message: 'could not parse JSON content',
-        error,
+        error: error instanceof Error ? error : new Error(String(error)),
       });
     }
   }
