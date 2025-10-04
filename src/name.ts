@@ -2,9 +2,7 @@ import { InputError } from './error.js';
 import { CapsRange, Namon, Surname } from './types.js';
 import { capitalize, decapitalize } from './utils.js';
 
-/**
- * Representation of a string type name with some extra capabilities.
- */
+/** Representation of a string type name with some extra capabilities. */
 export class Name {
   #namon!: string;
   protected initial!: string;
@@ -12,9 +10,9 @@ export class Name {
 
   /**
    * Creates augmented names by adding extra functionality to a string name.
-   * @param type must be indicated to categorize the name so it can be
+   * @param {Namon} type must be indicated to categorize the name so it can be
    * treated accordingly.
-   * @param capsRange determines how the name should be capitalized initially.
+   * @param {CapsRange} capsRange determines how the name should be capitalized initially.
    */
   constructor(
     value: string,
@@ -69,27 +67,27 @@ export class Name {
 
   /** Creates a prefix. */
   static prefix(value: string): Name {
-    return new this(value, Namon.PREFIX);
+    return new Name(value, Namon.PREFIX);
   }
 
   /** Creates a first name. */
   static first(value: string): Name {
-    return new this(value, Namon.FIRST_NAME);
+    return new Name(value, Namon.FIRST_NAME);
   }
 
   /** Creates a middle name. */
   static middle(value: string): Name {
-    return new this(value, Namon.MIDDLE_NAME);
+    return new Name(value, Namon.MIDDLE_NAME);
   }
 
   /** Creates a last name. */
   static last(value: string): Name {
-    return new this(value, Namon.LAST_NAME);
+    return new Name(value, Namon.LAST_NAME);
   }
 
   /** Creates a suffix. */
   static suffix(value: string): Name {
-    return new this(value, Namon.SUFFIX);
+    return new Name(value, Namon.SUFFIX);
   }
 
   /** Gets the initials (first character) of this name. */
@@ -126,9 +124,7 @@ export class Name {
   }
 }
 
-/**
- * Representation of a first name with some extra functionality.
- */
+/** Representation of a first name with some extra functionality. */
 export class FirstName extends Name {
   #more: string[];
 
@@ -136,12 +132,12 @@ export class FirstName extends Name {
    * Creates an extended version of `Name` and flags it as a first name `type`.
    *
    * Some may consider `more` additional name parts of a given name as their
-   * first names, but not as their middle names. Though, it may mean the same,
+   * first names, but not as their middle names. Though it may mean the same,
    * `more` provides the freedom to do it as it pleases.
    */
   constructor(value: string, ...more: string[]) {
     super(value, Namon.FIRST_NAME);
-    more.forEach((n) => this.validate(n));
+    more.forEach(this.validate);
     this.#more = more;
   }
 
@@ -157,9 +153,7 @@ export class FirstName extends Name {
   /** Returns a combined version of the `value` and `more` if any. */
   get asNames(): Name[] {
     const names: Name[] = [Name.first(this.value)];
-    if (this.hasMore) {
-      names.push(...this.#more.map((n) => Name.first(n)));
-    }
+    if (this.hasMore) names.push(...this.#more.map(Name.first));
     return names;
   }
 
@@ -174,9 +168,7 @@ export class FirstName extends Name {
 
   initials(withMore = false): string[] {
     const inits: string[] = [this.initial];
-    if (withMore && this.hasMore) {
-      inits.push(...this.#more.map((n) => n[0]));
-    }
+    if (withMore && this.hasMore) inits.push(...this.#more.map((n) => n[0]));
     return inits;
   }
 
@@ -200,9 +192,7 @@ export class FirstName extends Name {
   }
 }
 
-/**
- * Representation of a last name with some extra functionality.
- */
+/** Representation of a last name with some extra functionality. */
 export class LastName extends Name {
   #mother?: string;
 
@@ -222,12 +212,12 @@ export class LastName extends Name {
     this.#mother = mother;
   }
 
-  /** The surname inherited from a father side. */
+  /** The surname inherited from the father side. */
   get father(): string {
     return this.value;
   }
 
-  /** The surname inherited from a mother side. */
+  /** The surname inherited from the mother side. */
   get mother(): string | undefined {
     return this.#mother;
   }
@@ -245,7 +235,6 @@ export class LastName extends Name {
   get asNames(): Name[] {
     const names: Name[] = [Name.last(this.value)];
     if (this.#mother) names.push(Name.last(this.#mother));
-
     return names;
   }
 
@@ -264,18 +253,16 @@ export class LastName extends Name {
   }
 
   initials(format?: Surname): string[] {
-    format = format || this.format;
     const inits: string[] = [];
-    switch (format) {
-      case Surname.MOTHER:
-        if (this.#mother) inits.push(this.#mother[0]);
-        break;
+    switch (format ?? this.format) {
       case Surname.HYPHENATED:
       case Surname.ALL:
         inits.push(this.initial);
         if (this.#mother) inits.push(this.#mother[0]);
         break;
-      case Surname.FATHER:
+      case Surname.MOTHER:
+        if (this.#mother) inits.push(this.#mother[0]);
+        break;
       default:
         inits.push(this.initial);
     }
@@ -283,14 +270,14 @@ export class LastName extends Name {
   }
 
   caps(range?: CapsRange): LastName {
-    range = range || this.capsRange;
+    range ??= this.capsRange;
     this.value = capitalize(this.value, range);
     if (this.hasMother) this.#mother = capitalize(this.#mother!, range);
     return this;
   }
 
   decaps(range?: CapsRange): LastName {
-    range = range || this.capsRange;
+    range ??= this.capsRange;
     this.value = decapitalize(this.value, range);
     if (this.hasMother) this.#mother = decapitalize(this.#mother!, range);
     return this;
@@ -306,9 +293,7 @@ export function isNameArray(value?: unknown): boolean {
   return Array.isArray(value) && value.length > 0 && value.every((e) => e instanceof Name);
 }
 
-/**
- * JSON signature for `FullName` data.
- */
+/** JSON signature for `FullName` data. */
 export interface JsonName {
   prefix?: string;
   firstName: string;

@@ -8,9 +8,7 @@ interface ErrorMessage {
   message?: string;
 }
 
-/**
- * The error types supported by `Namefully`.
- */
+/** The error types supported by `Namefully`. */
 export enum NameErrorType {
   /**
    * Thrown when a name entry/argument is incorrect.
@@ -36,9 +34,7 @@ export enum NameErrorType {
    */
   NOT_ALLOWED,
 
-  /**
-   * Thrown by any other unknown sources or unexpected situation.
-   */
+  /** Thrown by any other unknown sources or unexpected situation. */
   UNKNOWN,
 }
 
@@ -202,9 +198,9 @@ export class UnknownError extends NameError {
    * Creates a new `UnknownError` with an optional error `message`.
    * Optionally, the original error revealing the true nature of the failure.
    */
-  constructor(error: ErrorMessage & { error?: Error }) {
+  constructor(error: ErrorMessage & { origin?: Error }) {
     super(error.source, error.message, NameErrorType.UNKNOWN);
-    this.origin = error.error;
+    this.origin = error.origin;
     this.name = 'UnknownError';
   }
 

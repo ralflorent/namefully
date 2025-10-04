@@ -1,4 +1,4 @@
-import { Name, NameBuilder, Title, NameOrder} from '../src';
+import { Name, NameBuilder, Title, NameOrder } from '../src';
 
 function main() {
   const builder = NameBuilder.of(Name.first('Nikola'), Name.last('Tesla'));

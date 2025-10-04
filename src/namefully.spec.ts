@@ -42,8 +42,8 @@ describe('Namefully', () => {
       middles.forEach((n) => expect(n).toBeInstanceOf(Name));
     });
 
-    test('.toJson() returns a json version of the full name', () => {
-      expect(name.toJson()).toStrictEqual({
+    test('.json() returns a json version of the full name', () => {
+      expect(name.json()).toStrictEqual({
         prefix: 'Mr',
         firstName: 'John',
         middleName: ['Ben'],

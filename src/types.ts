@@ -1,6 +1,4 @@
-/**
- * Make a type nullable.
- */
+/** Make a type nullable. */
 export type Nullable<T> = T | null | undefined;
 
 /**
@@ -36,20 +34,16 @@ export enum Surname {
   ALL = 'all',
 }
 
-/**
- * The order of appearance of a `FullName`.
- */
+/** The order of appearance of a `FullName`. */
 export enum NameOrder {
-  // The first part of a full name, usually the first piece of a person name.
+  // The first part of a full name, usually the first piece of a human name.
   FIRST_NAME = 'firstName',
 
-  // The last part of a full name, usually the last piece of a person name.
+  // The last part of a full name, usually the last piece of a human name.
   LAST_NAME = 'lastName',
 }
 
-/**
- * The types of name handled in this according the name standards.
- */
+/** The types of name handled in this according the name standards. */
 export enum NameType {
   FIRST_NAME = 'firstName',
   MIDDLE_NAME = 'middleName',
@@ -57,9 +51,7 @@ export enum NameType {
   BIRTH_NAME = 'birthName',
 }
 
-/**
- * The possible variants to indicate how to flatten a `FullName`.
- */
+/** The possible variants to indicate how to flatten a `FullName`. */
 export enum Flat {
   // Use the first name's initial combined with the remaining parts.
   FIRST_NAME = 'firstName',
@@ -80,9 +72,7 @@ export enum Flat {
   ALL = 'all',
 }
 
-/**
- * The range to use when capitalizing a string content.
- */
+/** The range to use when capitalizing a string content. */
 export enum CapsRange {
   // No capitalization.
   NONE,
@@ -94,9 +84,7 @@ export enum CapsRange {
   ALL,
 }
 
-/**
- * The types of name handled in this utility according the name standards.
- */
+/** The types of name handled in this utility according the name standards. */
 export class Namon {
   static readonly PREFIX: Namon = new Namon(0, 'prefix');
   static readonly FIRST_NAME: Namon = new Namon(1, 'firstName');
@@ -104,14 +92,10 @@ export class Namon {
   static readonly LAST_NAME: Namon = new Namon(3, 'lastName');
   static readonly SUFFIX: Namon = new Namon(4, 'suffix');
 
-  /**
-   * The list of supported name types.
-   */
+  /** The list of supported name types. */
   static readonly values: Namon[] = [Namon.PREFIX, Namon.FIRST_NAME, Namon.MIDDLE_NAME, Namon.LAST_NAME, Namon.SUFFIX];
 
-  /**
-   * All the predefined name types.
-   */
+  /** All the predefined name types. */
   static readonly all: Map<string, Namon> = new Map<string, Namon>([
     [Namon.PREFIX.key, Namon.PREFIX],
     [Namon.FIRST_NAME.key, Namon.FIRST_NAME],
@@ -125,38 +109,28 @@ export class Namon {
     readonly key: string,
   ) {}
 
-  /**
-   * Whether this string key is part of the predefined keys.
-   */
+  /** Whether this string key is part of the predefined keys. */
   static has(key: string): boolean {
     return Namon.all.has(key);
   }
 
-  /**
-   * Makes a string key a namon type.
-   */
+  /** Makes a string key a namon type. */
   static cast(key: string): Nullable<Namon> {
     return Namon.has(key) ? Namon.all.get(key) : undefined;
   }
 
-  /**
-   * String representation of this object.
-   */
+  /** String representation of this object. */
   toString(): string {
     return `Namon.${this.key}`;
   }
 
-  /**
-   * Whether this and the other value are equal.
-   */
+  /** Whether this and the other value are equal. */
   equal(other: Namon | unknown): boolean {
     return other instanceof Namon && other.index === this.index && other.key === this.key;
   }
 }
 
-/**
- * The token used to indicate how to split string values.
- */
+/** The token used to indicate how to split string values. */
 export class Separator {
   static readonly COMMA: Separator = new Separator('comma', ',');
   static readonly COLON: Separator = new Separator('colon', ':');
@@ -169,9 +143,7 @@ export class Separator {
   static readonly SPACE: Separator = new Separator('space', ' ');
   static readonly UNDERSCORE: Separator = new Separator('underscore', '_');
 
-  /**
-   * All the available separators.
-   */
+  /** All the available separators. */
   static readonly all: Map<string, Separator> = new Map<string, Separator>([
     [Separator.COMMA.name, Separator.COMMA],
     [Separator.COLON.name, Separator.COLON],
@@ -185,9 +157,7 @@ export class Separator {
     [Separator.UNDERSCORE.name, Separator.UNDERSCORE],
   ]);
 
-  /**
-   * All the available tokens.
-   */
+  /** All the available tokens. */
   static readonly tokens: string[] = [...Separator.all.values()].map((s) => s.token);
 
   private constructor(
@@ -195,9 +165,7 @@ export class Separator {
     readonly token: string,
   ) {}
 
-  /**
-   * String representation of this object.
-   */
+  /** String representation of this object. */
   toString(): string {
     return `Separator.${this.name}`;
   }

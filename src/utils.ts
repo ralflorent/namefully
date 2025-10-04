@@ -1,8 +1,8 @@
-import { MIN_NUMBER_OF_NAME_PARTS, MAX_NUMBER_OF_NAME_PARTS } from './constants.js';
 import { NameOrder, CapsRange } from './types.js';
+import { MIN_NUMBER_OF_NAME_PARTS, MAX_NUMBER_OF_NAME_PARTS } from './constants.js';
 
 /**
- * A fixed set of values to handle specific positions for list of names.
+ * A set of values to handle specific positions for list of names.
  *
  * As for list of names, this helps to follow a specific order based on the
  * count of elements. It is expected that the list has to be between two and
@@ -45,7 +45,7 @@ export class NameIndex {
 
   /** The default or base indexing: firstName lastName. */
   static base(): NameIndex {
-    return new this(-1, 0, -1, 1, -1);
+    return new NameIndex(-1, 0, -1, 1, -1);
   }
 
   /**
@@ -56,26 +56,26 @@ export class NameIndex {
     if (order === NameOrder.FIRST_NAME) {
       switch (count) {
         case 2: // first name + last name
-          return new this(-1, 0, -1, 1, -1);
+          return new NameIndex(-1, 0, -1, 1, -1);
         case 3: // first name + middle name + last name
-          return new this(-1, 0, 1, 2, -1);
+          return new NameIndex(-1, 0, 1, 2, -1);
         case 4: // prefix + first name + middle name + last name
-          return new this(0, 1, 2, 3, -1);
+          return new NameIndex(0, 1, 2, 3, -1);
         case 5: // prefix + first name + middle name + last name + suffix
-          return new this(0, 1, 2, 3, 4);
+          return new NameIndex(0, 1, 2, 3, 4);
         default:
           return NameIndex.base();
       }
     } else {
       switch (count) {
         case 2: // last name + first name
-          return new this(-1, 1, -1, 0, -1);
+          return new NameIndex(-1, 1, -1, 0, -1);
         case 3: // last name + first name + middle name
-          return new this(-1, 1, 2, 0, -1);
+          return new NameIndex(-1, 1, 2, 0, -1);
         case 4: // prefix + last name + first name + middle name
-          return new this(0, 2, 3, 1, -1);
+          return new NameIndex(0, 2, 3, 1, -1);
         case 5: // prefix + last name + first name + middle name + suffix
-          return new this(0, 2, 3, 1, 4);
+          return new NameIndex(0, 2, 3, 1, 4);
         default:
           return NameIndex.base();
       }
@@ -83,7 +83,7 @@ export class NameIndex {
   }
 
   static only({ prefix = -1, firstName, middleName = -1, lastName, suffix = -1 }: Record<string, number>): NameIndex {
-    return new this(prefix, firstName, middleName, lastName, suffix);
+    return new NameIndex(prefix, firstName, middleName, lastName, suffix);
   }
 
   toJson(): Record<string, number> {
@@ -95,11 +95,10 @@ export class NameIndex {
       suffix: this.suffix,
     };
   }
+  json = this.toJson;
 }
 
-/**
- * Capitalizes a string via a `CapsRange` option.
- */
+/** Capitalizes a string via a `CapsRange` option. */
 export function capitalize(str: string, range: CapsRange = CapsRange.INITIAL): string {
   if (!str || range === CapsRange.NONE) return str;
   const initial = str[0].toUpperCase();
@@ -117,15 +116,10 @@ export function decapitalize(str: string, range: CapsRange = CapsRange.INITIAL):
 
 /** Toggles a string representation. */
 export function toggleCase(str: string): string {
-  const chars = [];
-  for (const c of str) {
-    if (c === c.toUpperCase()) {
-      chars.push(c.toLowerCase());
-    } else {
-      chars.push(c.toUpperCase());
-    }
-  }
-  return chars.join('');
+  return str
+    .split('')
+    .map((c) => (c === c.toUpperCase() ? c.toLowerCase() : c.toUpperCase()))
+    .join('');
 }
 
 export function isStringArray(value?: unknown): boolean {

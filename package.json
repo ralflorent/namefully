@@ -1,6 +1,6 @@
 {
   "name": "namefully",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Handle personal names in a particular order, way, or shape.",
   "author": "Ralph Florent",
   "license": "MIT",
@@ -10,33 +10,33 @@
   "type": "module",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
-  "types": "dist/esm/index.d.js",
+  "types": "dist/esm/index.d.ts",
   "browser": "dist/namefully.min.js",
   "files": ["dist"],
   "exports": {
     ".": {
       "import": "./dist/esm/index.js",
       "require": "./dist/cjs/index.js",
-      "types": "./dist/esm/index.d.js"
+      "types": "./dist/esm/index.d.ts"
     },
     "./*": {
       "import": "./dist/esm/*.js",
       "require": "./dist/cjs/*.js",
-      "types": "./dist/esm/*.d.js"
+      "types": "./dist/esm/*.d.ts"
     }
   },
   "scripts": {
     "start": "tsx example/main.ts",
-    "format": "prettier --write src",
+    "format": "prettier --write src example",
     "lint": "eslint src",
     "test": "jest",
     "test:cov": "jest --collectCoverage",
     "prebuild": "shx rm -rf dist",
-    "build:esm": "tsc",
+    "build:esm": "tsc -p tsconfig.json",
     "build:cjs": "tsc -p tsconfig.cjs.json",
     "build:dts": "tsc -p tsconfig.dts.json",
     "build": "npm run build:esm && npm run build:cjs && npm run build:dts && rollup -c",
-    "prepublish": "npm run format && npm run build"
+    "prepublish": "npm run format && npm run lint && npm run build"
   },
   "devDependencies": {
     "@eslint/js": "^9.29.0",

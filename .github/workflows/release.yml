@@ -1,0 +1,48 @@
+name: Publish
+run-name: Publish version ${{ github.ref_name }}
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  publish:
+    name: publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Prepare releases
+        run: |
+          yarn install
+          yarn format
+          yarn lint
+          yarn build
+
+      - name: Publish to NPM
+        run: |
+          set -eux
+          npm config set '//registry.npmjs.org/:_authToken' "$NPM_TOKEN"
+          VERSION="$(node -p "require('./package.json').version")"
+          if [[ "$VERSION" =~ -([a-zA-Z]+) ]]; then
+            TAG="${BASH_REMATCH[1]}"
+          else
+            TAG="latest"
+          fi
+          npm publish --provenance --access public --tag "$TAG"
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_API_TOKEN }}
+
+      - name: Publish to JSR
+        run: npx jsr publish

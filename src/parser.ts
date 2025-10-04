@@ -1,10 +1,10 @@
-import { FullName } from './fullname.js';
 import { Config } from './config.js';
 import { NameIndex } from './utils.js';
-import { ArrayStringValidator, ArrayNameValidator, NamaValidator } from './validator.js';
-import { FirstName, LastName, Name, JsonName } from './name.js';
-import { Namon, Nullable, Separator } from './types.js';
 import { InputError } from './error.js';
+import { FullName } from './fullname.js';
+import { Namon, Nullable, Separator } from './types.js';
+import { FirstName, LastName, Name, JsonName } from './name.js';
+import { ArrayStringValidator, ArrayNameValidator, NamaValidator } from './validator.js';
 
 /**
  * A parser signature that helps to organize the names accordingly.
@@ -25,7 +25,7 @@ export abstract class Parser<T = unknown> {
     const length = parts.length;
 
     if (index instanceof NameIndex) {
-      const names = Object.entries(index.toJson())
+      const names = Object.entries(index.json())
         .filter(([, position]) => position > -1 && position < length)
         .map(([key, position]) => new Name(parts[position], Namon.all.get(key)!));
       return new ArrayNameParser(names);

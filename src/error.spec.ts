@@ -176,7 +176,7 @@ describe('NameError', () => {
   });
 
   test('can be created for unknown use cases', () => {
-    const error = new Errors.UnknownError({ source: null, error: new Error('something') });
+    const error = new Errors.UnknownError({ source: null, origin: new Error('something') });
     expect(error).toBeInstanceOf(Errors.NameError);
     expect(error.sourceAsString).toBe('<undefined>');
     expect(error.origin).toBeDefined();

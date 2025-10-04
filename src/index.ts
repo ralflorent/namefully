@@ -23,5 +23,4 @@ export * from './namefully.js';
 export { Parser } from './parser.js';
 export * from './types.js';
 export { NameIndex } from './utils.js';
-
 export default namefully;

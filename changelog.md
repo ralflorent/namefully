@@ -4,7 +4,17 @@ This file contains the documentation on the notable changes and bug fixes, and
 is formatted following this [standard](https://keepachangelog.com/en/1.0.0/).
 This project also adheres to [Semantic Versioning](https://semver.org/).
 
+## [2.0.1] - 2025-10-03
+
+**Fixed**:
+
+- Applied minor improvements
+- Fixed `exports` types in package.json
+- Updated code documentation
+
 ## [2.0.0] - 2025-06-24
+
+**Fixed**:
 
 - Refactored codebase to support both ESM (default) and CommonJS formats
 - Fixed minor lints related to TypeScript
@@ -13,26 +23,41 @@ This project also adheres to [Semantic Versioning](https://semver.org/).
 
 ## [1.3.0] - 2025-06-03
 
+**Added**:
+
 - Added name builder capabilities with lifecycle hooks
 - Parsed non-standard name cases with indexers
 - Returned initials as JSON dictionary if needed
+
+**Fixed**:
+
 - Applied minor updates to documentation
 
 ## [1.2.1] - 2025-06-01
 
+**Added**:
+
+- Added support for [jsr.io](https://jsr.io/@ralflorent/namefully)
+
+**Fixed**:
+
 - Upgraded TypeScript and other dependencies
 - Applied effective TypeScript
-- Added support for [jsr.io](https://jsr.io/@ralflorent/namefully)
 
 ## [1.2.0] - 2022-12-30
 
-- Improved usability of `Config`
-- Improved error handling `NameError`
+**Added**:
+
 - Added named constructors for `Name`
 - Used convenient getters (e.g., `FirstName.hasMore`, `LastName.hasMother`)
-- Applied small refactoring: introduce additional class members
-- Added support for initials in `format`
 - Added text parser for dynamic birth names (ordered by first name)
+- Added support for initials in `format`
+
+**Fixed**:
+
+- Improved usability of `Config`
+- Improved error handling `NameError`
+- Applied small refactoring: introduce additional class members
 - Reconfigured CI build setup via GitHub actions
 - Improved API documentation
 - Breaking changes:
@@ -160,6 +185,7 @@ This project also adheres to [Semantic Versioning](https://semver.org/).
 
 Initial version
 
+[2.0.1]: https://github.com/ralflorent/namefully/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/ralflorent/namefully/compare/v1.3.0...v2.0.0
 [1.3.0]: https://github.com/ralflorent/namefully/compare/v1.2.1...v1.3.0
 [1.2.1]: https://github.com/ralflorent/namefully/compare/v1.2.0...v1.2.1

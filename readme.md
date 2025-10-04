@@ -54,7 +54,7 @@ npm i namefully
 
 ## Dependencies
 
-None
+None.
 
 ## Related packages
 
@@ -66,7 +66,8 @@ This package is also available in [Angular](https://angular.io/) and
 
 ## Usage
 
-See [examples] or [test cases][test-cases] for more details.
+See [examples] or [test cases][test-cases] for more details. Here's a glimpse at
+what this utility does:
 
 ```ts
 import { Namefully } from 'namefully';
@@ -80,16 +81,17 @@ console.log(name.zip()); // Thomas A. E.
 ```
 
 > **Note** that if you intend to use this utility for non-standard name cases such as
-> many middle names or last names, use `Namefully.parse()` or `NameBuilder` instead.
+> multiple first, middle or last names, use `Namefully.parse()` or `NameBuilder` instead.
 
 ## `Config` and default values
 
-`Config` is a single configuration to use across the other components.
+`Config` represents a series of configurable parameters used to control and customize
+how `Namefully` objects get created.
 
-The multiton pattern is used to keep one configuration across the `Namefully`
-setup. This is useful for avoiding confusion when building other components such
-as `FirstName`, `LastName`, or `Name` of distinct types (or `Namon`) that may
-be of particular shapes.
+The multiton pattern is used to allow unique settings across `Namefully` objects.
+This is quite useful for avoiding confusion when building other name components such
+as `FirstName`, `LastName`, or `Name` that may not often follow the same pattern,
+rule or behavior in your application.
 
 Below are enlisted the options supported by `namefully`.
 
@@ -269,17 +271,16 @@ The opening `[` and closing `]` brackets mean that these parts are optional. In
 other words, the most basic/typical case is a name that looks like this:
 `John Smith`, where `John` is the _firstName_ and `Smith`, the _lastName_.
 
-> NOTE: Do notice that the order of appearance matters and (as shown in
-> [orderedBy](#orderedby)) can be altered through configured parameters. By default,
-> the order of appearance is as shown above and will be used as a basis for
-> future examples and use cases.
+> Do notice that the order of appearance matters and (as shown in [orderedBy](#orderedby))
+> can be altered through configured parameters. By default, the order of appearance
+> is as shown above and will be used as a basis for future examples and use cases.
 
 Once imported, all that is required to do is to create an instance of
 `Namefully` and the rest will follow.
 
 ### Basic cases
 
-Let us take a common example with all the parts:
+Let us take this example with all the parts:
 
 `Mr John Joe Smith PhD`
 

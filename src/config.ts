@@ -119,8 +119,7 @@ export class Config {
    * @param name describing its purpose.
    */
   static create(name = defaultName): Config {
-    if (!Config.cache.has(name)) Config.cache.set(name, new this(name));
-
+    if (!Config.cache.has(name)) Config.cache.set(name, new Config(name));
     return Config.cache.get(name)!;
   }
 
@@ -184,11 +183,21 @@ export class Config {
   /**
    * Alters the name order between the first and last name, and rearrange the
    * order of appearance of a name set.
+   * @deprecated use `update()` method instead.
    */
-  updateOrder(order: NameOrder): void {
-    if (order && order !== this.#orderedBy) {
-      Config.cache.get(this.name)!.#orderedBy = order;
-    }
+  updateOrder(orderedBy: NameOrder): void {
+    this.update({ orderedBy });
+  }
+
+  /**
+   * Allows the possibility to alter some options after creating a name set.
+   */
+  update({ orderedBy, title, ending }: Partial<Pick<Config, 'orderedBy' | 'title' | 'ending'>>): void {
+    const config = Config.cache.get(this.name);
+    if (!config) return;
+    if (orderedBy !== this.#orderedBy) config.#orderedBy = orderedBy!;
+    if (title !== this.#title) config.#title = title!;
+    if (ending !== this.#ending) config.#ending = ending!;
   }
 
   /** Generates a unique new name. */

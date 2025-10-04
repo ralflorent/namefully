@@ -7,7 +7,7 @@ import { NameIndex } from './utils.js';
 /**
  * Represents a set of validation rules (regex)
  *
- * This regex is intented to match specific alphabets only as a person name does
+ * This regex is intented to match specific alphabets only as a human name does
  * not contain special characters. `\w` does not cover non-Latin characters. So,
  * it is extended using unicode chars to cover more cases (e.g., Icelandic).
  * It matches as follows:
@@ -89,7 +89,7 @@ class NamonValidator implements Validator<string | Name> {
   static #validator: NamonValidator;
 
   static create(): NamonValidator {
-    return this.#validator || (this.#validator = new this());
+    return this.#validator || (this.#validator = new NamonValidator());
   }
 
   validate(value: string | Name, type?: Namon): void {
@@ -100,14 +100,11 @@ class NamonValidator implements Validator<string | Name> {
         throw new ValidationError({
           source: value,
           nameType: 'namon',
-          message: 'invalid content',
+          message: 'invalid name content failing namon regex',
         });
       }
     } else {
-      throw new InputError({
-        source: typeof value,
-        message: 'expecting types of string | Name',
-      });
+      throw new InputError({ source: typeof value, message: 'expecting types of string or Name' });
     }
   }
 }
@@ -116,7 +113,7 @@ class FirstNameValidator implements Validator<string | FirstName> {
   static #validator: FirstNameValidator;
 
   static create(): FirstNameValidator {
-    return this.#validator || (this.#validator = new this());
+    return this.#validator || (this.#validator = new FirstNameValidator());
   }
 
   validate(value: string | FirstName): void {
@@ -127,14 +124,11 @@ class FirstNameValidator implements Validator<string | FirstName> {
         throw new ValidationError({
           source: value,
           nameType: 'firstName',
-          message: 'invalid content',
+          message: 'invalid name content failing firstName regex',
         });
       }
     } else {
-      throw new InputError({
-        source: typeof value,
-        message: 'expecting types string | FirstName',
-      });
+      throw new InputError({ source: typeof value, message: 'expecting types string or FirstName' });
     }
   }
 }
@@ -143,7 +137,7 @@ class MiddleNameValidator implements Validator<string | string[] | Name[]> {
   static #validator: MiddleNameValidator;
 
   static create(): MiddleNameValidator {
-    return this.#validator || (this.#validator = new this());
+    return this.#validator || (this.#validator = new MiddleNameValidator());
   }
 
   validate(value: string | string[] | Name[]): void {
@@ -152,7 +146,7 @@ class MiddleNameValidator implements Validator<string | string[] | Name[]> {
         throw new ValidationError({
           source: value,
           nameType: 'middleName',
-          message: 'invalid content',
+          message: 'invalid name content failing middleName regex',
         });
       }
     } else if (Array.isArray(value)) {
@@ -169,7 +163,7 @@ class MiddleNameValidator implements Validator<string | string[] | Name[]> {
     } else {
       throw new InputError({
         source: typeof value,
-        message: 'expecting types of string | string[] | Name[]',
+        message: 'expecting types of string, string[] or Name[]',
       });
     }
   }
@@ -179,7 +173,7 @@ class LastNameValidator implements Validator<string | LastName> {
   static #validator: LastNameValidator;
 
   static create(): LastNameValidator {
-    return this.#validator || (this.#validator = new this());
+    return this.#validator || (this.#validator = new LastNameValidator());
   }
 
   validate(value: string | LastName): void {
@@ -190,14 +184,11 @@ class LastNameValidator implements Validator<string | LastName> {
         throw new ValidationError({
           source: value,
           nameType: 'lastName',
-          message: 'invalid content',
+          message: 'invalid name content failing lastName regex',
         });
       }
     } else {
-      throw new InputError({
-        source: typeof value,
-        message: 'expecting types string | LastName',
-      });
+      throw new InputError({ source: typeof value, message: 'expecting types string or LastName' });
     }
   }
 }
@@ -206,7 +197,7 @@ class NameValidator implements Validator<Name> {
   static #validator: NameValidator;
 
   static create(): NameValidator {
-    return this.#validator || (this.#validator = new this());
+    return this.#validator || (this.#validator = new NameValidator());
   }
 
   validate(name: Name, type?: Namon): void {
@@ -214,7 +205,7 @@ class NameValidator implements Validator<Name> {
       throw new ValidationError({
         source: name.toString(),
         nameType: name.type.toString(),
-        message: 'wrong type',
+        message: 'wrong name type; only Namon types are supported',
       });
     }
 
@@ -222,7 +213,7 @@ class NameValidator implements Validator<Name> {
       throw new ValidationError({
         source: name.toString(),
         nameType: name.type.toString(),
-        message: 'invalid content',
+        message: 'invalid name content failing namon regex',
       });
     }
   }
@@ -232,7 +223,7 @@ export class NamaValidator implements Validator<Map<Namon, string>> {
   static #validator: NamaValidator;
 
   static create(): NamaValidator {
-    return this.#validator || (this.#validator = new this());
+    return this.#validator || (this.#validator = new NamaValidator());
   }
 
   validate(value: Map<Namon, string>): void {
@@ -255,17 +246,11 @@ export class NamaValidator implements Validator<Map<Namon, string>> {
     }
 
     if (!nama.has(Namon.FIRST_NAME)) {
-      throw new InputError({
-        source: [...nama.values()],
-        message: '"firstName" is a required key',
-      });
+      throw new InputError({ source: [...nama.values()], message: '"firstName" is a required key' });
     }
 
     if (!nama.has(Namon.LAST_NAME)) {
-      throw new InputError({
-        source: [...nama.values()],
-        message: '"lastName" is a required key',
-      });
+      throw new InputError({ source: [...nama.values()], message: '"lastName" is a required key' });
     }
   }
 }
@@ -295,7 +280,7 @@ export class ArrayNameValidator implements Validator<Name[]> {
   static #validator: ArrayNameValidator;
 
   static create(): ArrayNameValidator {
-    return this.#validator || (this.#validator = new this());
+    return this.#validator || (this.#validator = new ArrayNameValidator());
   }
 
   validate(value: Name[]): void {
