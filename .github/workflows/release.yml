@@ -25,10 +25,8 @@ jobs:
 
       - name: Prepare releases
         run: |
-          yarn install
-          yarn format
-          yarn lint
-          yarn build
+          npm install
+          npm run build
 
       - name: Publish to NPM
         run: |
