@@ -101,16 +101,14 @@ export class NameIndex {
 /** Capitalizes a string via a `CapsRange` option. */
 export function capitalize(str: string, range: CapsRange = CapsRange.INITIAL): string {
   if (!str || range === CapsRange.NONE) return str;
-  const initial = str[0].toUpperCase();
-  const rest = str.slice(1).toLowerCase();
+  const [initial, rest] = [str[0].toUpperCase(), str.slice(1).toLowerCase()];
   return range === CapsRange.INITIAL ? initial.concat(rest) : str.toUpperCase();
 }
 
 /** Decapitalizes a string via a `CapsRange` option. */
 export function decapitalize(str: string, range: CapsRange = CapsRange.INITIAL): string {
   if (!str || range === CapsRange.NONE) return str;
-  const initial = str[0].toLowerCase();
-  const rest = str.slice(1);
+  const [initial, rest] = [str[0].toLowerCase(), str.slice(1)];
   return range === CapsRange.INITIAL ? initial.concat(rest) : str.toLowerCase();
 }
 
@@ -122,6 +120,6 @@ export function toggleCase(str: string): string {
     .join('');
 }
 
-export function isStringArray(value?: unknown): boolean {
+export function isStringArray(value?: unknown): value is string[] {
   return Array.isArray(value) && value.length > 0 && value.every((e) => typeof e === 'string');
 }

@@ -118,8 +118,8 @@ export class Name {
   }
 
   protected validate(name?: string): void {
-    if (name && name?.trim()?.length < 2) {
-      throw new InputError({ source: name, message: 'must be 2+ characters' });
+    if (typeof name === 'string' && name.trim().length < 1) {
+      throw new InputError({ source: name, message: 'must be 1+ characters' });
     }
   }
 }
@@ -199,8 +199,8 @@ export class LastName extends Name {
   /**
    * Creates an extended version of `Name` and flags it as a last name `type`.
    *
-   * Some people may keep their `mother`'s surname and want to keep a clear cut
-   * from their `father`'s surname. However, there are no clear rules about it.
+   * Some people may keep their @param mother's surname and want to keep a clear cut
+   * from their @param father's surname. However, there are no clear rules about it.
    */
   constructor(
     father: string,
@@ -289,7 +289,7 @@ export class LastName extends Name {
   }
 }
 
-export function isNameArray(value?: unknown): boolean {
+export function isNameArray(value?: unknown): value is Name[] {
   return Array.isArray(value) && value.length > 0 && value.every((e) => e instanceof Name);
 }
 

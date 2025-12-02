@@ -1,6 +1,6 @@
 import { Config } from './config.js';
 import { FullName } from './fullname.js';
-import { ALLOWED_TOKENS } from './constants.js';
+import { ALLOWED_FORMAT_TOKENS } from './constants.js';
 import { InputError, NotAllowedError } from './error.js';
 import { Name, JsonName, isNameArray } from './name.js';
 import { Flat, NameOrder, NameType, Namon, Nullable, Surname } from './types.js';
@@ -35,7 +35,7 @@ import { ArrayNameParser, ArrayStringParser, NamaParser, Parser, StringParser } 
  * this: `John Smith`, where `John` is the first name piece and `Smith`, the last
  * name piece.
  *
- * @see {link https://www.fbiic.gov/public/2008/nov/Naming_practice_guide_UK_2006.pdf}
+ * @see {@link https://www.fbiic.gov/public/2008/nov/Naming_practice_guide_UK_2006.pdf}
  * for more info on name standards.
  *
  * **IMPORTANT**: Keep in mind that the order of appearance (or name order) matters
@@ -56,13 +56,14 @@ export class Namefully {
   /** A copy of high-quality name data. */
   #fullName: FullName;
 
-  /** Creates a name with distinguishable parts from a raw string content.
+  /**
+   * Creates a name with distinguishable parts.
    * @param names element to parse.
    * @param options additional settings.
    *
    * Optional parameters may be provided with specifics on how to treat a full
-   * name during its existence. All name parts must have at least two (2) characters
-   * or more to be considered a potential. That is the only requirement of namefully.
+   * name during its existence. All name parts must have at least one (1) character
+   * to proceed. That is the only requirement/validation of namefully.
    */
   constructor(names: string | string[] | Name[] | JsonName | Parser, options?: Partial<Config>) {
     this.#fullName = this.#toParser(names).parse(options);
@@ -85,7 +86,7 @@ export class Namefully {
   /**
    * Constructs a `Namefully` instance from a text.
    *
-   * It throws a `NameError` if the text cannot be parsed. Use `tryParse`
+   * @throws a `NameError` if the @param text cannot be parsed. Use `tryParse`
    * instead if a `null` return is preferred over a throwable error.
    *
    * This operation is computed asynchronously, which gives more flexibility at
@@ -525,7 +526,7 @@ export class Namefully {
     let group = '';
     const formatted: string[] = [];
     for (const char of pattern) {
-      if (ALLOWED_TOKENS.indexOf(char) === -1) {
+      if (ALLOWED_FORMAT_TOKENS.indexOf(char) === -1) {
         throw new NotAllowedError({
           source: this.full,
           operation: 'format',

@@ -21,7 +21,7 @@ describe('FullName', () => {
   });
 
   test('creates a full name from a json name', () => {
-    expect(() => FullName.parse({ firstName: 'J', lastName: 'Smith' })).toThrow(NameError);
+    expect(() => FullName.parse({ firstName: '', lastName: 'Smith' })).toThrow(NameError);
     fullName = FullName.parse({
       prefix: 'Mr',
       firstName: 'John',

@@ -7,10 +7,10 @@ describe('Name', () => {
 
   beforeEach(() => (name = Name.middle('John')));
 
-  test('throws an exception if a name has less than 2 characters', () => {
-    expect(() => Name.first('Q')).toThrow(InputError);
-    expect(() => new FirstName('John', 'B')).toThrow(InputError);
-    expect(() => new LastName('Smith', 'D')).toThrow(InputError);
+  test('throws an exception if a name has less than 1 characters', () => {
+    expect(() => Name.first('')).toThrow(InputError);
+    expect(() => new FirstName('John', '')).toThrow(InputError);
+    expect(() => new LastName('Smith', '')).toThrow(InputError);
   });
 
   test('creates a name marked with a specific type', () => {

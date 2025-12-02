@@ -48,8 +48,8 @@ export enum NameErrorType {
  * program failure. Au contraire, it is expected that a programmer using this utility
  * would consider validating a name using its own business rules. That is not
  * this utility's job to guess those rules. So, the predefined `ValidationRules`
- * obey some common validation techniques when it comes to sanitizing a person
- * name. For this reason, the [Config.bypass] is set to `true` by default,
+ * obey some common validation techniques when it comes to sanitizing a personal
+ * name. For this reason, the `Config.bypass` is set to `true` by default,
  * indicating that those predefined rules should be skipped for the sake of the
  * program.
  *
@@ -58,14 +58,14 @@ export enum NameErrorType {
  *
  * A name error intends to provide useful information about what causes the error
  * and let the user take initiative on what happens next to the given name:
- * reconstructing it or skipping it.
+ * reconstructing it or discarding it.
  */
 export class NameError extends Error {
   /**
    * Creates an error with a message describing the issue for a name source.
    * @param source name input that caused the error
-   * @param message a message describing the failure.
-   * @param type of `NameErrorType`
+   * @param message describing the failure.
+   * @param type of error via `NameErrorType`
    */
   constructor(
     readonly source: NameSource,
@@ -78,11 +78,9 @@ export class NameError extends Error {
 
   /** The actual source input which caused the error. */
   get sourceAsString(): string {
-    let input = '';
-    if (!this.source) input = '<undefined>';
-    if (typeof this.source === 'string') input = this.source;
-    if (isStringArray(this.source)) input = (this.source as string[]).join(' ');
-    return input;
+    if (typeof this.source === 'string') return this.source;
+    if (isStringArray(this.source)) return this.source.join(' ');
+    return '<undefined>';
   }
 
   /** Whether a message describing the failure exists. */
@@ -101,9 +99,9 @@ export class NameError extends Error {
 /**
  * An error thrown when a name source input is incorrect.
  *
- * A `Name` is a name for this utility under certain criteria (i.e., 2+ chars),
+ * A `Name` is a name for this utility under certain criteria (i.e., 1+ chars),
  * hence, a wrong input will cause this kind of error. Another common reason
- * may be a wrong key in a Json name parsing mechanism.
+ * may be a wrong key in a JSON name parsing mechanism.
  *
  * Keep in mind that this error is different from a `ValidationError`.
  */

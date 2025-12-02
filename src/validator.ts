@@ -1,15 +1,15 @@
-import { MIN_NUMBER_OF_NAME_PARTS, MAX_NUMBER_OF_NAME_PARTS } from './constants.js';
-import { InputError, NameError, ValidationError } from './error.js';
-import { FirstName, LastName, Name, isNameArray } from './name.js';
 import { Namon } from './types.js';
 import { NameIndex } from './utils.js';
+import { FirstName, LastName, Name, isNameArray } from './name.js';
+import { InputError, NameError, ValidationError } from './error.js';
+import { MIN_NUMBER_OF_NAME_PARTS as MIN, MAX_NUMBER_OF_NAME_PARTS as MAX } from './constants.js';
 
 /**
  * Represents a set of validation rules (regex)
  *
  * This regex is intented to match specific alphabets only as a human name does
  * not contain special characters. `\w` does not cover non-Latin characters. So,
- * it is extended using unicode chars to cover more cases (e.g., Icelandic).
+ * it is extended (using unicode chars) to cover more cases (e.g., Icelandic).
  * It matches as follows:
  *  [a-z]: Latin alphabet from a (index 97) to z (index 122)
  *  [A-Z]: Latin alphabet from A (index 65) to Z (index 90)
@@ -67,7 +67,7 @@ class ValidationRule {
 }
 
 const toNameSource = (values: unknown[]): string => {
-  return isNameArray(values) ? (values as Name[]).map((n: Name) => n.toString()).join(' ') : '';
+  return isNameArray(values) ? values.map((n: Name) => n.toString()).join(' ') : '';
 };
 
 export interface Validator<T> {
@@ -76,10 +76,10 @@ export interface Validator<T> {
 
 class ArrayValidator<T extends string | Name> implements Validator<T[]> {
   validate(values: T[]): void {
-    if (values.length === 0 || values.length < MIN_NUMBER_OF_NAME_PARTS || values.length > MAX_NUMBER_OF_NAME_PARTS) {
+    if (values.length === 0 || values.length < MIN || values.length > MAX) {
       throw new InputError({
         source: values.map((n) => n.toString()),
-        message: `expecting a list of ${MIN_NUMBER_OF_NAME_PARTS}-${MIN_NUMBER_OF_NAME_PARTS} elements`,
+        message: `expecting a list of ${MIN}-${MAX} elements`,
       });
     }
   }
@@ -238,10 +238,10 @@ export class NamaValidator implements Validator<Map<Namon, string>> {
   validateKeys(nama: Map<Namon, string>): void {
     if (!nama.size) {
       throw new InputError({ source: undefined, message: 'Map<k,v> must not be empty' });
-    } else if (nama.size < MIN_NUMBER_OF_NAME_PARTS || nama.size > MAX_NUMBER_OF_NAME_PARTS) {
+    } else if (nama.size < MIN || nama.size > MAX) {
       throw new InputError({
         source: [...nama.values()],
-        message: `expecting ${MIN_NUMBER_OF_NAME_PARTS}-${MIN_NUMBER_OF_NAME_PARTS} fields`,
+        message: `expecting ${MIN}-${MAX} fields`,
       });
     }
 
@@ -284,10 +284,10 @@ export class ArrayNameValidator implements Validator<Name[]> {
   }
 
   validate(value: Name[]): void {
-    if (value.length < MIN_NUMBER_OF_NAME_PARTS) {
+    if (value.length < MIN) {
       throw new InputError({
         source: toNameSource(value),
-        message: `expecting at least ${MIN_NUMBER_OF_NAME_PARTS} elements`,
+        message: `expecting at least ${MIN} elements`,
       });
     }
 
@@ -306,14 +306,16 @@ export class ArrayNameValidator implements Validator<Name[]> {
         accumulator[name.type.key] = name.toString();
       }
     }
-    return Object.keys(accumulator).length === MIN_NUMBER_OF_NAME_PARTS;
+    return Object.keys(accumulator).length === MIN;
   }
 }
 
 /** A list of validators for a specific namon. */
 export abstract class Validators {
+  // core validators
   static namon = NamonValidator.create();
   static nama = NamaValidator.create();
+  // synthetic validators
   static prefix = NamonValidator.create();
   static firstName = FirstNameValidator.create();
   static middleName = MiddleNameValidator.create();

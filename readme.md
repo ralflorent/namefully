@@ -3,7 +3,6 @@
 [![npm version][version-img]][version-url]
 [![JSR Version][jsr-version]][jsr-url]
 [![CI build][ci-img]][ci-url]
-[![Coverage Status][codecov-img]][codecov-url]
 [![MIT License][license-img]][license-url]
 
 Human name handling made easy.
@@ -276,7 +275,8 @@ other words, the most basic/typical case is a name that looks like this:
 > is as shown above and will be used as a basis for future examples and use cases.
 
 Once imported, all that is required to do is to create an instance of
-`Namefully` and the rest will follow.
+`Namefully` and the rest will follow. Keep in mind that all name parts must have
+at least one (1) character to proceed.
 
 ### Basic cases
 
@@ -324,8 +324,6 @@ The underlying content of this utility is licensed under [MIT License][license-u
 [jsr-url]: https://jsr.io/@ralflorent/namefully
 [ci-img]: https://github.com/ralflorent/namefully/workflows/build/badge.svg
 [ci-url]: https://github.com/ralflorent/namefully/actions/workflows/ci.yml
-[codecov-img]: https://codecov.io/gh/ralflorent/namefully/branch/main/graph/badge.svg
-[codecov-url]: https://codecov.io/gh/ralflorent/namefully
 [license-img]: https://img.shields.io/npm/l/namefully
 [license-url]: https://opensource.org/licenses/MIT
 

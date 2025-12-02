@@ -45,9 +45,7 @@ export abstract class Parser<T = unknown> {
     }
   }
 
-  /**
-   * Builds asynchronously a dynamic `Parser`.
-   */
+  /** Builds asynchronously a dynamic `Parser`. */
   static buildAsync(text: string, index?: NameIndex): Promise<Parser> {
     try {
       return Promise.resolve(Parser.build(text, index));
@@ -58,7 +56,7 @@ export abstract class Parser<T = unknown> {
 
   /**
    * Parses the raw data into a `FullName` while considering some options.
-   * @param options additional configuration to apply.
+   * @param options for additional configuration to apply.
    */
   abstract parse(options?: Partial<Config>): FullName;
 }
@@ -101,18 +99,7 @@ export class ArrayStringParser extends Parser<string[]> {
 export class NamaParser extends Parser<JsonName> {
   parse(options: Partial<Config>): FullName {
     const config = Config.merge(options);
-
-    if (config.bypass) {
-      NamaValidator.create().validateKeys(this.#asNama());
-    } else {
-      NamaValidator.create().validate(this.#asNama());
-    }
-
-    return FullName.parse(this.raw, config);
-  }
-
-  #asNama(): Map<Namon, string> {
-    return new Map<Namon, string>(
+    const names = new Map<Namon, string>(
       Object.entries(this.raw).map(([key, value]) => {
         const namon: Nullable<Namon> = Namon.cast(key);
         if (!namon) {
@@ -124,6 +111,14 @@ export class NamaParser extends Parser<JsonName> {
         return [namon, value as string];
       }),
     );
+
+    if (config.bypass) {
+      NamaValidator.create().validateKeys(names);
+    } else {
+      NamaValidator.create().validate(names);
+    }
+
+    return FullName.parse(this.raw, config);
   }
 }
 
