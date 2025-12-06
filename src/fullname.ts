@@ -1,5 +1,5 @@
-import { Config } from './config.js';
 import { Validators } from './validator.js';
+import { Config, IConfig } from './config.js';
 import { Nullable, Namon, Title } from './types.js';
 import { NameError, UnknownError } from './error.js';
 import { FirstName, LastName, Name, JsonName } from './name.js';
@@ -32,7 +32,7 @@ export class FullName {
    * Creates a full name as it goes
    * @param options settings for additional features.
    */
-  constructor(options?: Partial<Config>) {
+  constructor(options?: IConfig) {
     this.#config = Config.merge(options);
   }
 
@@ -125,9 +125,31 @@ export class FullName {
   }
 
   /** Returns true if a namon has been set. */
-  has(namon: Namon): boolean {
+  has(key: Namon | string): boolean {
+    const namon = typeof key === 'string' ? Namon.cast(key) : key;
+    if (!namon) return false;
     if (namon.equal(Namon.PREFIX)) return !!this.#prefix;
     if (namon.equal(Namon.SUFFIX)) return !!this.#suffix;
     return namon.equal(Namon.MIDDLE_NAME) ? this.#middleName.length > 0 : true;
+  }
+
+  /** Returns an `Iterable` of existing `Name`s. */
+  *toIterable(flat: boolean = false): Iterable<Name> {
+    if (this.#prefix) yield this.#prefix;
+    if (flat) {
+      yield* this.#firstName.asNames;
+      yield* this.#middleName;
+      yield* this.#lastName.asNames;
+    } else {
+      yield this.#firstName;
+      yield* this.#middleName;
+      yield this.#lastName;
+    }
+    if (this.#suffix) yield this.#suffix;
+  }
+
+  /** Returns the default iterator for this name set (enabling for-of statements). */
+  *[Symbol.iterator](): Iterator<Name> {
+    yield* this.toIterable(true);
   }
 }

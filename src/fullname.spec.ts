@@ -77,6 +77,27 @@ describe('FullName', () => {
     expect(fullName.has(Namon.LAST_NAME)).toBe(true);
     expect(fullName.has(Namon.SUFFIX)).toBe(false);
   });
+
+  test('.toIterable() returns sequence of name parts', () => {
+    fullName = new FullName()
+      .setPrefix(prefix)
+      .setFirstName(firstName)
+      .setMiddleName(middleName)
+      .setLastName(lastName)
+      .setSuffix(suffix);
+
+    const parts = fullName[Symbol.iterator]();
+    expect(Name.prefix('Mr').equal(parts.next().value)).toBe(true);
+    expect(Name.first('John').equal(parts.next().value)).toBe(true);
+    expect(Name.middle('Ben').equal(parts.next().value)).toBe(true);
+    expect(Name.middle('Carl').equal(parts.next().value)).toBe(true);
+    expect(Name.last('Smith').equal(parts.next().value)).toBe(true);
+    expect(Name.suffix('Ph.D').equal(parts.next().value)).toBe(true);
+
+    const over = parts.next();
+    expect(over.done).toBe(true);
+    expect(over.value).toBe(undefined);
+  });
 });
 
 function runExpectations(fullName: FullName) {

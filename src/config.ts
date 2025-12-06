@@ -1,7 +1,18 @@
-import { NameOrder, Separator, Title, Surname } from './types.js';
+import { NameOrder, Separator, Title, Surname, TypeMatcher } from './types.js';
 
 const defaultName = 'default';
 const copyAlias = '_copy';
+
+/** Optional configuration parameters (@see {@linkcode Config} for more details). */
+export type IConfig = Partial<{
+  name: string;
+  orderedBy: NameOrder | 'firstname' | 'first' | 'fn' | 'f' | 'lastname' | 'last' | 'ln' | 'l';
+  separator: string | Separator;
+  title: Title | 'uk' | 'noperiod' | 'us' | 'period' | '.';
+  ending: boolean;
+  bypass: boolean;
+  surname: Surname | 'father' | 'mother' | 'hyphen' | 'hyphenated' | 'all' | '*';
+}>;
 
 /**
  * The Configuration to use across the other components.
@@ -31,7 +42,7 @@ const copyAlias = '_copy';
  * configuration, prioritizing the new one's values, as shown in the example
  * above.
  */
-export class Config {
+export class Config implements IConfig {
   #name: string;
   #orderedBy: NameOrder;
   #separator: Separator;
@@ -128,17 +139,23 @@ export class Config {
    * and the provided optional values of another configuration.
    * @param other partial config to be combined with.
    */
-  static merge(other?: Partial<Config>): Config {
+  static merge(other?: IConfig): Config {
     if (!other) {
       return Config.create();
     } else {
-      const config = Config.create(other.name);
-      config.#orderedBy = other.orderedBy ?? config.orderedBy;
-      config.#separator = other.separator ?? config.separator;
-      config.#title = other.title ?? config.title;
-      config.#ending = other.ending ?? config.ending;
-      config.#bypass = other.bypass ?? config.bypass;
-      config.#surname = other.surname ?? config.surname;
+      const config = Config.create(other?.name);
+      const {
+        orderedBy = config.orderedBy,
+        separator = config.separator,
+        title = config.title,
+        surname = config.surname,
+      } = other ?? {};
+      config.#orderedBy = TypeMatcher.nameOrder(orderedBy, config.orderedBy);
+      config.#separator = TypeMatcher.separator(separator, config.separator);
+      config.#title = TypeMatcher.title(title, config.title);
+      config.#ending = other?.ending ?? config.ending;
+      config.#bypass = other?.bypass ?? config.bypass;
+      config.#surname = TypeMatcher.surname(surname, config.surname);
       return config;
     }
   }
@@ -152,15 +169,23 @@ export class Config {
    * if the new copy is made from the default configuration, this new copy will
    * be named `default_copy`.
    */
-  copyWith(options: Partial<Config> = {}): Config {
-    const { name, orderedBy, separator, title, ending, bypass, surname } = options;
+  copyWith(options: IConfig = {}): Config {
+    const {
+      name,
+      orderedBy = this.orderedBy,
+      separator = this.separator,
+      title = this.title,
+      ending = this.ending,
+      bypass = this.bypass,
+      surname = this.surname,
+    } = options;
     const config = Config.create(this.#genNewName(name ?? this.name + copyAlias));
-    config.#orderedBy = orderedBy ?? this.orderedBy;
-    config.#separator = separator ?? this.separator;
-    config.#title = title ?? this.title;
+    config.#orderedBy = TypeMatcher.nameOrder(orderedBy, this.orderedBy);
+    config.#separator = TypeMatcher.separator(separator, this.separator);
+    config.#title = TypeMatcher.title(title, this.title);
     config.#ending = ending ?? this.ending;
     config.#bypass = bypass ?? this.bypass;
-    config.#surname = surname ?? this.surname;
+    config.#surname = TypeMatcher.surname(surname, this.surname);
     return config;
   }
 
@@ -185,19 +210,15 @@ export class Config {
    * order of appearance of a name set.
    * @deprecated use `update()` method instead.
    */
-  updateOrder(orderedBy: NameOrder): void {
+  updateOrder(orderedBy: IConfig['orderedBy']): void {
     this.update({ orderedBy });
   }
 
   /**
    * Allows the possibility to alter some options after creating a name set.
    */
-  update({ orderedBy, title, ending }: Partial<Pick<Config, 'orderedBy' | 'title' | 'ending'>>): void {
-    const config = Config.cache.get(this.name);
-    if (!config) return;
-    if (orderedBy !== this.#orderedBy) config.#orderedBy = orderedBy!;
-    if (title !== this.#title) config.#title = title!;
-    if (ending !== this.#ending) config.#ending = ending!;
+  update(options: Pick<IConfig, 'orderedBy' | 'title' | 'ending'>): void {
+    Config.merge({ name: this.name, ...options });
   }
 
   /** Generates a unique new name. */

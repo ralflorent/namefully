@@ -1,6 +1,7 @@
+import { IConfig } from './config.js';
 import { InputError } from './error.js';
-import { CapsRange, Namon, Surname } from './types.js';
 import { capitalize, decapitalize } from './utils.js';
+import { CapsRange, Namon, Surname, TypeMatcher } from './types.js';
 
 /** Representation of a string type name with some extra capabilities. */
 export class Name {
@@ -195,6 +196,7 @@ export class FirstName extends Name {
 /** Representation of a last name with some extra functionality. */
 export class LastName extends Name {
   #mother?: string;
+  format!: Surname;
 
   /**
    * Creates an extended version of `Name` and flags it as a last name `type`.
@@ -202,14 +204,11 @@ export class LastName extends Name {
    * Some people may keep their @param mother's surname and want to keep a clear cut
    * from their @param father's surname. However, there are no clear rules about it.
    */
-  constructor(
-    father: string,
-    mother?: string,
-    readonly format = Surname.FATHER,
-  ) {
+  constructor(father: string, mother?: string, format?: IConfig['surname']) {
     super(father, Namon.LAST_NAME);
     this.validate(mother);
     this.#mother = mother;
+    this.format = TypeMatcher.surname(format ?? '', Surname.FATHER);
   }
 
   /** The surname inherited from the father side. */
@@ -252,9 +251,10 @@ export class LastName extends Name {
     }
   }
 
-  initials(format?: Surname): string[] {
+  initials(format?: IConfig['surname']): string[] {
     const inits: string[] = [];
-    switch (format ?? this.format) {
+    format = TypeMatcher.surname(format ?? this.format);
+    switch (format) {
       case Surname.HYPHENATED:
       case Surname.ALL:
         inits.push(this.initial);
@@ -284,7 +284,7 @@ export class LastName extends Name {
   }
 
   /** Makes a copy of the current name. */
-  copyWith(values?: { father?: string; mother?: string; format?: Surname }): LastName {
+  copyWith(values?: { father?: string; mother?: string; format?: IConfig['surname'] }): LastName {
     return new LastName(values?.father ?? this.value, values?.mother ?? this.mother, values?.format ?? this.format);
   }
 }

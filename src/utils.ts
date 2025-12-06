@@ -1,4 +1,5 @@
-import { NameOrder, CapsRange } from './types.js';
+import { IConfig } from './config.js';
+import { NameOrder, CapsRange, TypeMatcher } from './types.js';
 import { MIN_NUMBER_OF_NAME_PARTS, MAX_NUMBER_OF_NAME_PARTS } from './constants.js';
 
 /**
@@ -52,8 +53,8 @@ export class NameIndex {
    * Gets the name index for a list of names based on the `count` of elements
    * and their `order` of appearance.
    */
-  static when(order: NameOrder, count = 2): NameIndex {
-    if (order === NameOrder.FIRST_NAME) {
+  static when(order: IConfig['orderedBy'], count = 2): NameIndex {
+    if (TypeMatcher.nameOrder(order ?? '') === NameOrder.FIRST_NAME) {
       switch (count) {
         case 2: // first name + last name
           return new NameIndex(-1, 0, -1, 1, -1);

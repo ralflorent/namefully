@@ -93,6 +93,8 @@ as `FirstName`, `LastName`, or `Name` that may not often follow the same pattern
 rule or behavior in your application.
 
 Below are enlisted the options supported by `namefully`.
+> All enums can be provided as `string` as well. There's no need to bring them in
+> when using TypeScript.
 
 ### orderedBy
 
@@ -108,7 +110,7 @@ const name1 = new Namefully('Smith John Joe', { orderedBy: NameOrder.LAST_NAME }
 console.log(name1.last); // Smith
 
 // 'Edison' is the surname in this string array case
-const name2 = new Namefully(['Edison', 'Thomas'], { orderedBy: NameOrder.LAST_NAME });
+const name2 = new Namefully(['Edison', 'Thomas'], { orderedBy: 'lastname' });
 console.log(name2.first); // Thomas
 ```
 
@@ -119,7 +121,7 @@ console.log(name2.first); // Thomas
 
 ```ts
 // 'Smith' is the surname in this raw string case
-const name = new Namefully('Smith John Joe', { orderedBy: NameOrder.LAST_NAME });
+const name = new Namefully('Smith John Joe', { orderedBy: 'lastname' });
 console.log(name.fullName()); // Smith John Joe
 
 // Now alter the order by choosing the given name first
@@ -134,7 +136,7 @@ _Only valid for raw string values_, this option indicates how to split the parts
 of a raw string name under the hood.
 
 ```ts
-const name = new Namefully('John,Smith', { separator: Separator.COMMA });
+const name = new Namefully('John,Smith', { separator: ',' });
 console.log(name.full); // John Smith
 ```
 
@@ -222,11 +224,11 @@ To sum it all up, the default values are:
 Customize your own parser to indicate the full name yourself.
 
 ```ts
-import { Config, FullName, Namefully, Parser } from 'namefully';
+import { IConfig, FullName, Namefully, Parser } from 'namefully';
 
 // Suppose you want to cover this '#' separator
 class SimpleParser extends Parser<string> {
-  parse(options: Partial<Config>): FullName {
+  parse(options: IConfig): FullName {
     const [firstName, lastName] = this.raw.split('#');
     return FullName.parse({ firstName, lastName }, Config.merge(options));
   }
