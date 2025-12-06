@@ -4,6 +4,7 @@ export type Nullable<T> = T | null | undefined;
 /**
  * The abbreviation type to indicate whether or not to add period to a prefix
  * using the American or British way.
+ * @see {@linkcode TypeMatcher} for more variant supports.
  */
 export enum Title {
   // A period after the prefix.
@@ -84,6 +85,83 @@ export enum CapsRange {
   ALL,
 }
 
+/**
+ * Making types flexible so callers aren’t boxed into enums.
+ *
+ * Certain acceptable aliases should be able to work as well for some types. For example,
+ * 'all' can be represented as '*', which is universally accepted. This works in
+ * conjunction with public APIs that callers will use to indicate optional `Config`.
+ */
+export abstract class TypeMatcher {
+  static readonly firstNames = ['firstname', 'first', 'fn', 'f'];
+  static readonly middleNames = ['middlename', 'middle', 'mid', 'mn', 'm'];
+  static readonly lastNames = ['lastname', 'last', 'ln', 'l'];
+  static readonly all = ['*', 'all', 'every'];
+
+  static find<T extends string>(value: string | T, aliases: Record<T, string[]>): T | undefined {
+    const searchValue = String(value).toLowerCase();
+    return Object.entries<string[]>(aliases).find(([, list]) => list.includes(searchValue))?.[0] as T;
+  }
+
+  static separator(acceptable: string | Separator, fallback?: Separator): Separator {
+    if (acceptable instanceof Separator) return acceptable;
+    return Separator.cast(acceptable.toLowerCase()) ?? fallback ?? Separator.SPACE;
+  }
+
+  static title(acceptable: string | Title, fallback?: Title): Title {
+    const aliases: Record<Title, string[]> = {
+      [Title.UK]: ['uk', 'gb', 'au', 'noperiod'],
+      [Title.US]: ['us', 'usa', 'period', '.'],
+    };
+
+    return TypeMatcher.find(acceptable, aliases) ?? fallback ?? Title.UK;
+  }
+
+  static surname(acceptable: string | Surname, fallback?: Surname): Surname {
+    const aliases: Record<Surname, string[]> = {
+      [Surname.FATHER]: ['father'],
+      [Surname.MOTHER]: ['mother'],
+      [Surname.HYPHENATED]: ['hyphen', 'hyphenated'],
+      [Surname.ALL]: TypeMatcher.all,
+    };
+
+    return TypeMatcher.find(acceptable, aliases) ?? fallback ?? Surname.FATHER;
+  }
+
+  static nameOrder(acceptable: string | NameOrder, fallback?: NameOrder): NameOrder {
+    const aliases: Record<NameOrder, string[]> = {
+      [NameOrder.FIRST_NAME]: TypeMatcher.firstNames,
+      [NameOrder.LAST_NAME]: TypeMatcher.lastNames,
+    };
+
+    return TypeMatcher.find(acceptable, aliases) ?? fallback ?? NameOrder.FIRST_NAME;
+  }
+
+  static nameType(acceptable: string | NameType, fallback?: NameType): NameType {
+    const aliases: Record<NameType, string[]> = {
+      [NameType.FIRST_NAME]: TypeMatcher.firstNames,
+      [NameType.MIDDLE_NAME]: TypeMatcher.middleNames,
+      [NameType.LAST_NAME]: TypeMatcher.lastNames,
+      [NameType.BIRTH_NAME]: ['birthname', 'birth', 'bn', 'b'],
+    };
+
+    return TypeMatcher.find(acceptable, aliases) ?? fallback ?? NameType.FIRST_NAME;
+  }
+
+  static flat(acceptable: string | Flat, fallback?: Flat): Flat {
+    const aliases: Record<Flat, string[]> = {
+      [Flat.FIRST_NAME]: TypeMatcher.firstNames,
+      [Flat.MIDDLE_NAME]: TypeMatcher.middleNames,
+      [Flat.LAST_NAME]: TypeMatcher.lastNames,
+      [Flat.FIRST_MID]: ['firstmid', 'fm'],
+      [Flat.MID_LAST]: ['midlast', 'ml'],
+      [Flat.ALL]: TypeMatcher.all,
+    };
+
+    return TypeMatcher.find(acceptable, aliases) ?? fallback ?? Flat.MIDDLE_NAME;
+  }
+}
+
 /** The types of name handled in this utility according the name standards. */
 export class Namon {
   static readonly PREFIX: Namon = new Namon(0, 'prefix');
@@ -116,7 +194,16 @@ export class Namon {
 
   /** Makes a string key a namon type. */
   static cast(key: string): Nullable<Namon> {
-    return Namon.has(key) ? Namon.all.get(key) : undefined;
+    const aliases: Record<string, string[]> = {
+      [Namon.PREFIX.key]: ['prefix', 'px', 'p'],
+      [Namon.FIRST_NAME.key]: TypeMatcher.firstNames,
+      [Namon.MIDDLE_NAME.key]: TypeMatcher.middleNames,
+      [Namon.LAST_NAME.key]: TypeMatcher.lastNames,
+      [Namon.SUFFIX.key]: ['suffix', 'sx', 's'],
+    };
+
+    const namon = TypeMatcher.find(key, aliases);
+    return namon && Namon.has(namon) ? Namon.all.get(key) : undefined;
   }
 
   /** String representation of this object. */
@@ -164,6 +251,16 @@ export class Separator {
     readonly name: string,
     readonly token: string,
   ) {}
+
+  /** Makes a string key a separator type. */
+  static cast(key: string): Nullable<Separator> {
+    for (const [name, separator] of Separator.all) {
+      if (separator.token === key || name.toLowerCase() === key.toLowerCase()) {
+        return separator;
+      }
+    }
+    return undefined;
+  }
 
   /** String representation of this object. */
   toString(): string {

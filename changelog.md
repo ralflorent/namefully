@@ -4,6 +4,14 @@ This file contains the documentation on the notable changes and bug fixes, and
 is formatted following this [standard](https://keepachangelog.com/en/1.0.0/).
 This project also adheres to [Semantic Versioning](https://semver.org/).
 
+## [2.1.0] - 2025-12-06
+
+**Added**:
+
+- Made the name set iterable (i.e., for-of statements).
+- Made types flexible so devs aren’t boxed into enums.
+- Refactored codebasea accordingly to maintain backward compatibility (no breaking changes).
+
 ## [2.0.2] - 2025-12-02
 
 **Fixed**:
@@ -193,6 +201,7 @@ This project also adheres to [Semantic Versioning](https://semver.org/).
 
 Initial version
 
+[2.1.0]: https://github.com/ralflorent/namefully/compare/v2.0.2...v2.1.0
 [2.0.2]: https://github.com/ralflorent/namefully/compare/v2.0.1...v2.0.2
 [2.0.1]: https://github.com/ralflorent/namefully/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/ralflorent/namefully/compare/v1.3.0...v2.0.0

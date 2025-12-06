@@ -1,7 +1,7 @@
-import { Config } from './config.js';
 import { NameIndex } from './utils.js';
 import { InputError } from './error.js';
 import { FullName } from './fullname.js';
+import { Config, IConfig } from './config.js';
 import { Namon, Nullable, Separator } from './types.js';
 import { FirstName, LastName, Name, JsonName } from './name.js';
 import { ArrayStringValidator, ArrayNameValidator, NamaValidator } from './validator.js';
@@ -58,11 +58,11 @@ export abstract class Parser<T = unknown> {
    * Parses the raw data into a `FullName` while considering some options.
    * @param options for additional configuration to apply.
    */
-  abstract parse(options?: Partial<Config>): FullName;
+  abstract parse(options?: IConfig): FullName;
 }
 
 export class StringParser extends Parser<string> {
-  parse(options: Partial<Config>): FullName {
+  parse(options: IConfig): FullName {
     const config = Config.merge(options);
     const names = this.raw.split(config.separator.token);
     return new ArrayStringParser(names).parse(options);
@@ -70,7 +70,7 @@ export class StringParser extends Parser<string> {
 }
 
 export class ArrayStringParser extends Parser<string[]> {
-  parse(options: Partial<Config>): FullName {
+  parse(options: IConfig): FullName {
     const config = Config.merge(options);
     const fullName = new FullName(config);
 
@@ -97,7 +97,7 @@ export class ArrayStringParser extends Parser<string[]> {
 }
 
 export class NamaParser extends Parser<JsonName> {
-  parse(options: Partial<Config>): FullName {
+  parse(options: IConfig): FullName {
     const config = Config.merge(options);
     const names = new Map<Namon, string>(
       Object.entries(this.raw).map(([key, value]) => {
@@ -123,7 +123,7 @@ export class NamaParser extends Parser<JsonName> {
 }
 
 export class ArrayNameParser extends Parser<Name[]> {
-  parse(options: Partial<Config>): FullName {
+  parse(options: IConfig): FullName {
     const config = Config.merge(options);
     const fullName = new FullName(config);
 
