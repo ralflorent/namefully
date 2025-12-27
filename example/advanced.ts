@@ -11,7 +11,7 @@ function main() {
   builder.add(Name.prefix('Mr'));
 
   // Build the name with options if needed
-  name = builder.build({ title: Title.US })
+  name = builder.build({ title: Title.US });
   console.log(name.full); // Mr. Nikola Tesla
 }
 

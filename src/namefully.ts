@@ -172,24 +172,64 @@ export class Namefully {
     return this.format('p l');
   }
 
+  /**
+   * Returns an iterable of the name components in their natural form.
+   *
+   * Regardless of the order of appearance, this method will always return the
+   * existing `Name`s according to the name standards upon which this library
+   * is based.
+   *
+   * This is useful for iterating over the name parts in a consistent manner and
+   * this automatically enables operations such as mapping, filtering, etc.
+   */
+  get parts(): Iterable<Name> {
+    return this.#fullName.toIterable();
+  }
+
+  /** The number of name components. */
+  get size(): number {
+    return Array.from(this.parts).length;
+  }
+
+  /**
+   * Makes the name set iterable (i.e., for-of statements).
+   *
+   * This is similar to `parts` with the exception that all name components are
+   * returned as `Name` classes (instead of their natural form - e.g., `FirstName`)
+   * to maintain certain homogeneity and consistency across each name piece.
+   */
+  *[Symbol.iterator](): Iterator<Name> {
+    yield* this.#fullName.toIterable(true);
+  }
+
   /** Returns the full name as set. */
   toString(): string {
     return this.full;
   }
 
   /** Fetches the raw form of a name piece. */
-  get(namon: Namon): Nullable<Name | Name[]> {
-    if (namon.equal(Namon.PREFIX)) return this.#fullName.prefix;
-    if (namon.equal(Namon.FIRST_NAME)) return this.#fullName.firstName;
-    if (namon.equal(Namon.MIDDLE_NAME)) return this.#fullName.middleName;
-    if (namon.equal(Namon.LAST_NAME)) return this.#fullName.lastName;
-    if (namon.equal(Namon.SUFFIX)) return this.#fullName.suffix;
+  get(key: Namon | string): Nullable<Name | Name[]> {
+    const namon = typeof key === 'string' ? Namon.cast(key) : key;
+    if (namon?.equal(Namon.PREFIX)) return this.#fullName.prefix;
+    if (namon?.equal(Namon.FIRST_NAME)) return this.#fullName.firstName;
+    if (namon?.equal(Namon.MIDDLE_NAME)) return this.#fullName.middleName;
+    if (namon?.equal(Namon.LAST_NAME)) return this.#fullName.lastName;
+    if (namon?.equal(Namon.SUFFIX)) return this.#fullName.suffix;
     return undefined;
   }
 
   /** Whether this name is equal to another one from a raw-string perspective. */
   equal(other: Namefully): boolean {
     return this.toString() === other.toString();
+  }
+
+  /** Whether this name is equal to another one from a component perspective. */
+  deepEqual(other: Namefully): boolean {
+    const others = Array.from(other.parts);
+    for (const part of this.parts) {
+      if (!others.some((name) => name.equal(part))) return false;
+    }
+    return true;
   }
 
   /** Gets a JSON representation of the full name. */
@@ -204,8 +244,8 @@ export class Namefully {
   }
   json = this.toJson;
 
-  /** Confirms that a name part has been set. */
-  has(namon: Namon): boolean {
+  /** Confirms whether a name component exists. */
+  has(namon: Namon | string): boolean {
     return this.#fullName.has(namon);
   }
 
@@ -216,7 +256,7 @@ export class Namefully {
    * name, overriding the preset configuration.
    *
    * `Namefully.format()` may also be used to alter manually the order of appearance
-   * of full name. For example:
+   * of a full name. For example:
    * ```ts
    * const name = new Namefully('Jon Stark Snow');
    * console.log(name.fullName(NameOrder.LAST_NAME)); // "Snow Jon Stark"

@@ -15,20 +15,52 @@ describe('Namefully', () => {
       name = new Namefully('Mr John Ben Smith Ph.D', Config.create('generic'));
     });
 
+    test('.parts returns the name components as a sequence', () => {
+      for (const part of name.parts) {
+        expect(part).toBeInstanceOf(Name);
+      }
+      expect(Array.from(name.parts).length).toBe(5);
+    });
+
+    test('.[Symbol.iterator]() returns sequence of name parts', () => {
+      const parts = name[Symbol.iterator]();
+      expect(Name.prefix('Mr').equal(parts.next().value)).toBe(true);
+      expect(Name.first('John').equal(parts.next().value)).toBe(true);
+      expect(Name.middle('Ben').equal(parts.next().value)).toBe(true);
+      expect(Name.last('Smith').equal(parts.next().value)).toBe(true);
+      expect(Name.suffix('Ph.D').equal(parts.next().value)).toBe(true);
+
+      const over = parts.next();
+      expect(over.done).toBe(true);
+      expect(over.value).toBe(undefined);
+    });
+
     test('.has() determines if the full name has a specific namon', () => {
       expect(name.has(Namon.PREFIX)).toBe(true);
       expect(name.has(Namon.SUFFIX)).toBe(true);
       expect(name.has(Namon.MIDDLE_NAME)).toBe(true);
       expect(name.hasMiddle).toBe(true);
+
+      expect(name.has('firstName')).toBe(true);
+      expect(name.has('lastName')).toBe(true);
+      expect(name.has('middle')).toBe(false); // unknown namon key.
     });
 
     test('.toString() returns a String version of the full name', () => {
       expect(name.toString()).toBe('Mr John Ben Smith Ph.D');
     });
 
-    test('.equal() checks whether two names are equal', () => {
-      expect(name.equal(new Namefully('Mr John Ben Smith Ph.D'))).toBe(true);
-      expect(name.equal(new Namefully('Mr John Ben Smith'))).toBe(false);
+    test('.equal() checks whether two names are equal from a raw-string perspective', () => {
+      const names = [Name.prefix('Mr'), new FirstName('John', 'Ben'), new LastName('Smith'), Name.suffix('Ph.D')];
+      expect(name.equal(new Namefully(names))).toBe(true);
+      expect(name.equal(new Namefully(names.slice(1)))).toBe(false);
+    });
+
+    test('.deepEqual() checks whether two names are equal from a component perspective', () => {
+      const name1 = new Namefully('John Ben Smith');
+      const name2 = new Namefully([new FirstName('John', 'Ben'), new LastName('Smith')]);
+      expect(name1.equal(name2)).toBe(true);
+      expect(name1.deepEqual(name2)).toBe(false);
     });
 
     test('get(). gets the raw form of a name', () => {
@@ -40,6 +72,11 @@ describe('Namefully', () => {
 
       const middles = name.get(Namon.MIDDLE_NAME) as Name[];
       middles.forEach((n) => expect(n).toBeInstanceOf(Name));
+
+      expect(name.get('prefix')).toBeInstanceOf(Name);
+      expect(name.get('firstName')).toBeInstanceOf(FirstName);
+      expect(name.get('lastName')).toBeInstanceOf(LastName);
+      expect(name.get('suffix')).toBeInstanceOf(Name);
     });
 
     test('.json() returns a json version of the full name', () => {
