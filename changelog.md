@@ -4,13 +4,14 @@ This file contains the documentation on the notable changes and bug fixes, and
 is formatted following this [standard](https://keepachangelog.com/en/1.0.0/).
 This project also adheres to [Semantic Versioning](https://semver.org/).
 
-## [2.1.0] - 2025-12-26
+## [2.1.0] - 2025-12-28
 
 **Added**:
 
 - Made the name set iterable (i.e., for-of statements)
-- Allowed dirty when publish JSR
 - Added ability for deep equal between 2 namefully instances
+- Made certain types flexible so callers aren’t boxed into enums
+- Allowed dirty TS (e.g., example/*) when publish JSR
 
 ## [2.0.2] - 2025-12-02
 

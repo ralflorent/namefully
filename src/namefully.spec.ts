@@ -1,11 +1,11 @@
 import { Config } from './config.js';
 import { NameError } from './error.js';
-import { FirstName, LastName, Name } from './name.js';
+import { NameIndex } from './utils.js';
 import { Namefully } from './namefully.js';
 import { NameBuilder } from './builder.js';
-import { Flat, NameOrder, NameType, Namon, Separator, Surname, Title } from './types.js';
+import { FirstName, LastName, Name } from './name.js';
 import { SimpleParser, findNameCase } from './fixtures/helpers.js';
-import { NameIndex } from './utils.js';
+import { Flat, NameOrder, NameType, Namon, Separator, Surname, Title } from './types.js';
 
 describe('Namefully', () => {
   describe('(default settings)', () => {
@@ -16,13 +16,11 @@ describe('Namefully', () => {
     });
 
     test('.parts returns the name components as a sequence', () => {
-      for (const part of name.parts) {
-        expect(part).toBeInstanceOf(Name);
-      }
       expect(Array.from(name.parts).length).toBe(5);
+      for (const part of name.parts) expect(part).toBeInstanceOf(Name);
     });
 
-    test('.[Symbol.iterator]() returns sequence of name parts', () => {
+    test('.[Symbol.iterator]() returns a sequence of name parts', () => {
       const parts = name[Symbol.iterator]();
       expect(Name.prefix('Mr').equal(parts.next().value)).toBe(true);
       expect(Name.first('John').equal(parts.next().value)).toBe(true);
@@ -63,7 +61,7 @@ describe('Namefully', () => {
       expect(name1.deepEqual(name2)).toBe(false);
     });
 
-    test('get(). gets the raw form of a name', () => {
+    test('.get() gets the raw form of a name', () => {
       expect(name.config).toBeDefined();
       expect(name.get(Namon.PREFIX)).toBeInstanceOf(Name);
       expect(name.get(Namon.FIRST_NAME)).toBeInstanceOf(FirstName);
@@ -278,10 +276,12 @@ describe('Namefully', () => {
   describe('can be instantiated with', () => {
     test('string', () => {
       expect(new Namefully('John Smith').toString()).toBe('John Smith');
+      expect(new Namefully('Jane D Smith').toString()).toBe('Jane D Smith');
     });
 
     test('string[]', () => {
       expect(new Namefully(['John', 'Smith']).toString()).toBe('John Smith');
+      expect(new Namefully(['Jane', 'D', 'Smith']).toString()).toBe('Jane D Smith');
     });
 
     test('json', () => {
@@ -301,9 +301,7 @@ describe('Namefully', () => {
     });
 
     test('Parser<T> (Custom Parser)', () => {
-      expect(new Namefully(new SimpleParser('John#Smith'), Config.create('simpleParser')).toString()).toBe(
-        'John Smith',
-      );
+      expect(new Namefully(new SimpleParser('John#Smith')).toString()).toBe('John Smith');
     });
 
     test('tryParse()', () => {
@@ -459,6 +457,19 @@ describe('Namefully', () => {
           surname: Surname.HYPHENATED,
         }),
       );
+
+      const { config } = new Namefully('f l', {
+        name: 'partial',
+        orderedBy: 'lastName',
+        title: 'US',
+        surname: 'all',
+        ending: true,
+      });
+      expect(config.name).toBe('partial');
+      expect(config.orderedBy).toBe(NameOrder.LAST_NAME);
+      expect(config.title).toBe(Title.US);
+      expect(config.ending).toBe(true);
+      expect(config.surname).toBe(Surname.ALL);
     });
 
     test('can create more than 1 configuration when necessary', () => {

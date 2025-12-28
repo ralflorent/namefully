@@ -1,7 +1,7 @@
 import { Name } from './name.js';
 import { Config } from './config.js';
-import { Namefully } from './namefully.js';
 import { ArrayNameValidator } from './validator.js';
+import { Namefully, NameOptions } from './namefully.js';
 
 type VoidCallback = () => void;
 type Callback<Type, Return> = (value: Type) => Return;
@@ -141,13 +141,13 @@ export class NameBuilder extends Builder<Name, Namefully> {
    * Regardless of how the names are added, both first and last names must exist
    * to complete a fine build. Otherwise, it throws a NameError.
    */
-  build(config?: Partial<Config>): Namefully {
+  build(options?: NameOptions): Namefully {
     this.prebuild?.();
 
     const names = [...this.queue];
     ArrayNameValidator.create().validate(names);
 
-    this.instance = new Namefully(names, config);
+    this.instance = new Namefully(names, options);
     this.postbuild?.(this.instance);
 
     return this.instance;
