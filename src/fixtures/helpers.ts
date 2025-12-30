@@ -1,8 +1,8 @@
 import { Config } from '../config.js';
-import { FullName } from '../fullname.js';
-import { FirstName, LastName, Name, JsonName } from '../name.js';
-import { Namefully } from '../namefully.js';
 import { Parser } from '../parser.js';
+import { FullName } from '../fullname.js';
+import { Namefully, NameOptions } from '../namefully.js';
+import { FirstName, LastName, Name, JsonName } from '../name.js';
 import { NameOrder, Separator, Surname, Title } from '../types.js';
 
 export class SimpleParser extends Parser<string> {
@@ -19,7 +19,7 @@ export function findNameCase(name: string): Namefully {
 
 interface NameCase {
   name: string | string[] | Name[] | JsonName;
-  options: Partial<Config>;
+  options: NameOptions;
 }
 
 const NAME_CASES: { [key: string]: NameCase } = {

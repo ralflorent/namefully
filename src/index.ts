@@ -16,6 +16,7 @@ import namefully from './namefully.js';
 export * from './builder.js';
 export * from './config.js';
 export { VERSION as version } from './constants.js';
+export * from './data.js';
 export * from './error.js';
 export * from './fullname.js';
 export * from './name.js';

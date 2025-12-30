@@ -1,10 +1,11 @@
 import { Config } from './config.js';
 import { FullName } from './fullname.js';
+import { SerializedName } from './data.js';
 import { ALLOWED_FORMAT_TOKENS } from './constants.js';
-import { InputError, NotAllowedError } from './error.js';
 import { Name, JsonName, isNameArray } from './name.js';
-import { Flat, NameOrder, NameType, Namon, Nullable, Surname } from './types.js';
+import { InputError, NotAllowedError } from './error.js';
 import { capitalize, decapitalize, isStringArray, NameIndex, toggleCase } from './utils.js';
+import { Flat, NameOrder, NameType, Namon, Nullable, Surname, Separator, Title } from './types.js';
 import { ArrayNameParser, ArrayStringParser, NamaParser, Parser, StringParser } from './parser.js';
 
 /**
@@ -65,8 +66,8 @@ export class Namefully {
    * name during its existence. All name parts must have at least one (1) character
    * to proceed. That is the only requirement/validation of namefully.
    */
-  constructor(names: string | string[] | Name[] | JsonName | Parser, options?: Partial<Config>) {
-    this.#fullName = this.#toParser(names).parse(options);
+  constructor(names: string | string[] | Name[] | JsonName | Parser, options?: NameOptions) {
+    this.#fullName = this.#toParser(names).parse(options as Partial<Config>);
   }
 
   /**
@@ -172,24 +173,64 @@ export class Namefully {
     return this.format('p l');
   }
 
-  /** Returns the full name as set. */
+  /**
+   * Returns an iterable of the name components in their natural form.
+   *
+   * Regardless of the order of appearance, this method will always return the
+   * existing `Name`s according to the name standards upon which this library
+   * is based.
+   *
+   * This is useful for iterating over the name parts in a consistent manner and
+   * this automatically enables operations such as mapping, filtering, etc.
+   */
+  get parts(): Iterable<Name> {
+    return this.#fullName.toIterable();
+  }
+
+  /** The number of name components. */
+  get size(): number {
+    return Array.from(this.parts).length;
+  }
+
+  /**
+   * Makes the name set iterable (i.e., for-of statements).
+   *
+   * This is similar to `parts` with the exception that all name components are
+   * returned as `Name` classes (instead of their natural form - e.g., `FirstName`)
+   * to maintain certain homogeneity and consistency across each name piece.
+   */
+  *[Symbol.iterator](): Iterator<Name> {
+    yield* this.#fullName.toIterable(true);
+  }
+
+  /** Gets a string representation of the full name. */
   toString(): string {
     return this.full;
   }
 
   /** Fetches the raw form of a name piece. */
-  get(namon: Namon): Nullable<Name | Name[]> {
-    if (namon.equal(Namon.PREFIX)) return this.#fullName.prefix;
-    if (namon.equal(Namon.FIRST_NAME)) return this.#fullName.firstName;
-    if (namon.equal(Namon.MIDDLE_NAME)) return this.#fullName.middleName;
-    if (namon.equal(Namon.LAST_NAME)) return this.#fullName.lastName;
-    if (namon.equal(Namon.SUFFIX)) return this.#fullName.suffix;
+  get(key: Namon | string): Nullable<Name | Name[]> {
+    const namon = typeof key === 'string' ? Namon.cast(key) : key;
+    if (namon?.equal(Namon.PREFIX)) return this.#fullName.prefix;
+    if (namon?.equal(Namon.FIRST_NAME)) return this.#fullName.firstName;
+    if (namon?.equal(Namon.MIDDLE_NAME)) return this.#fullName.middleName;
+    if (namon?.equal(Namon.LAST_NAME)) return this.#fullName.lastName;
+    if (namon?.equal(Namon.SUFFIX)) return this.#fullName.suffix;
     return undefined;
   }
 
   /** Whether this name is equal to another one from a raw-string perspective. */
   equal(other: Namefully): boolean {
     return this.toString() === other.toString();
+  }
+
+  /** Whether this name is equal to another one from a component perspective. */
+  deepEqual(other: Namefully): boolean {
+    const others = Array.from(other.parts);
+    for (const part of this.parts) {
+      if (!others.some((name) => name.equal(part))) return false;
+    }
+    return true;
   }
 
   /** Gets a JSON representation of the full name. */
@@ -204,8 +245,8 @@ export class Namefully {
   }
   json = this.toJson;
 
-  /** Confirms that a name part has been set. */
-  has(namon: Namon): boolean {
+  /** Confirms whether a name component exists. */
+  has(namon: Namon | string): boolean {
     return this.#fullName.has(namon);
   }
 
@@ -216,14 +257,14 @@ export class Namefully {
    * name, overriding the preset configuration.
    *
    * `Namefully.format()` may also be used to alter manually the order of appearance
-   * of full name. For example:
+   * of a full name. For example:
    * ```ts
    * const name = new Namefully('Jon Stark Snow');
    * console.log(name.fullName(NameOrder.LAST_NAME)); // "Snow Jon Stark"
    * console.log(name.format('l f m')); // "Snow Jon Stark"
    * ```
    */
-  fullName(orderedBy?: NameOrder): string {
+  fullName(orderedBy?: NameOptions['orderedBy']): string {
     const sep: string = this.config.ending ? ',' : '';
     const names: string[] = [];
 
@@ -244,7 +285,7 @@ export class Namefully {
    * @param orderedBy forces to order by first or last name by overriding the
    * preset configuration.
    */
-  birthName(orderedBy?: NameOrder): string {
+  birthName(orderedBy?: NameOptions['orderedBy']): string {
     orderedBy ??= this.config.orderedBy;
     return orderedBy === NameOrder.FIRST_NAME
       ? [this.first, ...this.middleName(), this.last].join(' ')
@@ -270,7 +311,7 @@ export class Namefully {
    * @param {Surname} format overrides the how-to formatting of a surname output,
    * considering its sub-parts.
    */
-  lastName(format?: Surname): string {
+  lastName(format?: NameOptions['surname']): string {
     return this.#fullName.lastName.toString(format);
   }
 
@@ -288,8 +329,8 @@ export class Namefully {
    * - `John Ben Smith` => `['J', 'B', 'S']`.
    */
   initials(options?: {
-    orderedBy?: NameOrder;
-    only?: NameType;
+    orderedBy?: NameOptions['orderedBy'];
+    only?: NameType | 'firstName' | 'lastName' | 'middleName' | 'birthName';
     asJson?: boolean;
   }): string[] | Record<string, string[]> {
     const { orderedBy = this.config.orderedBy, only = NameType.BIRTH_NAME, asJson } = options ?? {};
@@ -326,7 +367,7 @@ export class Namefully {
    * For a given `FirstName FatherName MotherName`, shortening this name when
    * the surname is set as `mother` is equivalent to making it: `FirstName MotherName`.
    */
-  shorten(orderedBy?: NameOrder): string {
+  shorten(orderedBy?: NameOptions['orderedBy']): string {
     orderedBy ??= this.config.orderedBy;
     const { firstName, lastName } = this.#fullName;
     return orderedBy === NameOrder.FIRST_NAME
@@ -366,11 +407,11 @@ export class Namefully {
   flatten(
     options: Partial<{
       limit: number;
-      by: Flat;
+      by: Flat | 'firstName' | 'lastName' | 'middleName' | 'birthName' | 'firstMid' | 'midLast' | 'all' | '*';
       withPeriod: boolean;
       recursive: boolean;
       withMore: boolean;
-      surname: Surname;
+      surname: NameOptions['surname'];
     }>,
   ): string {
     const {
@@ -413,7 +454,7 @@ export class Namefully {
         case Flat.MID_LAST:
           name = hasMid ? [fn, m, l] : [fn, l];
           break;
-        case Flat.ALL:
+        default:
           name = hasMid ? [f, m, l] : [f, l];
           break;
       }
@@ -434,7 +475,7 @@ export class Namefully {
         case Flat.MID_LAST:
           name = hasMid ? [l, fn, m] : [l, fn];
           break;
-        case Flat.ALL:
+        default:
           name = hasMid ? [l, f, m] : [l, f];
           break;
       }
@@ -497,14 +538,6 @@ export class Namefully {
    * - 'P': capitalized prefix
    * - 's': suffix
    * - 'S': capitalized suffix
-   *
-   * punctuations
-   * ------------
-   * - '.': period
-   * - ',': comma
-   * - ' ': space
-   * - '-': hyphen
-   * - '_': underscore
    * - '$': an escape character to select only the initial of the next char.
    *
    * Given the name `Joe Jim Smith`, use `format` with the `pattern` string.
@@ -526,7 +559,7 @@ export class Namefully {
     let group = '';
     const formatted: string[] = [];
     for (const char of pattern) {
-      if (ALLOWED_FORMAT_TOKENS.indexOf(char) === -1) {
+      if (!ALLOWED_FORMAT_TOKENS.includes(char)) {
         throw new NotAllowedError({
           source: this.full,
           operation: 'format',
@@ -624,12 +657,6 @@ export class Namefully {
 
   #map(char: string): Nullable<string> {
     switch (char) {
-      case '.':
-      case ',':
-      case ' ':
-      case '-':
-      case '_':
-        return char;
       case 'b':
         return this.birth;
       case 'B':
@@ -670,17 +697,51 @@ export class Namefully {
       case 'S':
         return this.suffix?.toUpperCase();
       case '$f':
-      case '$F':
         return this.#fullName.firstName.value[0];
+      case '$F':
+        return this.#fullName.firstName.initials(true).join('');
       case '$l':
-      case '$L':
         return this.#fullName.lastName.value[0];
+      case '$L':
+        return this.#fullName.lastName.initials().join('');
       case '$m':
-      case '$M':
         return this.hasMiddle ? this.middle![0] : undefined;
+      case '$M':
+        return this.hasMiddle ? this.#fullName.middleName.map((n) => n.value[0]).join('') : undefined;
       default:
-        return undefined;
+        return ALLOWED_FORMAT_TOKENS.includes(char) ? char : undefined;
     }
+  }
+
+  /**
+   * Serializes this Namefully instance to a JSON object.
+   *
+   * This includes both the name data (with full hierarchy for FirstName and LastName)
+   * and the configuration, allowing for complete reconstruction of the Namefully instance.
+   *
+   * @returns a JSON-serializable object containing name data and config.
+   */
+  serialize(): SerializedName {
+    const { config, firstName: fn, lastName: ln } = this.#fullName;
+
+    return {
+      names: {
+        prefix: this.prefix,
+        firstName: fn.hasMore ? { value: fn.value, more: fn.more } : fn.value,
+        middleName: this.hasMiddle ? this.middleName() : undefined,
+        lastName: ln.hasMother ? { father: ln.father, mother: ln.mother } : ln.value,
+        suffix: this.suffix,
+      },
+      config: {
+        name: config.name,
+        orderedBy: config.orderedBy,
+        separator: config.separator.token,
+        title: config.title,
+        ending: config.ending,
+        bypass: config.bypass,
+        surname: config.surname,
+      },
+    };
   }
 }
 
@@ -689,6 +750,17 @@ export class Namefully {
  * @param names element to parse.
  * @param options additional settings.
  */
-export default (names: string | string[] | Name[] | JsonName | Parser, options?: Partial<Config>) => {
+export default (names: string | string[] | Name[] | JsonName | Parser, options?: NameOptions) => {
   return new Namefully(names, options);
 };
+
+/** Optional namefully parameters (@see {@linkcode Config} for more details). */
+export type NameOptions = Partial<{
+  name: string;
+  orderedBy: NameOrder | 'firstName' | 'lastName';
+  separator: Separator;
+  title: Title | 'UK' | 'US';
+  ending: boolean;
+  bypass: boolean;
+  surname: Surname | 'father' | 'mother' | 'hyphenated' | 'all';
+}>;

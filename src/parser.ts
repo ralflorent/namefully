@@ -139,8 +139,8 @@ export class ArrayNameParser extends Parser<Name[]> {
       } else if (name.isMiddleName) {
         fullName.middleName.push(name);
       } else if (name.isLastName) {
-        const lastName = new LastName(name.value, name instanceof LastName ? name.mother : undefined, config.surname);
-        fullName.setLastName(lastName);
+        const mother = name instanceof LastName ? name.mother : undefined;
+        fullName.setLastName(new LastName(name.value, mother, config.surname));
       }
     }
     return fullName;

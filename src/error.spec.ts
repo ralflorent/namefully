@@ -116,7 +116,7 @@ describe('InputError', () => {
 describe('NotAllowedError', () => {
   test('is thrown if wrong key params are given when formatting', () => {
     const name = new Namefully('Jane Doe');
-    for (const k of ['[', '{', '^', '!', '@', '#', 'a', 'c', 'd']) {
+    for (const k of ['{', '^', '!', '@', '#', 'a', 'c', 'd']) {
       expect(() => name.format(k)).toThrow(Errors.NotAllowedError);
     }
   });

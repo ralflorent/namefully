@@ -104,6 +104,14 @@ export class Namon {
     [Namon.SUFFIX.key, Namon.SUFFIX],
   ]);
 
+  private static readonly aliases: Record<string, string[]> = {
+    [Namon.PREFIX.key]: ['prefix', 'px', 'p'],
+    [Namon.FIRST_NAME.key]: ['firstname', 'first', 'fn', 'f'],
+    [Namon.MIDDLE_NAME.key]: ['middlename', 'middle', 'mid', 'mn', 'm'],
+    [Namon.LAST_NAME.key]: ['lastname', 'last', 'ln', 'l'],
+    [Namon.SUFFIX.key]: ['suffix', 'sx', 's'],
+  };
+
   private constructor(
     readonly index: number,
     readonly key: string,
@@ -116,7 +124,9 @@ export class Namon {
 
   /** Makes a string key a namon type. */
   static cast(key: string): Nullable<Namon> {
-    return Namon.has(key) ? Namon.all.get(key) : undefined;
+    const searchValue = String(key).toLowerCase();
+    const namon = Object.entries(Namon.aliases).find(([, list]) => list.includes(searchValue))?.[0];
+    return Namon.has(namon ?? '') ? Namon.all.get(key) : undefined;
   }
 
   /** String representation of this object. */
@@ -164,6 +174,16 @@ export class Separator {
     readonly name: string,
     readonly token: string,
   ) {}
+
+  /** Makes a string key a separator type. */
+  static cast(key: string): Nullable<Separator> {
+    for (const [name, separator] of Separator.all) {
+      if (separator.token === key || name.toLowerCase() === key.toLowerCase()) {
+        return separator;
+      }
+    }
+    return undefined;
+  }
 
   /** String representation of this object. */
   toString(): string {

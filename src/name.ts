@@ -205,7 +205,7 @@ export class LastName extends Name {
   constructor(
     father: string,
     mother?: string,
-    readonly format = Surname.FATHER,
+    readonly format: Surname | 'father' | 'mother' | 'hyphenated' | 'all' = Surname.FATHER,
   ) {
     super(father, Namon.LAST_NAME);
     this.validate(mother);
@@ -238,7 +238,7 @@ export class LastName extends Name {
     return names;
   }
 
-  toString(format?: Surname): string {
+  toString(format?: Surname | 'father' | 'mother' | 'hyphenated' | 'all'): string {
     format = format ?? this.format;
     switch (format) {
       case Surname.FATHER:
@@ -247,12 +247,12 @@ export class LastName extends Name {
         return this.mother ?? '';
       case Surname.HYPHENATED:
         return this.hasMother ? `${this.value}-${this.#mother}` : this.value;
-      case Surname.ALL:
+      default:
         return this.hasMother ? `${this.value} ${this.#mother}` : this.value;
     }
   }
 
-  initials(format?: Surname): string[] {
+  initials(format?: Surname | 'father' | 'mother' | 'hyphenated' | 'all'): string[] {
     const inits: string[] = [];
     switch (format ?? this.format) {
       case Surname.HYPHENATED:
