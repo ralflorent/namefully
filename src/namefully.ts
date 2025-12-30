@@ -1,9 +1,9 @@
 import { Config } from './config.js';
-import { NameBuilder } from './builder';
 import { FullName } from './fullname.js';
+import { SerializedName } from './data.js';
 import { ALLOWED_FORMAT_TOKENS } from './constants.js';
-import { InputError, NotAllowedError } from './error.js';
 import { Name, JsonName, isNameArray } from './name.js';
+import { InputError, NotAllowedError } from './error.js';
 import { capitalize, decapitalize, isStringArray, NameIndex, toggleCase } from './utils.js';
 import { Flat, NameOrder, NameType, Namon, Nullable, Surname, Separator, Title } from './types.js';
 import { ArrayNameParser, ArrayStringParser, NamaParser, Parser, StringParser } from './parser.js';
@@ -171,18 +171,6 @@ export class Namefully {
   /** The combination of prefix and last name. */
   get salutation(): string {
     return this.format('p l');
-  }
-
-    /**
-   * Converts the name set into a name builder.
-   *
-   * This makes it easy for you to dismantle and reshape the name components as
-   * desired since `Namefully` instances are immutable. This is just a convenience
-   * method; but in case more functionality (i.e., hooks) is needed from a builder,
-   * you should build it yourself.
-   */
-  get asBuilder(): NameBuilder {
-    return NameBuilder.of(...this.parts);
   }
 
   /**
@@ -550,14 +538,6 @@ export class Namefully {
    * - 'P': capitalized prefix
    * - 's': suffix
    * - 'S': capitalized suffix
-   *
-   * punctuations
-   * ------------
-   * - '.': period
-   * - ',': comma
-   * - ' ': space
-   * - '-': hyphen
-   * - '_': underscore
    * - '$': an escape character to select only the initial of the next char.
    *
    * Given the name `Joe Jim Smith`, use `format` with the `pattern` string.
@@ -579,7 +559,7 @@ export class Namefully {
     let group = '';
     const formatted: string[] = [];
     for (const char of pattern) {
-      if (ALLOWED_FORMAT_TOKENS.indexOf(char) === -1) {
+      if (!ALLOWED_FORMAT_TOKENS.includes(char)) {
         throw new NotAllowedError({
           source: this.full,
           operation: 'format',
@@ -677,12 +657,6 @@ export class Namefully {
 
   #map(char: string): Nullable<string> {
     switch (char) {
-      case '.':
-      case ',':
-      case ' ':
-      case '-':
-      case '_':
-        return char;
       case 'b':
         return this.birth;
       case 'B':
@@ -723,17 +697,51 @@ export class Namefully {
       case 'S':
         return this.suffix?.toUpperCase();
       case '$f':
-      case '$F':
         return this.#fullName.firstName.value[0];
+      case '$F':
+        return this.#fullName.firstName.initials(true).join('');
       case '$l':
-      case '$L':
         return this.#fullName.lastName.value[0];
+      case '$L':
+        return this.#fullName.lastName.initials().join('');
       case '$m':
-      case '$M':
         return this.hasMiddle ? this.middle![0] : undefined;
+      case '$M':
+        return this.hasMiddle ? this.#fullName.middleName.map((n) => n.value[0]).join('') : undefined;
       default:
-        return undefined;
+        return ALLOWED_FORMAT_TOKENS.includes(char) ? char : undefined;
     }
+  }
+
+  /**
+   * Serializes this Namefully instance to a JSON object.
+   *
+   * This includes both the name data (with full hierarchy for FirstName and LastName)
+   * and the configuration, allowing for complete reconstruction of the Namefully instance.
+   *
+   * @returns a JSON-serializable object containing name data and config.
+   */
+  serialize(): SerializedName {
+    const { config, firstName: fn, lastName: ln } = this.#fullName;
+
+    return {
+      names: {
+        prefix: this.prefix,
+        firstName: fn.hasMore ? { value: fn.value, more: fn.more } : fn.value,
+        middleName: this.hasMiddle ? this.middleName() : undefined,
+        lastName: ln.hasMother ? { father: ln.father, mother: ln.mother } : ln.value,
+        suffix: this.suffix,
+      },
+      config: {
+        name: config.name,
+        orderedBy: config.orderedBy,
+        separator: config.separator.token,
+        title: config.title,
+        ending: config.ending,
+        bypass: config.bypass,
+        surname: config.surname,
+      },
+    };
   }
 }
 

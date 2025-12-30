@@ -205,7 +205,7 @@ export class LastName extends Name {
   constructor(
     father: string,
     mother?: string,
-    readonly format = Surname.FATHER,
+    readonly format: Surname | 'father' | 'mother' | 'hyphenated' | 'all' = Surname.FATHER,
   ) {
     super(father, Namon.LAST_NAME);
     this.validate(mother);
