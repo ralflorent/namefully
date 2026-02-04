@@ -1,3 +1,4 @@
+import { Separator } from './types.js';
 import { NameBuilder } from './builder.js';
 import { Name, FirstName, LastName } from './name.js';
 import { type Namefully, NameOptions } from './namefully.js';
@@ -48,6 +49,9 @@ export function deserialize(data: SerializedName | string): Namefully {
     }
 
     const { names, config } = parsed;
+    const separator = Separator.cast(config.separator);
+    if (!separator) throw new NameError(config.separator, 'unable to deserialize name for unknown separator');
+
     const { firstName: fn, lastName: ln, middleName: mn, prefix: px, suffix: sx } = names;
     const builder = NameBuilder.of();
 
@@ -57,8 +61,7 @@ export function deserialize(data: SerializedName | string): Namefully {
 
     builder.add(typeof fn === 'string' ? Name.first(fn) : new FirstName(fn.value, ...(fn.more ?? [])));
     builder.add(typeof ln === 'string' ? Name.last(ln) : new LastName(ln.father, ln.mother));
-
-    return builder.build(config as unknown as NameOptions);
+    return builder.build({ ...config, separator: separator! } as NameOptions);
   } catch (error) {
     if (error instanceof NameError) throw error;
 

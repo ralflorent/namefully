@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Namefully | Demo</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      h1,
+      h2 {
+        font-family: Lato;
+      }
+
+      table {
+        text-align: left;
+        margin-top: 1em;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <h1>How to use namefully</h1>
+      <h2>Simple case</h2>
+      <p>Given the name <i id="name-1">John Smith</i>, use only the first name:</p>
+      <div id="simple-case"></div>
+
+      <!-- Advanced use case -->
+      <h2>It can also do that</h2>
+      <p>
+        Let us say you want to distinguish the name parts of a full name like this
+        <i id="name-2">Mr,Smith,John,Ben,Ph.D</i> (comma-separated values), you can achieve the following:
+      </p>
+      <div id="advanced-case"></div>
+      <script type="module">
+        import { Namefully, Separator } from 'https://esm.sh/namefully';
+
+        // Simple case
+        const name = new Namefully(document.getElementById('name-1').innerText);
+        const simpleDiv = document.getElementById('simple-case');
+        simpleDiv.innerHTML = `<pre>Hello, ${name.first}!</pre>`;
+
+        const advancedDiv = document.getElementById('advanced-case');
+        const contents = createWithOptionalParamsUseCase();
+        advancedDiv.innerHTML = `${contents.join('')}`;
+
+        // Use case with optional params
+        function createWithOptionalParamsUseCase() {
+          const nameEl = document.getElementById('name-2');
+          const options = [
+            {
+              separator: Separator.COMMA,
+              orderedBy: 'lastName',
+              title: 'US',
+              ending: true,
+            },
+            // Add more options here to test.
+          ];
+
+          return options.map((option) => {
+            const name = new Namefully(nameEl.innerText, option);
+            const rows = [
+              `<tr> <th>Prefix:</th> <td>${name.prefix} </td></tr>`,
+              `<tr> <th>First name:</th> <td>${name.first} </td></tr>`,
+              `<tr> <th>Middle name:</th> <td>${name.middle} </td></tr>`,
+              `<tr> <th>Last name:</th> <td>${name.last} </td></tr>`,
+              `<tr> <th>Suffix:</th> <td>${name.suffix} </td></tr>`,
+              `<tr> <th>Full name:</th> <td>${name.full}</td></tr>`,
+              `<tr> <th>Birth name:</th> <td>${name.birth} </td></tr>`,
+              `<tr> <th>Short version:</th> <td>${name.short} </td></tr>`,
+              `<tr> <th>Flat version:</th> <td>${name.zip()} </td></tr>`,
+              `<tr> <th>Initials:</th> <td>${name.initials().join(' ')} </td></tr>`,
+              `<tr> <th>Public:</th> <td>${name.public} </td></tr>`,
+              `<tr> <th>Public:</th> <td>${name.salutation} </td></tr>`,
+              `<tr> <th>Formatted:</th> <td>${name.format('f (m) l')} </td></tr>`,
+            ];
+            return `<table>${rows.join('')}</table>`;
+          });
+        }
+      </script>
+    </div>
+  </body>
+</html>

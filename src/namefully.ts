@@ -37,7 +37,7 @@ import { ArrayNameParser, ArrayStringParser, NamaParser, Parser, StringParser } 
  * name piece.
  *
  * @see {@link https://www.fbiic.gov/public/2008/nov/Naming_practice_guide_UK_2006.pdf}
- * for more info on name standards.
+ *  for more info on name standards.
  *
  * **IMPORTANT**: Keep in mind that the order of appearance (or name order) matters
  * and may be altered through configurable parameters, which will be seen later.
@@ -272,7 +272,12 @@ export class Namefully {
     if ((orderedBy ?? this.config.orderedBy) === NameOrder.FIRST_NAME) {
       names.push(this.first, ...this.middleName(), this.last + sep);
     } else {
-      names.push(this.last, this.first, this.middleName().join(' ') + sep);
+      names.push(this.last);
+      if (this.hasMiddle) {
+        names.push(this.first, this.middleName().join(' ') + sep);
+      } else {
+        names.push(this.first + sep);
+      }
     }
     if (this.suffix) names.push(this.suffix);
 
@@ -645,6 +650,37 @@ export class Namefully {
     return toggleCase(this.birth);
   }
 
+  /**
+   * Serializes this Namefully instance to a JSON object.
+   *
+   * This includes both the name data (with full hierarchy for FirstName and LastName)
+   * and the configuration, allowing for complete reconstruction of the Namefully instance.
+   *
+   * @returns a JSON-serializable object containing name data and config.
+   */
+  serialize(): SerializedName {
+    const { config, firstName: fn, lastName: ln } = this.#fullName;
+
+    return {
+      names: {
+        prefix: this.prefix,
+        firstName: fn.hasMore ? { value: fn.value, more: fn.more } : fn.value,
+        middleName: this.hasMiddle ? this.middleName() : undefined,
+        lastName: ln.hasMother ? { father: ln.father, mother: ln.mother } : ln.value,
+        suffix: this.suffix,
+      },
+      config: {
+        name: config.name,
+        orderedBy: config.orderedBy,
+        separator: config.separator.token,
+        title: config.title,
+        ending: config.ending,
+        bypass: config.bypass,
+        surname: config.surname,
+      },
+    };
+  }
+
   #toParser(raw: string | string[] | Name[] | JsonName | Parser): Parser {
     if (raw instanceof Parser) return raw;
     if (typeof raw === 'string') return new StringParser(raw);
@@ -711,37 +747,6 @@ export class Namefully {
       default:
         return ALLOWED_FORMAT_TOKENS.includes(char) ? char : undefined;
     }
-  }
-
-  /**
-   * Serializes this Namefully instance to a JSON object.
-   *
-   * This includes both the name data (with full hierarchy for FirstName and LastName)
-   * and the configuration, allowing for complete reconstruction of the Namefully instance.
-   *
-   * @returns a JSON-serializable object containing name data and config.
-   */
-  serialize(): SerializedName {
-    const { config, firstName: fn, lastName: ln } = this.#fullName;
-
-    return {
-      names: {
-        prefix: this.prefix,
-        firstName: fn.hasMore ? { value: fn.value, more: fn.more } : fn.value,
-        middleName: this.hasMiddle ? this.middleName() : undefined,
-        lastName: ln.hasMother ? { father: ln.father, mother: ln.mother } : ln.value,
-        suffix: this.suffix,
-      },
-      config: {
-        name: config.name,
-        orderedBy: config.orderedBy,
-        separator: config.separator.token,
-        title: config.title,
-        ending: config.ending,
-        bypass: config.bypass,
-        surname: config.surname,
-      },
-    };
   }
 }
 

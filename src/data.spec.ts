@@ -2,6 +2,7 @@ import { Namefully } from './namefully.js';
 import { InputError, UnknownError } from './error.js';
 import { Name, FirstName, LastName } from './name.js';
 import { deserialize, SerializedName } from './data.js';
+import { Separator, Title, Surname, NameOrder } from './types.js';
 
 describe('JSON serialization', () => {
   describe('serialize', () => {
@@ -82,27 +83,39 @@ describe('JSON serialization', () => {
   });
 
   describe('deserialize', () => {
-    test('should deserialize a simple name from object', () => {
-      const data: SerializedName = {
-        names: {
-          firstName: 'John',
-          lastName: 'Smith',
-        },
-        config: {
-          name: 'fullName',
-          orderedBy: 'firstName',
-          separator: ' ',
-          title: 'US',
-          ending: false,
-          bypass: false,
-          surname: 'father',
-        },
-      };
+    let defaultConfig: SerializedName['config'];
 
-      const name = deserialize(data);
-      expect(name.firstName()).toBe('John');
-      expect(name.lastName()).toBe('Smith');
+    beforeEach(() => {
+      defaultConfig = {
+        name: 'defaultConfig',
+        orderedBy: 'firstName',
+        separator: ' ',
+        title: 'US',
+        ending: false,
+        bypass: true,
+        surname: 'father',
+      };
+    });
+
+    test('should deserialize a simple name from object', () => {
+      const name = deserialize({
+        names: { firstName: 'John', lastName: 'Smith' },
+        config: { ...defaultConfig, name: 'fullName', bypass: false, surname: 'all' },
+      });
+      expect(name.first).toBe('John');
+      expect(name.last).toBe('Smith');
       expect(name.full).toBe('John Smith');
+      expect(name.middle).toBeUndefined();
+      expect(name.prefix).toBeUndefined();
+      expect(name.suffix).toBeUndefined();
+
+      expect(name.config.name).toBe('fullName');
+      expect(name.config.orderedBy).toBe('firstName');
+      expect(name.config.separator).toBe(Separator.SPACE);
+      expect(name.config.title).toBe(Title.US);
+      expect(name.config.ending).toBe(false);
+      expect(name.config.bypass).toBe(false);
+      expect(name.config.surname).toBe(Surname.ALL);
     });
 
     test('should deserialize a name from JSON string', () => {
@@ -110,80 +123,67 @@ describe('JSON serialization', () => {
         names: {
           firstName: 'Jane',
           lastName: 'Doe',
+          suffix: 'Ph.D',
         },
         config: {
-          name: 'fullName',
-          orderedBy: 'firstName',
-          separator: ' ',
-          title: 'US',
-          ending: false,
-          bypass: false,
+          name: 'byLastName',
+          orderedBy: 'lastName',
+          separator: ',',
+          title: 'UK',
+          ending: true,
+          bypass: true,
           surname: 'father',
         },
       });
 
       const name = deserialize(jsonString);
-      expect(name.firstName()).toBe('Jane');
-      expect(name.lastName()).toBe('Doe');
+      expect(name.first).toBe('Jane');
+      expect(name.last).toBe('Doe');
+      expect(name.full).toBe('Doe Jane, Ph.D');
+      expect(name.middle).toBeUndefined();
+      expect(name.prefix).toBeUndefined();
+      expect(name.suffix).toBe('Ph.D');
+
+      expect(name.config.name).toBe('byLastName');
+      expect(name.config.orderedBy).toBe(NameOrder.LAST_NAME);
+      expect(name.config.separator).toBe(Separator.COMMA);
+      expect(name.config.title).toBe(Title.UK);
+      expect(name.config.ending).toBe(true);
+      expect(name.config.bypass).toBe(true);
+      expect(name.config.surname).toBe(Surname.FATHER);
     });
 
     test('should deserialize a name with prefix and suffix', () => {
-      const original = new Namefully([Name.prefix('Mr'), Name.first('John'), Name.last('Smith'), Name.suffix('Jr')]);
-      const serialized = original.serialize();
+      const name = deserialize({
+        names: { prefix: 'Mr', firstName: 'John', lastName: 'Smith', suffix: 'Jr' },
+        config: defaultConfig,
+      });
 
-      const name = deserialize(serialized);
-      expect(name.prefix).toBe(original.prefix);
-      expect(name.suffix).toBe(original.suffix);
+      expect(name.prefix).toBe('Mr.');
+      expect(name.first).toBe('John');
+      expect(name.last).toBe('Smith');
+      expect(name.suffix).toBe('Jr');
     });
 
     test('should deserialize a name with middle names', () => {
-      const data: SerializedName = {
-        names: {
-          firstName: 'John',
-          middleName: ['Michael', 'David'],
-          lastName: 'Smith',
-        },
-        config: {
-          name: 'fullName',
-          orderedBy: 'firstName',
-          separator: ' ',
-          title: 'US',
-          ending: false,
-          bypass: false,
-          surname: 'father',
-        },
-      };
-
-      const name = deserialize(data);
+      const name = deserialize({
+        names: { firstName: 'John', middleName: ['Michael', 'David'], lastName: 'Smith' },
+        config: defaultConfig,
+      });
       expect(name.middleName()).toEqual(['Michael', 'David']);
     });
 
     test('should deserialize a name with multiple first names', () => {
-      const data: SerializedName = {
-        names: {
-          firstName: {
-            value: 'John',
-            more: ['Michael'],
-          },
-          lastName: 'Smith',
-        },
-        config: {
-          name: 'fullName',
-          orderedBy: 'firstName',
-          separator: ' ',
-          title: 'US',
-          ending: false,
-          bypass: false,
-          surname: 'father',
-        },
-      };
-
-      const name = deserialize(data);
+      const name = deserialize({
+        names: { firstName: { value: 'John', more: ['Michael'] }, lastName: 'Smith' },
+        config: defaultConfig,
+      });
       expect(name.firstName(false)).toBe('John');
+      expect(name.firstName(true)).toEqual('John Michael');
     });
 
     test('should deserialize a name with hyphenated last name', () => {
-      const data: SerializedName = {
+      const name = deserialize({
         names: {
           firstName: 'John',
           lastName: {
@@ -191,19 +191,11 @@ describe('JSON serialization', () => {
             mother: 'Jones',
           },
         },
-        config: {
-          name: 'fullName',
-          orderedBy: 'firstName',
-          separator: ' ',
-          title: 'US',
-          ending: false,
-          bypass: false,
-          surname: 'father',
-        },
-      };
-
-      const name = deserialize(data);
-      expect(name.lastName()).toBe('Smith');
+        config: { ...defaultConfig, surname: 'hyphenated' },
+      });
+      expect(name.first).toBe('John');
+      expect(name.last).toBe('Smith-Jones');
+      expect(name.full).toBe('John Smith-Jones');
     });
 
     test('should throw NameError for invalid data', () => {
