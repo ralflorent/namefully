@@ -1,8 +1,10 @@
 import { Config } from './config.js';
 import { NameError } from './error.js';
 import { NameIndex } from './utils.js';
+import { deserialize } from './data.js';
 import { Namefully } from './namefully.js';
 import { NameBuilder } from './builder.js';
+import { ZERO_WIDTH_SPACE } from './constants.js';
 import { FirstName, LastName, Name } from './name.js';
 import { SimpleParser, findNameCase } from './fixtures/helpers.js';
 import { Flat, NameOrder, NameType, Namon, Separator, Surname, Title } from './types.js';
@@ -277,6 +279,7 @@ describe('Namefully', () => {
     test('string', () => {
       expect(new Namefully('John Smith').toString()).toBe('John Smith');
       expect(new Namefully('Jane D Smith').toString()).toBe('Jane D Smith');
+      expect(new Namefully('Madonna', { mono: true }).toString()).toBe('Madonna');
     });
 
     test('string[]', () => {
@@ -302,6 +305,24 @@ describe('Namefully', () => {
 
     test('Parser<T> (Custom Parser)', () => {
       expect(new Namefully(new SimpleParser('John#Smith')).toString()).toBe('John Smith');
+    });
+
+    test('deserialize()', () => {
+      const name = deserialize({
+        names: { firstName: 'John', lastName: 'Smith' },
+        config: {
+          name: 'deserialize',
+          orderedBy: 'firstName',
+          separator: ' ',
+          title: 'US',
+          ending: false,
+          bypass: true,
+          surname: 'father',
+          mono: false,
+        },
+      });
+      expect(name).toBeInstanceOf(Namefully);
+      expect(name.full).toBe('John Smith');
     });
 
     test('tryParse()', () => {
@@ -420,9 +441,23 @@ describe('Namefully', () => {
       expect(() => new Namefully('Mr John Joe Sm1th', Config.create('noBypass'))).toThrow(NameError);
       expect(() => new Namefully('Mr John Joe Smith Ph+', Config.create('noBypass'))).toThrow(NameError);
     });
+
+    test('of mononyms', () => {
+      const name = new Namefully('Madonna', { mono: true });
+      expect(name.toString()).toBe('Madonna');
+      expect(name.first).toBe('Madonna');
+      expect(name.last).toBe(ZERO_WIDTH_SPACE);
+      expect(name.middle).toBeUndefined();
+      expect(name.initials()).toStrictEqual(['M']);
+      expect(name.format('L, f m')).toBe(ZERO_WIDTH_SPACE + ', Madonna');
+      expect(name.shorten()).toBe('Madonna');
+      expect(name.zip()).toBe('M.');
+    });
   });
 
   describe('Config', () => {
+    beforeEach(() => (Config as any).cache.clear());
+
     test('creates a default configuration', () => {
       expect(Config.create()).toEqual(
         expect.objectContaining({

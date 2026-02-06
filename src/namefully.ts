@@ -271,6 +271,8 @@ export class Namefully {
    * ```
    */
   fullName(orderedBy?: NameOptions['orderedBy']): string {
+    if (this.isMono) return this.#fullName.toString();
+
     const sep: string = this.config.ending ? ',' : '';
     const names: string[] = [];
 
@@ -297,6 +299,7 @@ export class Namefully {
    * preset configuration.
    */
   birthName(orderedBy?: NameOptions['orderedBy']): string {
+    if (this.isMono) return this.#fullName.toString();
     orderedBy ??= this.config.orderedBy;
     return orderedBy === NameOrder.FIRST_NAME
       ? [this.first, ...this.middleName(), this.last].join(' ')
@@ -380,6 +383,8 @@ export class Namefully {
    * the surname is set as `mother` is equivalent to making it: `FirstName MotherName`.
    */
   shorten(orderedBy?: NameOptions['orderedBy']): string {
+    if (this.isMono) return this.#fullName.toString();
+
     orderedBy ??= this.config.orderedBy;
     const { firstName, lastName } = this.#fullName;
     return orderedBy === NameOrder.FIRST_NAME
