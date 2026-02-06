@@ -1,10 +1,10 @@
 import { Config } from './config.js';
 import { NameIndex } from './utils.js';
 import { InputError } from './error.js';
-import { FullName } from './fullname.js';
+import { FullName, Mononym } from './fullname.js';
 import { Namon, Nullable, Separator } from './types.js';
 import { FirstName, LastName, Name, JsonName } from './name.js';
-import { ArrayStringValidator, ArrayNameValidator, NamaValidator } from './validator.js';
+import { ArrayStringValidator, ArrayNameValidator, Validators } from './validator.js';
 
 /**
  * A parser signature that helps to organize the names accordingly.
@@ -65,7 +65,7 @@ export class StringParser extends Parser<string> {
   parse(options: Partial<Config>): FullName {
     const config = Config.merge(options);
     const names = this.raw.split(config.separator.token);
-    return new ArrayStringParser(names).parse(options);
+    return (names.length === 1 && config.mono ? new MonoParser(names[0]) : new ArrayStringParser(names)).parse(options);
   }
 }
 
@@ -113,9 +113,9 @@ export class NamaParser extends Parser<JsonName> {
     );
 
     if (config.bypass) {
-      NamaValidator.create().validateKeys(names);
+      Validators.nama.validateKeys(names);
     } else {
-      NamaValidator.create().validate(names);
+      Validators.nama.validate(names);
     }
 
     return FullName.parse(this.raw, config);
@@ -144,5 +144,16 @@ export class ArrayNameParser extends Parser<Name[]> {
       }
     }
     return fullName;
+  }
+}
+
+export class MonoParser extends Parser<string> {
+  parse(options: Partial<Config>): Mononym {
+    const { bypass, mono } = Config.merge(options);
+
+    if (bypass) Validators.namon.validate(this.raw);
+
+    const type = mono instanceof Namon ? mono : Namon.FIRST_NAME;
+    return new Mononym(new Name(this.raw.trim(), type));
   }
 }

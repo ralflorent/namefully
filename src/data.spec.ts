@@ -20,6 +20,7 @@ describe('JSON serialization', () => {
           ending: expect.any(Boolean),
           bypass: expect.any(Boolean),
           surname: expect.any(String),
+          mono: expect.any(Boolean),
         }),
       });
     });
@@ -94,6 +95,7 @@ describe('JSON serialization', () => {
         ending: false,
         bypass: true,
         surname: 'father',
+        mono: false,
       };
     });
 
@@ -116,6 +118,7 @@ describe('JSON serialization', () => {
       expect(name.config.ending).toBe(false);
       expect(name.config.bypass).toBe(false);
       expect(name.config.surname).toBe(Surname.ALL);
+      expect(name.config.mono).toBe(false);
     });
 
     test('should deserialize a name from JSON string', () => {
@@ -245,6 +248,15 @@ describe('JSON serialization', () => {
       const deserialized = deserialize(jsonString);
 
       expect(deserialized.full).toBe(original.full);
+    });
+
+    test('should serialize and deserialize mononyms', () => {
+      const original = new Namefully('Plato', { mono: true });
+      const serialized = original.serialize();
+      const deserialized = deserialize(serialized);
+
+      expect(deserialized.first).toBe(original.first);
+      expect(deserialized.last).toBe(original.last);
     });
   });
 });

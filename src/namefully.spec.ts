@@ -433,6 +433,7 @@ describe('Namefully', () => {
           bypass: true,
           ending: false,
           surname: Surname.FATHER,
+          mono: false,
         }),
       );
     });
@@ -445,6 +446,7 @@ describe('Namefully', () => {
           title: Title.US,
           surname: Surname.HYPHENATED,
           ending: true,
+          mono: true,
         }),
       ).toEqual(
         expect.objectContaining({
@@ -455,21 +457,24 @@ describe('Namefully', () => {
           bypass: true,
           ending: true,
           surname: Surname.HYPHENATED,
+          mono: true,
         }),
       );
 
-      const { config } = new Namefully('f l', {
+      const config = Config.merge({
         name: 'partial',
         orderedBy: 'lastName',
         title: 'US',
         surname: 'all',
         ending: true,
-      });
+        mono: Namon.LAST_NAME,
+      } as Partial<Config>);
       expect(config.name).toBe('partial');
       expect(config.orderedBy).toBe(NameOrder.LAST_NAME);
       expect(config.title).toBe(Title.US);
       expect(config.ending).toBe(true);
       expect(config.surname).toBe(Surname.ALL);
+      expect(config.mono).toBe(Namon.LAST_NAME);
     });
 
     test('can create more than 1 configuration when necessary', () => {
@@ -491,6 +496,7 @@ describe('Namefully', () => {
           bypass: true,
           ending: false,
           surname: Surname.FATHER,
+          mono: false,
         }),
       );
 
@@ -504,6 +510,7 @@ describe('Namefully', () => {
           bypass: false,
           ending: false,
           surname: Surname.MOTHER,
+          mono: false,
         }),
       );
     });
@@ -528,6 +535,7 @@ describe('Namefully', () => {
           bypass: false,
           ending: false,
           surname: Surname.MOTHER,
+          mono: false,
         }),
       );
 
@@ -541,6 +549,7 @@ describe('Namefully', () => {
           bypass: false,
           ending: false,
           surname: Surname.MOTHER,
+          mono: false,
         }),
       );
 
@@ -554,6 +563,7 @@ describe('Namefully', () => {
           bypass: true,
           ending: false,
           surname: Surname.FATHER,
+          mono: false,
         }),
       );
 
@@ -568,6 +578,7 @@ describe('Namefully', () => {
           bypass: true,
           ending: false,
           surname: Surname.FATHER,
+          mono: false,
         }),
       );
     });

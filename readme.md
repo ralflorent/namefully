@@ -4,6 +4,7 @@
 [![JSR Version][jsr-version]][jsr-url]
 [![CI build][ci-img]][ci-url]
 [![MIT License][license-img]][license-url]
+[![DeepWiki][deepwiki-img]][deepwiki-url]
 
 Human name handling made easy.
 [Try it live](https://stackblitz.com/edit/namefully).
@@ -204,6 +205,24 @@ const name = new Namefully(
 );
 ```
 
+### mono
+
+`boolean | Namon` - default: `false`
+
+Enables support for mononyms (i.e., single word names). You may also use `Namon`
+to assign which name type is being used to represent the mononym.
+
+> You should know that this goes against the original design philosophy of the library,
+> which is intentionally opinionated around shaping and organizing multiple name components.
+> Treating a single token as a "full" name makes a lot of the existing API semantics
+> somewhat meaningless.
+
+```ts
+const name = new Namefully('Plato', { mono: true }); // throws an exception without this flag.
+console.log(name.full); // Plato
+console.log(name.initials()); // ['P']
+```
+
 To sum it all up, the default values are:
 
 ```ts
@@ -213,7 +232,8 @@ To sum it all up, the default values are:
   title: Title.UK,
   ending: false,
   bypass: true,
-  surname: Surname.FATHER
+  surname: Surname.FATHER,
+  mono: false
 }
 ```
 
@@ -303,7 +323,7 @@ So, this utility understands the name parts as follows:
 
 `namefully` does not support certain use cases:
 
-- mononame: `Plato` - a workaround is to set the mononame as both first and last name;
+- mononame: `Plato` - enable the mononym flag `Config.mono` to support this.
 - nickname: `Dwayne "The Rock" Johnson` - use custom parser instead.
 - multiple prefixes or suffixes: `Prof. Dr. Einstein`.
 
@@ -326,6 +346,8 @@ The underlying content of this utility is licensed under [MIT License][license-u
 [ci-url]: https://github.com/ralflorent/namefully/actions/workflows/ci.yml
 [license-img]: https://img.shields.io/npm/l/namefully
 [license-url]: https://opensource.org/licenses/MIT
+[deepwiki-img]: https://deepwiki.com/badge.svg
+[deepwiki-url]: https://deepwiki.com/ralflorent/namefully
 
 [contributing-url]: https://github.com/ralflorent/namefully/blob/main/CONTRIBUTING.md
 [examples]: https://github.com/ralflorent/namefully/tree/main/example

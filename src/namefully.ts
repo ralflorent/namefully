@@ -36,8 +36,8 @@ import { ArrayNameParser, ArrayStringParser, NamaParser, Parser, StringParser } 
  * this: `John Smith`, where `John` is the first name piece and `Smith`, the last
  * name piece.
  *
- * @see {@link https://www.fbiic.gov/public/2008/nov/Naming_practice_guide_UK_2006.pdf}
- *  for more info on name standards.
+ * @see {@link https://www.fbiic.gov/public/2008/nov/Naming_practice_guide_UK_2006.pdf} for
+ * more info on name standards.
  *
  * **IMPORTANT**: Keep in mind that the order of appearance (or name order) matters
  * and may be altered through configurable parameters, which will be seen later.
@@ -108,8 +108,14 @@ export class Namefully {
     return this.#fullName.config;
   }
 
+  /** Whether the name is a single word name. */
+  get isMono(): boolean {
+    return this.#fullName.isMono;
+  }
+
   /** The number of characters of the `birthName`, including spaces. */
   get length(): number {
+    if (this.isMono) return this.#fullName.toString().length;
     return this.birth.length;
   }
 
@@ -345,6 +351,7 @@ export class Namefully {
     const lastInits = this.#fullName.lastName.initials();
 
     if (asJson) return { firstName: firstInits, middleName: midInits, lastName: lastInits };
+    if (this.isMono) return [this.#fullName.toString()[0]];
 
     if (only !== NameType.BIRTH_NAME) {
       return only === NameType.FIRST_NAME ? firstInits : only === NameType.MIDDLE_NAME ? midInits : lastInits;
@@ -429,6 +436,7 @@ export class Namefully {
     } = options;
 
     if (this.length <= limit) return this.full;
+    if (this.isMono) return `${this.initials()}${withPeriod ? '.' : ''}`;
 
     const { firstName, lastName, middleName } = this.#fullName;
     const sep = withPeriod ? '.' : '';
@@ -677,6 +685,7 @@ export class Namefully {
         ending: config.ending,
         bypass: config.bypass,
         surname: config.surname,
+        mono: config.mono instanceof Namon ? config.mono.key : config.mono,
       },
     };
   }
@@ -768,4 +777,5 @@ export type NameOptions = Partial<{
   ending: boolean;
   bypass: boolean;
   surname: Surname | 'father' | 'mother' | 'hyphenated' | 'all';
+  mono: boolean | Namon;
 }>;

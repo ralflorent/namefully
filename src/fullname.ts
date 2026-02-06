@@ -1,5 +1,6 @@
 import { Config } from './config.js';
 import { Validators } from './validator.js';
+import { ZERO_WIDTH_SPACE } from './constants.js';
 import { Nullable, Namon, Title } from './types.js';
 import { NameError, UnknownError } from './error.js';
 import { FirstName, LastName, Name, JsonName } from './name.js';
@@ -64,6 +65,11 @@ export class FullName {
   /** The suffix part of the full name. */
   get suffix(): Nullable<Name> {
     return this.#suffix;
+  }
+
+  /** Whether the full name is a single word name. */
+  get isMono(): boolean {
+    return this instanceof Mononym;
   }
 
   /**
@@ -133,6 +139,11 @@ export class FullName {
     return namon.equal(Namon.MIDDLE_NAME) ? this.#middleName.length > 0 : true;
   }
 
+  toString(): string {
+    if (this.isMono) return (this as unknown as Mononym).value;
+    return Array.from(this.toIterable(true)).join(' ');
+  }
+
   /** Returns an `Iterable` of existing `Name`s. */
   *toIterable(flat: boolean = false): Iterable<Name> {
     if (this.#prefix) yield this.#prefix;
@@ -151,5 +162,63 @@ export class FullName {
   /** Returns the default iterator for this name set (enabling for-of statements). */
   *[Symbol.iterator](): Iterator<Name> {
     yield* this.toIterable(true);
+  }
+}
+
+/**
+ * A single word name or mononym.
+ *
+ * This is a special case of `FullName` that is used to represent mononyms. This contradicts
+ * the original purpose of this library such as shaping and organizing name pieces accordingly.
+ *
+ * When enabled via `Config.mono`, this becomes the full name of a human. And as a single name,
+ * most of the `Namefully` methods become irrelevant.
+ */
+export class Mononym extends FullName {
+  readonly #namon!: string;
+  #type!: Namon;
+
+  /**
+   * Constructs a mononym from a piece of string.
+   * @param {string | Name} name to be used to construct the mononym.
+   */
+  constructor(name: string | Name) {
+    super();
+    this.#namon = name.toString();
+    this.type = name instanceof Name ? name.type : Namon.FIRST_NAME;
+  }
+
+  /**
+   * Re-assigns which name type is being used to represent the mononym.
+   *
+   * Ideally, this doesn't really matter as the mononym is always a single piece of name.
+   * When used as `string`, it must be a valid `Namon` type or else it will default to
+   * `Namon.FIRST_NAME`.
+   * @param {string | Namon} type of name to use.
+   */
+  set type(type: string | Namon) {
+    this.#type = typeof type === 'string' ? (Namon.cast(type) ?? Namon.FIRST_NAME) : type;
+    this.#build(this.#namon);
+  }
+
+  /** The type of name being used to represent the mononym. */
+  get type(): Namon {
+    return this.#type;
+  }
+
+  /** The piece of string treated as a name. */
+  get value(): string {
+    return this.#namon;
+  }
+
+  #build(name: string): void {
+    this.setFirstName(ZERO_WIDTH_SPACE).setLastName(ZERO_WIDTH_SPACE).setMiddleName([]).setPrefix(null).setSuffix(null);
+
+    if (this.#type.equal(Namon.FIRST_NAME)) this.setFirstName(name);
+    else if (this.#type.equal(Namon.LAST_NAME)) this.setLastName(name);
+    else if (this.#type.equal(Namon.MIDDLE_NAME)) this.setMiddleName([name]);
+    else if (this.#type.equal(Namon.PREFIX)) this.setPrefix(name);
+    else if (this.#type.equal(Namon.SUFFIX)) this.setSuffix(name);
+    else throw new NameError(name, 'invalid mononym type');
   }
 }
