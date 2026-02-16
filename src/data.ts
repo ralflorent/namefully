@@ -1,19 +1,13 @@
 import { NameBuilder } from './builder.js';
 import { Namon, Separator } from './types.js';
-import { Name, FirstName, LastName } from './name.js';
+import { Name, FirstName, LastName, JsonName } from './name.js';
 import { type Namefully, NameOptions } from './namefully.js';
 import { InputError, NameError, UnknownError } from './error.js';
 
 /** Serialized representation of a Namefully instance. */
 export interface SerializedName {
   /** The name data (with its hierarchy intact). */
-  names: {
-    prefix?: string;
-    firstName: string | { value: string; more?: string[] };
-    middleName?: string[];
-    lastName: string | { father: string; mother?: string };
-    suffix?: string;
-  };
+  names: JsonName;
   /** The configuration data. */
   config: {
     name: string;
@@ -55,7 +49,7 @@ export function deserialize(data: SerializedName | string): Namefully {
 
     if (px) builder.add(Name.prefix(px));
     if (sx) builder.add(Name.suffix(sx));
-    if (mn) builder.add(...mn.map((n) => Name.middle(n)));
+    if (mn) builder.add(...(typeof mn === 'string' ? [Name.middle(mn)] : mn.map((n) => Name.middle(n))));
 
     builder.add(typeof fn === 'string' ? Name.first(fn) : new FirstName(fn.value, ...(fn.more ?? [])));
     builder.add(typeof ln === 'string' ? Name.last(ln) : new LastName(ln.father, ln.mother));

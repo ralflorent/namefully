@@ -79,12 +79,13 @@ export class FullName {
    */
   static parse(json: JsonName, config?: Config): FullName {
     try {
+      const { prefix, firstName: fn, middleName: mn, lastName: ln, suffix } = json;
       return new FullName(config)
-        .setPrefix(json.prefix)
-        .setFirstName(json.firstName)
-        .setMiddleName(json.middleName ?? [])
-        .setLastName(json.lastName)
-        .setSuffix(json.suffix);
+        .setPrefix(prefix)
+        .setFirstName(typeof fn === 'string' ? fn : new FirstName(fn.value, ...(fn.more ?? [])))
+        .setMiddleName(typeof mn === 'string' ? [mn] : (mn ?? []))
+        .setLastName(typeof ln === 'string' ? ln : new LastName(ln.father, ln.mother))
+        .setSuffix(suffix);
     } catch (error) {
       if (error instanceof NameError) throw error;
 
@@ -100,7 +101,7 @@ export class FullName {
     if (!name) return this;
     if (!this.#config.bypass) Validators.prefix.validate(name);
     const prefix = name instanceof Name ? name.value : name;
-    this.#prefix = Name.prefix(this.#config.title === Title.US ? `${prefix}.` : prefix);
+    this.#prefix = Name.prefix(this.#config.title === Title.US && !prefix.endsWith('.') ? `${prefix}.` : prefix);
     return this;
   }
 
@@ -182,8 +183,8 @@ export class Mononym extends FullName {
    * Constructs a mononym from a piece of string.
    * @param {string | Name} name to be used to construct the mononym.
    */
-  constructor(name: string | Name) {
-    super();
+  constructor(name: string | Name, options?: Partial<Config>) {
+    super(options ?? { name: 'mononym', mono: true });
     this.#namon = name.toString();
     this.type = name instanceof Name ? name.type : Namon.FIRST_NAME;
   }

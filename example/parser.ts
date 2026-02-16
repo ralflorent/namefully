@@ -10,7 +10,7 @@ class CustomParser extends Parser<string> {
 
   parse(options: Partial<Config>): FullName {
     const [fn, ln] = this.raw.split(this.separator, 2);
-    return FullName.parse({ firstName: fn.trim(), lastName: ln.trim() }, Config.merge(options));
+    return new FullName(options).setFirstName(fn.trim()).setLastName(ln.trim());
   }
 }
 

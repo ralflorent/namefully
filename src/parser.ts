@@ -17,6 +17,12 @@ export abstract class Parser<T = unknown> {
   constructor(public raw: T) {}
 
   /**
+   * Parses raw data into a `FullName` while applying some options.
+   * @param options for additional configuration to apply.
+   */
+  abstract parse(options?: Partial<Config>): FullName;
+
+  /**
    * Builds a dynamic `Parser` on the fly and throws a `NameError` when unable
    * to do so. The built parser only knows how to operate birth names.
    */
@@ -32,10 +38,7 @@ export abstract class Parser<T = unknown> {
     }
 
     if (length < 2) {
-      throw new InputError({
-        source: text,
-        message: 'cannot build from invalid input',
-      });
+      throw new InputError({ source: text, message: 'expecting at least 2 name parts' });
     } else if (length === 2 || length === 3) {
       return new StringParser(text);
     } else {
@@ -53,19 +56,14 @@ export abstract class Parser<T = unknown> {
       return Promise.reject(error);
     }
   }
-
-  /**
-   * Parses the raw data into a `FullName` while considering some options.
-   * @param options for additional configuration to apply.
-   */
-  abstract parse(options?: Partial<Config>): FullName;
 }
 
 export class StringParser extends Parser<string> {
   parse(options: Partial<Config>): FullName {
-    const config = Config.merge(options);
-    const names = this.raw.split(config.separator.token);
-    return (names.length === 1 && config.mono ? new MonoParser(names[0]) : new ArrayStringParser(names)).parse(options);
+    const { separator, mono } = Config.merge(options);
+    const names = this.raw.split(separator.token);
+    const parser = names.length === 1 && mono ? new MonoParser(names[0]) : new ArrayStringParser(names);
+    return parser.parse(options);
   }
 }
 
@@ -154,6 +152,6 @@ export class MonoParser extends Parser<string> {
     if (bypass) Validators.namon.validate(this.raw);
 
     const type = mono instanceof Namon ? mono : Namon.FIRST_NAME;
-    return new Mononym(new Name(this.raw.trim(), type));
+    return new Mononym(new Name(this.raw.trim(), type), options);
   }
 }

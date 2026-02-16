@@ -347,6 +347,8 @@ export class Namefully {
     only?: NameType | 'firstName' | 'lastName' | 'middleName' | 'birthName';
     asJson?: boolean;
   }): string[] | Record<string, string[]> {
+    if (this.isMono) return [this.#fullName.toString()[0]];
+
     const { orderedBy = this.config.orderedBy, only = NameType.BIRTH_NAME, asJson } = options ?? {};
 
     const firstInits = this.#fullName.firstName.initials();
@@ -354,8 +356,6 @@ export class Namefully {
     const lastInits = this.#fullName.lastName.initials();
 
     if (asJson) return { firstName: firstInits, middleName: midInits, lastName: lastInits };
-    if (this.isMono) return [this.#fullName.toString()[0]];
-
     if (only !== NameType.BIRTH_NAME) {
       return only === NameType.FIRST_NAME ? firstInits : only === NameType.MIDDLE_NAME ? midInits : lastInits;
     } else if (orderedBy === NameOrder.FIRST_NAME) {
