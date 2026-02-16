@@ -285,6 +285,7 @@ describe('Namefully', () => {
     test('string[]', () => {
       expect(new Namefully(['John', 'Smith']).toString()).toBe('John Smith');
       expect(new Namefully(['Jane', 'D', 'Smith']).toString()).toBe('Jane D Smith');
+      expect(new Namefully(['Madonna'], { mono: true }).toString()).toBe('Madonna');
     });
 
     test('json', () => {
@@ -295,16 +296,23 @@ describe('Namefully', () => {
       const names = [new FirstName('John'), new LastName('Smith')];
       expect(new Namefully(names).toString()).toBe('John Smith');
       expect(new Namefully([Name.first('John'), Name.last('Smith'), Name.suffix('Ph.D')]).birth).toBe('John Smith');
+      expect(new Namefully([Name.last('Madonna')], { mono: true }).toString()).toBe('Madonna');
     });
 
     test('NameBuilder', () => {
       const builder = NameBuilder.create();
       builder.add(Name.first('John'), Name.last('Smith'), Name.suffix('Ph.D'));
       expect(builder.build().birth).toBe('John Smith');
+
+      builder.clear();
+      builder.add(Name.middle('Madonna'));
+      expect(builder.size).toBe(1);
+      expect(builder.build({ mono: Namon.MIDDLE_NAME }).toString()).toBe('Madonna');
     });
 
     test('Parser<T> (Custom Parser)', () => {
-      expect(new Namefully(new SimpleParser('John#Smith')).toString()).toBe('John Smith');
+      const parser = new SimpleParser('John#Smith');
+      expect(new Namefully(parser).toString()).toBe('John Smith');
     });
 
     test('deserialize()', () => {

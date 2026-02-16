@@ -191,25 +191,13 @@ export class Config {
     Config.cache.set(this.name, this);
   }
 
-  /**
-   * Alters the name order between the first and last name, and rearrange the
-   * order of appearance of a name set.
-   * @deprecated use `update()` method instead.
-   */
-  updateOrder(orderedBy: NameOrder): void {
-    this.update({ orderedBy });
-  }
-
-  /**
-   * Allows the possibility to alter some options after creating a name set.
-   */
-  update({ orderedBy, title, ending, mono }: Partial<Pick<Config, 'orderedBy' | 'title' | 'ending' | 'mono'>>): void {
+  /** Allows the possibility to alter behavior-related options after creating a name set. */
+  update({ orderedBy, title, ending }: Partial<Pick<Config, 'orderedBy' | 'title' | 'ending'>>): void {
     const config = Config.cache.get(this.name);
     if (!config) return;
     if (orderedBy !== this.#orderedBy) config.#orderedBy = orderedBy!;
     if (title !== this.#title) config.#title = title!;
     if (ending !== this.#ending) config.#ending = ending!;
-    if (mono !== this.#mono) config.#mono = mono!;
   }
 
   /** Generates a unique new name. */

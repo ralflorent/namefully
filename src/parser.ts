@@ -60,17 +60,19 @@ export abstract class Parser<T = unknown> {
 
 export class StringParser extends Parser<string> {
   parse(options: Partial<Config>): FullName {
-    const { separator, mono } = Config.merge(options);
-    const names = this.raw.split(separator.token);
-    const parser = names.length === 1 && mono ? new MonoParser(names[0]) : new ArrayStringParser(names);
-    return parser.parse(options);
+    const config = Config.merge(options);
+    const names = this.raw.split(config.separator.token);
+    return new ArrayStringParser(names).parse(config);
   }
 }
 
 export class ArrayStringParser extends Parser<string[]> {
   parse(options: Partial<Config>): FullName {
     const config = Config.merge(options);
-    const fullName = new FullName(config);
+
+    if (this.raw.length === 1 && config.mono) {
+      return new MonoParser(this.raw[0]).parse(config);
+    }
 
     const raw = this.raw.map((n) => n.trim());
     const index = NameIndex.when(config.orderedBy, raw.length);
@@ -83,8 +85,9 @@ export class ArrayStringParser extends Parser<string[]> {
     }
 
     const { firstName, lastName, middleName, prefix, suffix } = index;
-    fullName.setFirstName(new FirstName(raw[firstName]));
-    fullName.setLastName(new LastName(raw[lastName]));
+    const fullName = new FullName(config)
+      .setFirstName(new FirstName(raw[firstName]))
+      .setLastName(new LastName(raw[lastName]));
 
     if (raw.length >= 3) fullName.setMiddleName(raw[middleName].split(config.separator.token));
     if (raw.length >= 4) fullName.setPrefix(Name.prefix(raw[prefix]));
@@ -123,10 +126,14 @@ export class NamaParser extends Parser<JsonName> {
 export class ArrayNameParser extends Parser<Name[]> {
   parse(options: Partial<Config>): FullName {
     const config = Config.merge(options);
+
+    if (this.raw.length === 1 && config.mono) {
+      return new MonoParser(this.raw[0]).parse(options);
+    } else {
+      ArrayNameValidator.create().validate(this.raw);
+    }
+
     const fullName = new FullName(config);
-
-    ArrayNameValidator.create().validate(this.raw);
-
     for (const name of this.raw) {
       if (name.isPrefix) {
         fullName.setPrefix(name);
@@ -145,13 +152,14 @@ export class ArrayNameParser extends Parser<Name[]> {
   }
 }
 
-export class MonoParser extends Parser<string> {
+export class MonoParser extends Parser<string | Name> {
   parse(options: Partial<Config>): Mononym {
-    const { bypass, mono } = Config.merge(options);
+    const config = Config.merge(options);
 
-    if (bypass) Validators.namon.validate(this.raw);
+    if (config.bypass) Validators.namon.validate(this.raw);
 
-    const type = mono instanceof Namon ? mono : Namon.FIRST_NAME;
-    return new Mononym(new Name(this.raw.trim(), type), options);
+    const type = config.mono instanceof Namon ? config.mono : Namon.FIRST_NAME;
+    const name = this.raw instanceof Name ? this.raw : new Name(this.raw.trim(), type);
+    return new Mononym(name, config);
   }
 }

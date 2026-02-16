@@ -247,8 +247,10 @@ import { Config, FullName, Namefully, Parser } from 'namefully';
 // Suppose you want to cover this '#' separator
 class SimpleParser extends Parser<string> {
   parse(options: Partial<Config>): FullName {
-    const [firstName, lastName] = this.raw.split('#');
-    return FullName.parse({ firstName, lastName }, Config.merge(options));
+    const [fn, ln] = this.raw.split('#', 2);
+    return new FullName(options)
+      .setFirstName(fn.trim())
+      .setLastName(ln.trim());
   }
 }
 
