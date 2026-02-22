@@ -3,6 +3,7 @@ import { NameError } from './error.js';
 import { NameIndex } from './utils.js';
 import { deserialize } from './data.js';
 import { Namefully } from './namefully.js';
+import namefully from './namefully.js';
 import { NameBuilder } from './builder.js';
 import { ZERO_WIDTH_SPACE } from './constants.js';
 import { FirstName, LastName, Name } from './name.js';
@@ -18,7 +19,7 @@ describe('Namefully', () => {
     });
 
     test('.parts returns the name components as a sequence', () => {
-      expect(Array.from(name.parts).length).toBe(5);
+      expect(name.size).toBe(5);
       for (const part of name.parts) expect(part).toBeInstanceOf(Name);
     });
 
@@ -59,8 +60,11 @@ describe('Namefully', () => {
     test('.deepEqual() checks whether two names are equal from a component perspective', () => {
       const name1 = new Namefully('John Ben Smith');
       const name2 = new Namefully([new FirstName('John', 'Ben'), new LastName('Smith')]);
+      const name3 = new Namefully([Name.first('John'), Name.middle('Ben'), Name.last('Smith')]);
       expect(name1.equal(name2)).toBe(true);
       expect(name1.deepEqual(name2)).toBe(false);
+      expect(name1.equal(name3)).toBe(true);
+      expect(name1.deepEqual(name3)).toBe(true);
     });
 
     test('.get() gets the raw form of a name', () => {
@@ -77,6 +81,7 @@ describe('Namefully', () => {
       expect(name.get('firstName')).toBeInstanceOf(FirstName);
       expect(name.get('lastName')).toBeInstanceOf(LastName);
       expect(name.get('suffix')).toBeInstanceOf(Name);
+      expect(name.get('middle')).toBeUndefined();
     });
 
     test('.json() returns a json version of the full name', () => {
@@ -115,6 +120,7 @@ describe('Namefully', () => {
       expect(name.format('f $l.')).toBe('John S.');
       expect(name.format('f $m. l')).toBe('John B. Smith');
       expect(name.format('$F.$M.$L')).toBe('J.B.S');
+      expect(name.format('$f.$m.$l')).toBe('J.B.S');
       expect(name.format('$p')).toBe('');
 
       expect(new Namefully('John Smith').format('o')).toBe('SMITH, John');
@@ -392,6 +398,13 @@ describe('Namefully', () => {
       expect(parsed.middleName().join(' ')).toBe('Some Other Name Parts');
 
       await expect(Namefully.parse('John')).rejects.toThrow(NameError);
+    });
+
+    test('default namefully function import', () => {
+      expect(namefully('John Smith').full).toBe('John Smith');
+      expect(namefully(['John', 'Smith']).full).toBe('John Smith');
+      expect(namefully([Name.first('John'), Name.last('Smith')]).full).toBe('John Smith');
+      expect(namefully(new SimpleParser('John#Smith')).full).toBe('John Smith');
     });
   });
 
