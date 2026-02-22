@@ -1,5 +1,6 @@
 import { Config } from './config.js';
 import { Validators } from './validator.js';
+import { ZERO_WIDTH_SPACE } from './constants.js';
 import { Nullable, Namon, Title } from './types.js';
 import { NameError, UnknownError } from './error.js';
 import { FirstName, LastName, Name, JsonName } from './name.js';
@@ -66,6 +67,11 @@ export class FullName {
     return this.#suffix;
   }
 
+  /** Whether the full name is a single word name. */
+  get isMono(): boolean {
+    return this instanceof Mononym;
+  }
+
   /**
    * Parses a JSON name into a full name.
    * @param {JsonName} json parsable name element
@@ -73,12 +79,13 @@ export class FullName {
    */
   static parse(json: JsonName, config?: Config): FullName {
     try {
+      const { prefix, firstName: fn, middleName: mn, lastName: ln, suffix } = json;
       return new FullName(config)
-        .setPrefix(json.prefix)
-        .setFirstName(json.firstName)
-        .setMiddleName(json.middleName ?? [])
-        .setLastName(json.lastName)
-        .setSuffix(json.suffix);
+        .setPrefix(prefix)
+        .setFirstName(typeof fn === 'string' ? fn : new FirstName(fn.value, ...(fn.more ?? [])))
+        .setMiddleName(typeof mn === 'string' ? [mn] : (mn ?? []))
+        .setLastName(typeof ln === 'string' ? ln : new LastName(ln.father, ln.mother))
+        .setSuffix(suffix);
     } catch (error) {
       if (error instanceof NameError) throw error;
 
@@ -94,7 +101,7 @@ export class FullName {
     if (!name) return this;
     if (!this.#config.bypass) Validators.prefix.validate(name);
     const prefix = name instanceof Name ? name.value : name;
-    this.#prefix = Name.prefix(this.#config.title === Title.US ? `${prefix}.` : prefix);
+    this.#prefix = Name.prefix(this.#config.title === Title.US && !prefix.endsWith('.') ? `${prefix}.` : prefix);
     return this;
   }
 
@@ -133,6 +140,11 @@ export class FullName {
     return namon.equal(Namon.MIDDLE_NAME) ? this.#middleName.length > 0 : true;
   }
 
+  toString(): string {
+    if (this.isMono) return (this as unknown as Mononym).value;
+    return Array.from(this.toIterable(true)).join(' ');
+  }
+
   /** Returns an `Iterable` of existing `Name`s. */
   *toIterable(flat: boolean = false): Iterable<Name> {
     if (this.#prefix) yield this.#prefix;
@@ -151,5 +163,63 @@ export class FullName {
   /** Returns the default iterator for this name set (enabling for-of statements). */
   *[Symbol.iterator](): Iterator<Name> {
     yield* this.toIterable(true);
+  }
+}
+
+/**
+ * A single word name or mononym.
+ *
+ * This is a special case of `FullName` that is used to represent mononyms. This contradicts
+ * the original purpose of this library such as shaping and organizing name pieces accordingly.
+ *
+ * When enabled via `Config.mono`, this becomes the full name of a human. And as a single name,
+ * most of the `Namefully` methods become irrelevant.
+ */
+export class Mononym extends FullName {
+  readonly #namon!: string;
+  #type!: Namon;
+
+  /**
+   * Constructs a mononym from a piece of string.
+   * @param {string | Name} name to be used to construct the mononym.
+   */
+  constructor(name: string | Name, options?: Partial<Config>) {
+    super(options ?? { name: 'mononym', mono: true });
+    this.#namon = name.toString();
+    this.type = name instanceof Name ? name.type : Namon.FIRST_NAME;
+  }
+
+  /**
+   * Re-assigns which name type is being used to represent the mononym.
+   *
+   * Ideally, this doesn't really matter as the mononym is always a single piece of name.
+   * When used as `string`, it must be a valid `Namon` type or else it will default to
+   * `Namon.FIRST_NAME`.
+   * @param {string | Namon} type of name to use.
+   */
+  set type(type: string | Namon) {
+    this.#type = typeof type === 'string' ? (Namon.cast(type) ?? Namon.FIRST_NAME) : type;
+    this.#build(this.#namon);
+  }
+
+  /** The type of name being used to represent the mononym. */
+  get type(): Namon {
+    return this.#type;
+  }
+
+  /** The piece of string treated as a name. */
+  get value(): string {
+    return this.#namon;
+  }
+
+  #build(name: string): void {
+    this.setFirstName(ZERO_WIDTH_SPACE).setLastName(ZERO_WIDTH_SPACE).setMiddleName([]).setPrefix(null).setSuffix(null);
+
+    if (this.#type.equal(Namon.FIRST_NAME)) this.setFirstName(name);
+    else if (this.#type.equal(Namon.LAST_NAME)) this.setLastName(name);
+    else if (this.#type.equal(Namon.MIDDLE_NAME)) this.setMiddleName([name]);
+    else if (this.#type.equal(Namon.PREFIX)) this.setPrefix(name);
+    else if (this.#type.equal(Namon.SUFFIX)) this.setSuffix(name);
+    else throw new NameError(name, 'invalid mononym type');
   }
 }

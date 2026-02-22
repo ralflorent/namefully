@@ -1,10 +1,10 @@
 import { Config } from './config.js';
 import { NameIndex } from './utils.js';
 import { InputError } from './error.js';
-import { FullName } from './fullname.js';
+import { FullName, Mononym } from './fullname.js';
 import { Namon, Nullable, Separator } from './types.js';
 import { FirstName, LastName, Name, JsonName } from './name.js';
-import { ArrayStringValidator, ArrayNameValidator, NamaValidator } from './validator.js';
+import { ArrayStringValidator, ArrayNameValidator, Validators } from './validator.js';
 
 /**
  * A parser signature that helps to organize the names accordingly.
@@ -15,6 +15,12 @@ export abstract class Parser<T = unknown> {
    * @param raw data to be parsed
    */
   constructor(public raw: T) {}
+
+  /**
+   * Parses raw data into a `FullName` while applying some options.
+   * @param options for additional configuration to apply.
+   */
+  abstract parse(options?: Partial<Config>): FullName;
 
   /**
    * Builds a dynamic `Parser` on the fly and throws a `NameError` when unable
@@ -32,10 +38,7 @@ export abstract class Parser<T = unknown> {
     }
 
     if (length < 2) {
-      throw new InputError({
-        source: text,
-        message: 'cannot build from invalid input',
-      });
+      throw new InputError({ source: text, message: 'expecting at least 2 name parts' });
     } else if (length === 2 || length === 3) {
       return new StringParser(text);
     } else {
@@ -53,26 +56,23 @@ export abstract class Parser<T = unknown> {
       return Promise.reject(error);
     }
   }
-
-  /**
-   * Parses the raw data into a `FullName` while considering some options.
-   * @param options for additional configuration to apply.
-   */
-  abstract parse(options?: Partial<Config>): FullName;
 }
 
 export class StringParser extends Parser<string> {
   parse(options: Partial<Config>): FullName {
     const config = Config.merge(options);
     const names = this.raw.split(config.separator.token);
-    return new ArrayStringParser(names).parse(options);
+    return new ArrayStringParser(names).parse(config);
   }
 }
 
 export class ArrayStringParser extends Parser<string[]> {
   parse(options: Partial<Config>): FullName {
     const config = Config.merge(options);
-    const fullName = new FullName(config);
+
+    if (this.raw.length === 1 && config.mono) {
+      return new MonoParser(this.raw[0]).parse(config);
+    }
 
     const raw = this.raw.map((n) => n.trim());
     const index = NameIndex.when(config.orderedBy, raw.length);
@@ -85,8 +85,9 @@ export class ArrayStringParser extends Parser<string[]> {
     }
 
     const { firstName, lastName, middleName, prefix, suffix } = index;
-    fullName.setFirstName(new FirstName(raw[firstName]));
-    fullName.setLastName(new LastName(raw[lastName]));
+    const fullName = new FullName(config)
+      .setFirstName(new FirstName(raw[firstName]))
+      .setLastName(new LastName(raw[lastName]));
 
     if (raw.length >= 3) fullName.setMiddleName(raw[middleName].split(config.separator.token));
     if (raw.length >= 4) fullName.setPrefix(Name.prefix(raw[prefix]));
@@ -113,9 +114,9 @@ export class NamaParser extends Parser<JsonName> {
     );
 
     if (config.bypass) {
-      NamaValidator.create().validateKeys(names);
+      Validators.nama.validateKeys(names);
     } else {
-      NamaValidator.create().validate(names);
+      Validators.nama.validate(names);
     }
 
     return FullName.parse(this.raw, config);
@@ -125,10 +126,14 @@ export class NamaParser extends Parser<JsonName> {
 export class ArrayNameParser extends Parser<Name[]> {
   parse(options: Partial<Config>): FullName {
     const config = Config.merge(options);
+
+    if (this.raw.length === 1 && config.mono) {
+      return new MonoParser(this.raw[0]).parse(options);
+    } else {
+      ArrayNameValidator.create().validate(this.raw);
+    }
+
     const fullName = new FullName(config);
-
-    ArrayNameValidator.create().validate(this.raw);
-
     for (const name of this.raw) {
       if (name.isPrefix) {
         fullName.setPrefix(name);
@@ -144,5 +149,17 @@ export class ArrayNameParser extends Parser<Name[]> {
       }
     }
     return fullName;
+  }
+}
+
+export class MonoParser extends Parser<string | Name> {
+  parse(options: Partial<Config>): Mononym {
+    const config = Config.merge(options);
+
+    if (config.bypass) Validators.namon.validate(this.raw);
+
+    const type = config.mono instanceof Namon ? config.mono : Namon.FIRST_NAME;
+    const name = this.raw instanceof Name ? this.raw : new Name(this.raw.trim(), type);
+    return new Mononym(name, config);
   }
 }

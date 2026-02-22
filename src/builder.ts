@@ -145,9 +145,10 @@ export class NameBuilder extends Builder<Name, Namefully> {
     this.prebuild?.();
 
     const names = [...this.queue];
-    ArrayNameValidator.create().validate(names);
+    const config = Config.merge(options as Partial<Config>);
+    if (!config.mono) ArrayNameValidator.create().validate(names);
 
-    this.instance = new Namefully(names, options);
+    this.instance = new Namefully(names, config);
     this.postbuild?.(this.instance);
 
     return this.instance;

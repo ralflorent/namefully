@@ -1,4 +1,4 @@
-import { NameOrder, Separator, Title, Surname } from './types.js';
+import { NameOrder, Namon, Separator, Title, Surname } from './types.js';
 
 const defaultName = 'default';
 const copyAlias = '_copy';
@@ -39,6 +39,7 @@ export class Config {
   #ending: boolean;
   #bypass: boolean;
   #surname: Surname;
+  #mono: boolean | Namon;
 
   /** Cache for multiple instances. */
   private static cache = new Map<string, Config>();
@@ -91,6 +92,11 @@ export class Config {
     return this.#surname;
   }
 
+  /** Whether to parse a single word name as a mononym. */
+  get mono(): boolean | Namon {
+    return this.#mono;
+  }
+
   /** The name of the cached configuration. */
   get name(): string {
     return this.#name;
@@ -104,6 +110,7 @@ export class Config {
     ending = false,
     bypass = true,
     surname = Surname.FATHER,
+    mono: boolean | Namon = false,
   ) {
     this.#name = name;
     this.#orderedBy = orderedBy;
@@ -112,6 +119,7 @@ export class Config {
     this.#ending = ending;
     this.#bypass = bypass;
     this.#surname = surname;
+    this.#mono = mono;
   }
 
   /**
@@ -139,6 +147,7 @@ export class Config {
       config.#ending = other.ending ?? config.ending;
       config.#bypass = other.bypass ?? config.bypass;
       config.#surname = other.surname ?? config.surname;
+      config.#mono = other.mono ?? config.mono;
       return config;
     }
   }
@@ -153,7 +162,7 @@ export class Config {
    * be named `default_copy`.
    */
   copyWith(options: Partial<Config> = {}): Config {
-    const { name, orderedBy, separator, title, ending, bypass, surname } = options;
+    const { name, orderedBy, separator, title, ending, bypass, surname, mono } = options;
     const config = Config.create(this.#genNewName(name ?? this.name + copyAlias));
     config.#orderedBy = orderedBy ?? this.orderedBy;
     config.#separator = separator ?? this.separator;
@@ -161,6 +170,7 @@ export class Config {
     config.#ending = ending ?? this.ending;
     config.#bypass = bypass ?? this.bypass;
     config.#surname = surname ?? this.surname;
+    config.#mono = mono ?? this.mono;
     return config;
   }
 
@@ -177,21 +187,11 @@ export class Config {
     this.#ending = false;
     this.#bypass = true;
     this.#surname = Surname.FATHER;
+    this.#mono = false;
     Config.cache.set(this.name, this);
   }
 
-  /**
-   * Alters the name order between the first and last name, and rearrange the
-   * order of appearance of a name set.
-   * @deprecated use `update()` method instead.
-   */
-  updateOrder(orderedBy: NameOrder): void {
-    this.update({ orderedBy });
-  }
-
-  /**
-   * Allows the possibility to alter some options after creating a name set.
-   */
+  /** Allows the possibility to alter behavior-related options after creating a name set. */
   update({ orderedBy, title, ending }: Partial<Pick<Config, 'orderedBy' | 'title' | 'ending'>>): void {
     const config = Config.cache.get(this.name);
     if (!config) return;

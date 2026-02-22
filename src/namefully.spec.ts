@@ -1,8 +1,11 @@
 import { Config } from './config.js';
 import { NameError } from './error.js';
 import { NameIndex } from './utils.js';
+import { deserialize } from './data.js';
 import { Namefully } from './namefully.js';
+import namefully from './namefully.js';
 import { NameBuilder } from './builder.js';
+import { ZERO_WIDTH_SPACE } from './constants.js';
 import { FirstName, LastName, Name } from './name.js';
 import { SimpleParser, findNameCase } from './fixtures/helpers.js';
 import { Flat, NameOrder, NameType, Namon, Separator, Surname, Title } from './types.js';
@@ -16,7 +19,7 @@ describe('Namefully', () => {
     });
 
     test('.parts returns the name components as a sequence', () => {
-      expect(Array.from(name.parts).length).toBe(5);
+      expect(name.size).toBe(5);
       for (const part of name.parts) expect(part).toBeInstanceOf(Name);
     });
 
@@ -57,8 +60,11 @@ describe('Namefully', () => {
     test('.deepEqual() checks whether two names are equal from a component perspective', () => {
       const name1 = new Namefully('John Ben Smith');
       const name2 = new Namefully([new FirstName('John', 'Ben'), new LastName('Smith')]);
+      const name3 = new Namefully([Name.first('John'), Name.middle('Ben'), Name.last('Smith')]);
       expect(name1.equal(name2)).toBe(true);
       expect(name1.deepEqual(name2)).toBe(false);
+      expect(name1.equal(name3)).toBe(true);
+      expect(name1.deepEqual(name3)).toBe(true);
     });
 
     test('.get() gets the raw form of a name', () => {
@@ -75,6 +81,7 @@ describe('Namefully', () => {
       expect(name.get('firstName')).toBeInstanceOf(FirstName);
       expect(name.get('lastName')).toBeInstanceOf(LastName);
       expect(name.get('suffix')).toBeInstanceOf(Name);
+      expect(name.get('middle')).toBeUndefined();
     });
 
     test('.json() returns a json version of the full name', () => {
@@ -113,6 +120,7 @@ describe('Namefully', () => {
       expect(name.format('f $l.')).toBe('John S.');
       expect(name.format('f $m. l')).toBe('John B. Smith');
       expect(name.format('$F.$M.$L')).toBe('J.B.S');
+      expect(name.format('$f.$m.$l')).toBe('J.B.S');
       expect(name.format('$p')).toBe('');
 
       expect(new Namefully('John Smith').format('o')).toBe('SMITH, John');
@@ -277,11 +285,13 @@ describe('Namefully', () => {
     test('string', () => {
       expect(new Namefully('John Smith').toString()).toBe('John Smith');
       expect(new Namefully('Jane D Smith').toString()).toBe('Jane D Smith');
+      expect(new Namefully('Madonna', { mono: true }).toString()).toBe('Madonna');
     });
 
     test('string[]', () => {
       expect(new Namefully(['John', 'Smith']).toString()).toBe('John Smith');
       expect(new Namefully(['Jane', 'D', 'Smith']).toString()).toBe('Jane D Smith');
+      expect(new Namefully(['Madonna'], { mono: true }).toString()).toBe('Madonna');
     });
 
     test('json', () => {
@@ -292,16 +302,41 @@ describe('Namefully', () => {
       const names = [new FirstName('John'), new LastName('Smith')];
       expect(new Namefully(names).toString()).toBe('John Smith');
       expect(new Namefully([Name.first('John'), Name.last('Smith'), Name.suffix('Ph.D')]).birth).toBe('John Smith');
+      expect(new Namefully([Name.last('Madonna')], { mono: true }).toString()).toBe('Madonna');
     });
 
     test('NameBuilder', () => {
       const builder = NameBuilder.create();
       builder.add(Name.first('John'), Name.last('Smith'), Name.suffix('Ph.D'));
       expect(builder.build().birth).toBe('John Smith');
+
+      builder.clear();
+      builder.add(Name.middle('Madonna'));
+      expect(builder.size).toBe(1);
+      expect(builder.build({ mono: Namon.MIDDLE_NAME }).toString()).toBe('Madonna');
     });
 
     test('Parser<T> (Custom Parser)', () => {
-      expect(new Namefully(new SimpleParser('John#Smith')).toString()).toBe('John Smith');
+      const parser = new SimpleParser('John#Smith');
+      expect(new Namefully(parser).toString()).toBe('John Smith');
+    });
+
+    test('deserialize()', () => {
+      const name = deserialize({
+        names: { firstName: 'John', lastName: 'Smith' },
+        config: {
+          name: 'deserialize',
+          orderedBy: 'firstName',
+          separator: ' ',
+          title: 'US',
+          ending: false,
+          bypass: true,
+          surname: 'father',
+          mono: false,
+        },
+      });
+      expect(name).toBeInstanceOf(Namefully);
+      expect(name.full).toBe('John Smith');
     });
 
     test('tryParse()', () => {
@@ -364,6 +399,13 @@ describe('Namefully', () => {
 
       await expect(Namefully.parse('John')).rejects.toThrow(NameError);
     });
+
+    test('default namefully function import', () => {
+      expect(namefully('John Smith').full).toBe('John Smith');
+      expect(namefully(['John', 'Smith']).full).toBe('John Smith');
+      expect(namefully([Name.first('John'), Name.last('Smith')]).full).toBe('John Smith');
+      expect(namefully(new SimpleParser('John#Smith')).full).toBe('John Smith');
+    });
   });
 
   describe('can be built with a name', () => {
@@ -420,9 +462,23 @@ describe('Namefully', () => {
       expect(() => new Namefully('Mr John Joe Sm1th', Config.create('noBypass'))).toThrow(NameError);
       expect(() => new Namefully('Mr John Joe Smith Ph+', Config.create('noBypass'))).toThrow(NameError);
     });
+
+    test('of mononyms', () => {
+      const name = new Namefully('Madonna', { mono: true });
+      expect(name.toString()).toBe('Madonna');
+      expect(name.first).toBe('Madonna');
+      expect(name.last).toBe(ZERO_WIDTH_SPACE);
+      expect(name.middle).toBeUndefined();
+      expect(name.initials()).toStrictEqual(['M']);
+      expect(name.format('L, f m')).toBe(ZERO_WIDTH_SPACE + ', Madonna');
+      expect(name.shorten()).toBe('Madonna');
+      expect(name.zip()).toBe('M.');
+    });
   });
 
   describe('Config', () => {
+    beforeEach(() => (Config as any).cache.clear());
+
     test('creates a default configuration', () => {
       expect(Config.create()).toEqual(
         expect.objectContaining({
@@ -433,6 +489,7 @@ describe('Namefully', () => {
           bypass: true,
           ending: false,
           surname: Surname.FATHER,
+          mono: false,
         }),
       );
     });
@@ -445,6 +502,7 @@ describe('Namefully', () => {
           title: Title.US,
           surname: Surname.HYPHENATED,
           ending: true,
+          mono: true,
         }),
       ).toEqual(
         expect.objectContaining({
@@ -455,21 +513,24 @@ describe('Namefully', () => {
           bypass: true,
           ending: true,
           surname: Surname.HYPHENATED,
+          mono: true,
         }),
       );
 
-      const { config } = new Namefully('f l', {
+      const config = Config.merge({
         name: 'partial',
         orderedBy: 'lastName',
         title: 'US',
         surname: 'all',
         ending: true,
-      });
+        mono: Namon.LAST_NAME,
+      } as Partial<Config>);
       expect(config.name).toBe('partial');
       expect(config.orderedBy).toBe(NameOrder.LAST_NAME);
       expect(config.title).toBe(Title.US);
       expect(config.ending).toBe(true);
       expect(config.surname).toBe(Surname.ALL);
+      expect(config.mono).toBe(Namon.LAST_NAME);
     });
 
     test('can create more than 1 configuration when necessary', () => {
@@ -491,6 +552,7 @@ describe('Namefully', () => {
           bypass: true,
           ending: false,
           surname: Surname.FATHER,
+          mono: false,
         }),
       );
 
@@ -504,6 +566,7 @@ describe('Namefully', () => {
           bypass: false,
           ending: false,
           surname: Surname.MOTHER,
+          mono: false,
         }),
       );
     });
@@ -528,6 +591,7 @@ describe('Namefully', () => {
           bypass: false,
           ending: false,
           surname: Surname.MOTHER,
+          mono: false,
         }),
       );
 
@@ -541,6 +605,7 @@ describe('Namefully', () => {
           bypass: false,
           ending: false,
           surname: Surname.MOTHER,
+          mono: false,
         }),
       );
 
@@ -554,6 +619,7 @@ describe('Namefully', () => {
           bypass: true,
           ending: false,
           surname: Surname.FATHER,
+          mono: false,
         }),
       );
 
@@ -568,6 +634,7 @@ describe('Namefully', () => {
           bypass: true,
           ending: false,
           surname: Surname.FATHER,
+          mono: false,
         }),
       );
     });

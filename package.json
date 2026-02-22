@@ -1,6 +1,6 @@
 {
   "name": "namefully",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Handle personal names in a particular order, way, or shape.",
   "author": "Ralph Florent",
   "license": "MIT",
@@ -30,7 +30,7 @@
     "format": "prettier --write src example",
     "lint": "eslint src",
     "test": "jest",
-    "test:cov": "jest --collectCoverage",
+    "test:cov": "jest --coverage",
     "prebuild": "shx rm -rf dist",
     "build:esm": "tsc -p tsconfig.json",
     "build:cjs": "tsc -p tsconfig.cjs.json",

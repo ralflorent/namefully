@@ -1,4 +1,4 @@
-import namefully from '../src/index';
+import namefully from 'namefully';
 
 function main() {
   // Gives a simple name some super power.

@@ -296,8 +296,8 @@ export function isNameArray(value?: unknown): value is Name[] {
 /** JSON signature for `FullName` data. */
 export interface JsonName {
   prefix?: string;
-  firstName: string;
-  middleName?: string[];
-  lastName: string;
+  firstName: string | { value: string; more?: string[] };
+  middleName?: string | string[];
+  lastName: string | { father: string; mother?: string };
   suffix?: string;
 }

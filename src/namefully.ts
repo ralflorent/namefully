@@ -36,8 +36,8 @@ import { ArrayNameParser, ArrayStringParser, NamaParser, Parser, StringParser } 
  * this: `John Smith`, where `John` is the first name piece and `Smith`, the last
  * name piece.
  *
- * @see {@link https://www.fbiic.gov/public/2008/nov/Naming_practice_guide_UK_2006.pdf}
- * for more info on name standards.
+ * @see {@link https://www.fbiic.gov/public/2008/nov/Naming_practice_guide_UK_2006.pdf} for
+ * more info on name standards.
  *
  * **IMPORTANT**: Keep in mind that the order of appearance (or name order) matters
  * and may be altered through configurable parameters, which will be seen later.
@@ -108,8 +108,14 @@ export class Namefully {
     return this.#fullName.config;
   }
 
+  /** Whether the name is a single word name. */
+  get isMono(): boolean {
+    return this.#fullName.isMono;
+  }
+
   /** The number of characters of the `birthName`, including spaces. */
   get length(): number {
+    if (this.isMono) return this.#fullName.toString().length;
     return this.birth.length;
   }
 
@@ -265,6 +271,8 @@ export class Namefully {
    * ```
    */
   fullName(orderedBy?: NameOptions['orderedBy']): string {
+    if (this.isMono) return this.#fullName.toString();
+
     const sep: string = this.config.ending ? ',' : '';
     const names: string[] = [];
 
@@ -272,7 +280,12 @@ export class Namefully {
     if ((orderedBy ?? this.config.orderedBy) === NameOrder.FIRST_NAME) {
       names.push(this.first, ...this.middleName(), this.last + sep);
     } else {
-      names.push(this.last, this.first, this.middleName().join(' ') + sep);
+      names.push(this.last);
+      if (this.hasMiddle) {
+        names.push(this.first, this.middleName().join(' ') + sep);
+      } else {
+        names.push(this.first + sep);
+      }
     }
     if (this.suffix) names.push(this.suffix);
 
@@ -286,6 +299,7 @@ export class Namefully {
    * preset configuration.
    */
   birthName(orderedBy?: NameOptions['orderedBy']): string {
+    if (this.isMono) return this.#fullName.toString();
     orderedBy ??= this.config.orderedBy;
     return orderedBy === NameOrder.FIRST_NAME
       ? [this.first, ...this.middleName(), this.last].join(' ')
@@ -333,6 +347,8 @@ export class Namefully {
     only?: NameType | 'firstName' | 'lastName' | 'middleName' | 'birthName';
     asJson?: boolean;
   }): string[] | Record<string, string[]> {
+    if (this.isMono) return [this.#fullName.toString()[0]];
+
     const { orderedBy = this.config.orderedBy, only = NameType.BIRTH_NAME, asJson } = options ?? {};
 
     const firstInits = this.#fullName.firstName.initials();
@@ -340,7 +356,6 @@ export class Namefully {
     const lastInits = this.#fullName.lastName.initials();
 
     if (asJson) return { firstName: firstInits, middleName: midInits, lastName: lastInits };
-
     if (only !== NameType.BIRTH_NAME) {
       return only === NameType.FIRST_NAME ? firstInits : only === NameType.MIDDLE_NAME ? midInits : lastInits;
     } else if (orderedBy === NameOrder.FIRST_NAME) {
@@ -368,6 +383,8 @@ export class Namefully {
    * the surname is set as `mother` is equivalent to making it: `FirstName MotherName`.
    */
   shorten(orderedBy?: NameOptions['orderedBy']): string {
+    if (this.isMono) return this.#fullName.toString();
+
     orderedBy ??= this.config.orderedBy;
     const { firstName, lastName } = this.#fullName;
     return orderedBy === NameOrder.FIRST_NAME
@@ -424,6 +441,7 @@ export class Namefully {
     } = options;
 
     if (this.length <= limit) return this.full;
+    if (this.isMono) return `${this.initials()}${withPeriod ? '.' : ''}`;
 
     const { firstName, lastName, middleName } = this.#fullName;
     const sep = withPeriod ? '.' : '';
@@ -645,6 +663,38 @@ export class Namefully {
     return toggleCase(this.birth);
   }
 
+  /**
+   * Serializes this Namefully instance to a JSON object.
+   *
+   * This includes both the name data (with full hierarchy for FirstName and LastName)
+   * and the configuration, allowing for complete reconstruction of the Namefully instance.
+   *
+   * @returns a JSON-serializable object containing name data and config.
+   */
+  serialize(): SerializedName {
+    const { config, firstName: fn, lastName: ln } = this.#fullName;
+
+    return {
+      names: {
+        prefix: this.prefix,
+        firstName: fn.hasMore ? { value: fn.value, more: fn.more } : fn.value,
+        middleName: this.hasMiddle ? this.middleName() : undefined,
+        lastName: ln.hasMother ? { father: ln.father, mother: ln.mother } : ln.value,
+        suffix: this.suffix,
+      },
+      config: {
+        name: config.name,
+        orderedBy: config.orderedBy,
+        separator: config.separator.token,
+        title: config.title,
+        ending: config.ending,
+        bypass: config.bypass,
+        surname: config.surname,
+        mono: config.mono instanceof Namon ? config.mono.key : config.mono,
+      },
+    };
+  }
+
   #toParser(raw: string | string[] | Name[] | JsonName | Parser): Parser {
     if (raw instanceof Parser) return raw;
     if (typeof raw === 'string') return new StringParser(raw);
@@ -712,37 +762,6 @@ export class Namefully {
         return ALLOWED_FORMAT_TOKENS.includes(char) ? char : undefined;
     }
   }
-
-  /**
-   * Serializes this Namefully instance to a JSON object.
-   *
-   * This includes both the name data (with full hierarchy for FirstName and LastName)
-   * and the configuration, allowing for complete reconstruction of the Namefully instance.
-   *
-   * @returns a JSON-serializable object containing name data and config.
-   */
-  serialize(): SerializedName {
-    const { config, firstName: fn, lastName: ln } = this.#fullName;
-
-    return {
-      names: {
-        prefix: this.prefix,
-        firstName: fn.hasMore ? { value: fn.value, more: fn.more } : fn.value,
-        middleName: this.hasMiddle ? this.middleName() : undefined,
-        lastName: ln.hasMother ? { father: ln.father, mother: ln.mother } : ln.value,
-        suffix: this.suffix,
-      },
-      config: {
-        name: config.name,
-        orderedBy: config.orderedBy,
-        separator: config.separator.token,
-        title: config.title,
-        ending: config.ending,
-        bypass: config.bypass,
-        surname: config.surname,
-      },
-    };
-  }
 }
 
 /**
@@ -763,4 +782,5 @@ export type NameOptions = Partial<{
   ending: boolean;
   bypass: boolean;
   surname: Surname | 'father' | 'mother' | 'hyphenated' | 'all';
+  mono: boolean | Namon;
 }>;

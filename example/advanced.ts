@@ -1,4 +1,4 @@
-import { Name, NameBuilder, Title } from '../src/index';
+import { Name, NameBuilder } from 'namefully';
 
 function main() {
   const builder = NameBuilder.of(Name.first('Nikola'), Name.last('Tesla'));
@@ -11,7 +11,7 @@ function main() {
   builder.add(Name.prefix('Mr'));
 
   // Build the name with options if needed
-  name = builder.build({ title: Title.US });
+  name = builder.build({ title: 'US' });
   console.log(name.full); // Mr. Nikola Tesla
 }
 

@@ -111,6 +111,10 @@ describe('InputError', () => {
   test('is thrown if the wrong argument is provided for a last name', () => {
     expect(() => Validators.lastName.validate({} as LastName));
   });
+
+  test('is thrown for unknown input types', () => {
+    expect(() => new Namefully(class {} as never)).toThrow(Errors.InputError);
+  });
 });
 
 describe('NotAllowedError', () => {

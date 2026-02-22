@@ -4,6 +4,21 @@ This file contains the documentation on the notable changes and bug fixes, and
 is formatted following this [standard](https://keepachangelog.com/en/1.0.0/).
 This project also adheres to [Semantic Versioning](https://semver.org/).
 
+## [2.2.0] - 2026-02-22
+
+**Added**:
+
+- Added support for mononyms (enabled via `Config.mono` flag); only available only for
+  `Namefully(string | string[] | Names[])` or `NameBuilder`.
+- Updated FullName parsing to handle new JsonName structure (now hierarchical)
+- Added more practical examples
+
+**Fixed**:
+
+- Refactored deserialization logic to accommodate flexible name formats
+- Adjusted error handling for invalid name inputs
+- Fixed deserialization issue when casting separators
+
 ## [2.1.0] - 2025-12-30
 
 **Added**:
@@ -204,6 +219,8 @@ This project also adheres to [Semantic Versioning](https://semver.org/).
 
 Initial version
 
+[2.2.0]: https://github.com/ralflorent/namefully/compare/v2.1.0...v2.2.0
+[2.1.0]: https://github.com/ralflorent/namefully/compare/v2.0.2...v2.1.0
 [2.0.2]: https://github.com/ralflorent/namefully/compare/v2.0.1...v2.0.2
 [2.0.1]: https://github.com/ralflorent/namefully/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/ralflorent/namefully/compare/v1.3.0...v2.0.0
