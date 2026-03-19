@@ -1,6 +1,6 @@
 import { Name } from './name';
-import { Namefully } from './namefully';
 import { Config } from './config';
+import { Namefully } from './namefully';
 import { ArrayNameValidator } from './validator';
 
 type VoidCallback = () => void;
@@ -90,9 +90,11 @@ abstract class Builder<T, I> {
  * to finally construct a complete Namefully instance.
  *
  * @example
+ * ```js
  * const builder = NameBuilder.of([Name.first('Thomas'), Name.last('Edison')]);
  * builder.add(Name.middle('Alva'));
  * console.log(builder.build()); // 'Thomas Alva Edison'
+ * ```
  */
 export class NameBuilder extends Builder<Name, Namefully> {
   private constructor(
@@ -137,7 +139,7 @@ export class NameBuilder extends Builder<Name, Namefully> {
    * Builds an instance of Namefully from the previously collected names.
    *
    * Regardless of how the names are added, both first and last names must exist
-   * to complete a fine build. Otherwise, it throws a NameException.
+   * to complete a fine build. Otherwise, it throws a NameError.
    */
   build(config?: Partial<Config>): Namefully {
     this.prebuild?.();

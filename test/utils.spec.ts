@@ -1,6 +1,6 @@
-import { Name } from '../src/name';
+import { Name, isNameArray } from '../src/name';
 import { CapsRange, NameOrder, Separator } from '../src/types';
-import { capitalize, decapitalize, isNameArray, isStringArray, NameIndex, toggleCase } from '../src/utils';
+import { capitalize, decapitalize, isStringArray, NameIndex, toggleCase } from '../src/utils';
 
 describe('Utils', () => {
   test('NameIndex.when() provides the name indexes from a list of names when ordered by first name', () => {

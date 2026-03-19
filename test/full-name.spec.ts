@@ -1,8 +1,8 @@
 import { FirstName, LastName, Name } from '../src/name';
+import { NameError, ValidationError } from '../src/error';
 import { FullName } from '../src/full-name';
 import { Config } from '../src/config';
 import { Namon } from '../src/types';
-import { NameError } from '../src/error';
 
 describe('FullName', () => {
   let prefix: Name;
@@ -21,7 +21,7 @@ describe('FullName', () => {
   });
 
   test('creates a full name from a json name', () => {
-    expect(() => FullName.parse({ firstName: 'J', lastName: 'Smith' })).toThrow(NameError);
+    expect(() => FullName.parse({ firstName: '', lastName: 'Smith' })).toThrow(NameError);
     fullName = FullName.parse({
       prefix: 'Mr',
       firstName: 'John',
@@ -31,6 +31,22 @@ describe('FullName', () => {
     });
 
     runExpectations(fullName);
+
+    fullName = FullName.parse({
+      prefix: 'Mr',
+      firstName: { value: 'John', more: ['David'] },
+      middleName: 'Michael',
+      lastName: { father: 'Smith', mother: 'Jones' },
+      suffix: 'Ph.D',
+    });
+
+    expect(fullName.prefix?.toString()).toBe('Mr');
+    expect(fullName.firstName.toString()).toBe('John');
+    expect(fullName.firstName.toString(true)).toBe('John David');
+    expect(fullName.middleName.map((n) => n.toString()).join(' ')).toBe('Michael');
+    expect(fullName.lastName.toString()).toBe('Smith');
+    expect(fullName.lastName.toString('all')).toBe('Smith Jones');
+    expect(fullName.suffix?.toString()).toBe('Ph.D');
   });
 
   test('builds a full name as it goes', () => {
@@ -44,17 +60,19 @@ describe('FullName', () => {
     runExpectations(fullName);
   });
 
-  test('builds a full name with no validation rules', () => {
-    fullName = new FullName(Config.merge({ name: 'withBypass', bypass: true }))
-      .setFirstName(new FirstName('2Pac'))
-      .setLastName(new LastName('Shakur'));
+  test('enforces validation rules if needed when building a full name', () => {
+    try {
+      fullName = new FullName(Config.merge({ name: 'noBypass', bypass: false }))
+        .setFirstName(new FirstName('2Pac')) // name with digits is invalid
+        .setLastName(new LastName('Shakur'));
 
-    expect(fullName.firstName).toBeInstanceOf(FirstName);
-    expect(fullName.lastName).toBeInstanceOf(LastName);
-    expect(fullName.firstName.toString()).toBe('2Pac');
-    expect(fullName.lastName.toString()).toBe('Shakur');
-    expect(fullName.config).toBeDefined();
-    expect(fullName.config.name).toBe('withBypass');
+      fail('Expected NameError to be thrown');
+    } catch (error: unknown) {
+      expect(error).toBeInstanceOf(NameError);
+      expect((error as NameError).name).toContain('ValidationError');
+      expect((error as NameError).source).toContain('2Pac');
+      expect((error as ValidationError).nameType).toBe('firstName');
+    }
   });
 
   test('creates a full name as it goes from raw strings', () => {
@@ -76,6 +94,27 @@ describe('FullName', () => {
     expect(fullName.has(Namon.MIDDLE_NAME)).toBe(false);
     expect(fullName.has(Namon.LAST_NAME)).toBe(true);
     expect(fullName.has(Namon.SUFFIX)).toBe(false);
+  });
+
+  test('.toIterable() returns sequence of name parts', () => {
+    fullName = new FullName()
+      .setPrefix(prefix)
+      .setFirstName(firstName)
+      .setMiddleName(middleName)
+      .setLastName(lastName)
+      .setSuffix(suffix);
+
+    const parts = fullName[Symbol.iterator]();
+    expect(Name.prefix('Mr').equal(parts.next().value)).toBe(true);
+    expect(Name.first('John').equal(parts.next().value)).toBe(true);
+    expect(Name.middle('Ben').equal(parts.next().value)).toBe(true);
+    expect(Name.middle('Carl').equal(parts.next().value)).toBe(true);
+    expect(Name.last('Smith').equal(parts.next().value)).toBe(true);
+    expect(Name.suffix('Ph.D').equal(parts.next().value)).toBe(true);
+
+    const over = parts.next();
+    expect(over.done).toBe(true);
+    expect(over.value).toBe(undefined);
   });
 });
 

@@ -1,6 +1,6 @@
 {
   "name": "namefully",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "Handle personal names in a particular order, way, or shape.",
   "author": "Ralph Florent",
   "license": "MIT",
@@ -15,7 +15,7 @@
     "start": "webpack --config webpack.dev.js --display=errors-only && node ./build/example/index.js",
     "format": "prettier --write '{src,test}/**/*.ts'",
     "lint": "eslint 'src/**/*.ts' --fix",
-    "test": "jest --collectCoverage=true",
+    "test": "jest --coverage",
     "prebuild": "shx rm -rf dist build",
     "build": "tsc && tsc -p tsconfig.dts.json && webpack --config webpack.prod.js --progress",
     "prepublish": "npm run format && npm run build"

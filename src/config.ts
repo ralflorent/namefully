@@ -181,14 +181,13 @@ export class Config {
     Config.cache.set(this.name, this);
   }
 
-  /**
-   * Alters the name order between the first and last name, and rearrange the
-   * order of appearance of a name set.
-   */
-  updateOrder(order: NameOrder): void {
-    if (order && order !== this.#orderedBy) {
-      Config.cache.get(this.name).#orderedBy = order;
-    }
+  /** Allows the possibility to alter behavior-related options after creating a name set. */
+  update({ orderedBy, title, ending }: Partial<Pick<Config, 'orderedBy' | 'title' | 'ending'>>): void {
+    const config = Config.cache.get(this.name);
+    if (!config) return;
+    if (orderedBy !== this.#orderedBy) config.#orderedBy = orderedBy!;
+    if (title !== this.#title) config.#title = title!;
+    if (ending !== this.#ending) config.#ending = ending!;
   }
 
   /** Generates a unique new name. */

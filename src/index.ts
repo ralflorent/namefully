@@ -23,5 +23,4 @@ export * from './namefully';
 export { Parser } from './parser';
 export * from './types';
 export { NameIndex } from './utils';
-
 export default namefully;

@@ -4,28 +4,60 @@ This file contains the documentation on the notable changes and bug fixes, and
 is formatted following this [standard](https://keepachangelog.com/en/1.0.0/).
 This project also adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.3.1] - 2026-03-20
+
+**Added**:
+
+- Made the name set iterable (i.e., for-of statements)
+- Added ability for deep equal between 2 namefully instances
+- Made certain types flexible so callers aren’t boxed into enums
+- Added support for JSON-serializable names
+- Extended ALLOWED_FORMAT_TOKENS with more symbols
+- Allowed dirty TS (e.g., example/*) when publish JSR
+
+**Fixed**:
+
+- Modified name string requirement to 1 character
+- Applied minor improvements
+- Updated code documentation
+
 ## [1.3.0] - 2025-06-03
 
-- Addded name builder capabilities with lifecycle hooks
+**Added**:
+
+- Added name builder capabilities with lifecycle hooks
 - Parsed non-standard name cases with indexers
 - Returned initials as JSON dictionary if needed
+
+**Fixed**:
+
 - Applied minor updates to documentation
 
 ## [1.2.1] - 2025-06-01
 
+**Added**:
+
+- Added support for [jsr.io](https://jsr.io/@ralflorent/namefully)
+
+**Fixed**:
+
 - Upgraded TypeScript and other dependencies
 - Applied effective TypeScript
-- Added support for [jsr.io](https://jsr.io/@ralflorent/namefully)
 
 ## [1.2.0] - 2022-12-30
 
-- Improved usability of `Config`
-- Improved error handling `NameError`
+**Added**:
+
 - Added named constructors for `Name`
 - Used convenient getters (e.g., `FirstName.hasMore`, `LastName.hasMother`)
-- Applied small refactoring: introduce additional class members
-- Added support for initials in `format`
 - Added text parser for dynamic birth names (ordered by first name)
+- Added support for initials in `format`
+
+**Fixed**:
+
+- Improved usability of `Config`
+- Improved error handling `NameError`
+- Applied small refactoring: introduce additional class members
 - Reconfigured CI build setup via GitHub actions
 - Improved API documentation
 - Breaking changes:
@@ -153,16 +185,18 @@ This project also adheres to [Semantic Versioning](https://semver.org/).
 
 Initial version
 
-[1.3.0]: https://github.com/ralflorent/namefully/compare/v1.2.1...v1.3.0
-[1.2.1]: https://github.com/ralflorent/namefully/compare/v1.2.0...v1.2.1
-[1.2.0]: https://github.com/ralflorent/namefully/compare/v1.1.0...v1.2.0
-[1.1.0]: https://github.com/ralflorent/namefully/compare/v1.0.9...v1.1.0
-[1.0.9]: https://github.com/ralflorent/namefully/compare/v1.0.8...v1.0.9
-[1.0.8]: https://github.com/ralflorent/namefully/compare/v1.0.7...v1.0.8
-[1.0.7]: https://github.com/ralflorent/namefully/compare/v1.0.6...v1.0.7
-[1.0.6]: https://github.com/ralflorent/namefully/compare/v1.0.5...v1.0.6
-[1.0.5]: https://github.com/ralflorent/namefully/compare/v1.0.3...v1.0.5
-[1.0.3]: https://github.com/ralflorent/namefully/compare/v1.0.2...v1.0.3
-[1.0.2]: https://github.com/ralflorent/namefully/compare/v1.0.1...v1.0.2
-[1.0.1]: https://github.com/ralflorent/namefully/compare/v1.0.0...v1.0.1
+
+[1.3.1]: https://github.com/ralflorent/namefully/releases/tag/v1.3.1
+[1.3.0]: https://github.com/ralflorent/namefully/releases/tag/v1.3.0
+[1.2.1]: https://github.com/ralflorent/namefully/releases/tag/v1.2.1
+[1.2.0]: https://github.com/ralflorent/namefully/releases/tag/v1.2.0
+[1.1.0]: https://github.com/ralflorent/namefully/releases/tag/v1.1.0
+[1.0.9]: https://github.com/ralflorent/namefully/releases/tag/v1.0.9
+[1.0.8]: https://github.com/ralflorent/namefully/releases/tag/v1.0.8
+[1.0.7]: https://github.com/ralflorent/namefully/releases/tag/v1.0.7
+[1.0.6]: https://github.com/ralflorent/namefully/releases/tag/v1.0.6
+[1.0.5]: https://github.com/ralflorent/namefully/releases/tag/v1.0.5
+[1.0.3]: https://github.com/ralflorent/namefully/releases/tag/v1.0.4
+[1.0.2]: https://github.com/ralflorent/namefully/releases/tag/v1.0.3
+[1.0.1]: https://github.com/ralflorent/namefully/releases/tag/v1.0.1
 [1.0.0]: https://github.com/ralflorent/namefully/releases/tag/v1.0.0
